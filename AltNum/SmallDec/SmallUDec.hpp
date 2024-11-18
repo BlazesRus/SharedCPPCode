@@ -2193,13 +2193,6 @@ protected:
             switch (precision)
             {
             case 8: decimalRes /= 10; decimalRes *= 10; break;
-            case 7: decimalRes /= 100; decimalRes *= 100; break;
-            case 6: decimalRes /= 1000; decimalRes *= 1000; break;
-            case 5: decimalRes /= 10000; decimalRes *= 10000; break;
-            case 4: decimalRes /= 100000; decimalRes *= 100000; break;
-            case 3: decimalRes /= 1000000; decimalRes *= 1000000; break;
-            case 2: decimalRes /= 10000000; decimalRes *= 10000000; break;
-            case 1: decimalRes /= 100000000; decimalRes *= 100000000; break;
             default: decimalRes = 0; break;
             }
             return VariantType(tValue.IntHalf, decimalRes);
@@ -2257,11 +2250,10 @@ public:
 protected:
 
         /// <summary>
-        /// Perform square root on this instance.
-        /// (Code other than switch statement adjusted from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
         template<SmallUDecVariant VariantType = SmallUDec>
-        static VariantType UnsignedSqrtV1(VariantType value, const int& precision=7)
+        static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
         {
             if (value.DecimalHalf == 0)
             {
@@ -2293,7 +2285,7 @@ protected:
                     AutoSetValue = false;
                     break;
                 }
-                if(AutoSetValue)
+                if (AutoSetValue)
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
@@ -2342,17 +2334,6 @@ protected:
             return ans;
         }
 
-        /// <summary>
-        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-        /// </summary>
-        template<SmallUDecVariant VariantType = SmallUDec>
-        static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
-        {
-            if(value.IsNegative())
-                throw "Can't display result of negative square root without imaginary number support";
-            return UnsignedSqrtV1(value, precision);
-        }
-
 public:
 
         /// <summary>
@@ -2388,8 +2369,7 @@ protected:
             {
                 IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-                VariantType self = tValue.AbsOf();
+                VariantType self = tValue;
                 VariantType result = VariantType::One;
                 while (exp > 0)
                 {
@@ -2398,7 +2378,7 @@ protected:
                         result.UnsignedMultOp(self);
                     // n must be even now
                     exp = exp >> 1; // y = y/2
-                    self.UnsignedMultOp(self); // Change x to x^2
+                    self.MultOp(self); // Change x to x^2
                 }
                 return result;
             }
@@ -2423,9 +2403,7 @@ protected:
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    //Switches from negative to positive if exp is odd number
-                    bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-                    VariantType self = tValue.AbsOf();//Prevent needing to flip the sign
+                    VariantType self = tValue;
                     VariantType result = VariantType::One;
                     while (exp > 0)
                     {
@@ -2434,10 +2412,9 @@ protected:
                             result.DivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
-                        self.UnsignedMultOp(self); //  Change x to x^2
+                        self.MultOp(self); //  Change x to x^2
                     }
-                    if(IsNegative)
-                        result.IntHalf.Sign = MirroredInt::NegativeSign;
+                    return result;
                 }
             }
             else
@@ -2449,9 +2426,7 @@ protected:
         {
             unsigned int exp = expValue;
             //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-            //Switches from negative to positive if exp is odd number
-            bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-            VariantType self = tValue.AbsOf();
+            VariantType self = tValue;
             VariantType result = VariantType::One;
             while (exp > 0)
             {
@@ -2460,7 +2435,7 @@ protected:
                     result.DivOp(self);
                 // n must be even now
                 exp = exp >> 1; // y = y/2
-                self.UnsignedMultOp(self); // Change x to x^2
+                self.MultOp(self); // Change x to x^2
             }
             return result;
         }
@@ -2514,10 +2489,14 @@ protected:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
+        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
+        /// <param name="nValue">The nth root degree value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
         template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
+        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
-            VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            //Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            VariantType xPre = IntHalf==0 ? tValue / n: ((tValue - 1) / n) + 1;
             int nMinus1 = n - 1;
 
             // initializing difference between two
@@ -2536,24 +2515,10 @@ protected:
                 xK = xPre * nMinus1;
                 xK += DivisionV1(tValue, UIntPowV1(xPre, nMinus1));
                 xK /= n;
-                delX = VariantType::Abs(xK - xPre);
+                delX = xK - xPre;
                 xPre = xK;
             } while (delX > precision);
             return xK;
-        }
-
-        /// <summary>
-        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
-        /// </summary>
-        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
-        /// <param name="nValue">The nth root degree value.</param>
-        /// <param name="precision">Precision level (smaller = more precise)</param>
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
-        {
-            if (tValue.IsNegative())
-                throw "Nth root of a negative number requires imaginary number support";
-            return UnsignedNthRootV1(tValue, n, precision);
         }
 
         /// <summary>
@@ -2686,400 +2651,6 @@ public:
         { return PowOfV1(expValue); }
 
     #pragma endregion Pow and Sqrt Functions
-
-    #pragma region Log Functions
-protected:
-
-        /// <summary>
-        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
-        /// </summary>
-        /// <param name="x">The value to apply the exponential function to.</param>
-        /// <returns>VariantType</returns>
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType ExpV1(const VariantType& x)
-        {
-            /*
-             * Evaluates f(x) = e^x for any x in the interval [-709, 709].
-             * If x < -709 or x > 709, raises an assertion error. Implemented
-             * using the truncated Taylor series of e^x with ceil(|x| * e) * 12
-             * terms. Achieves at least 14 and at most 16 digits of precision
-             * over the entire interval.
-             * Performance - There are exactly 36 * ceil(|x| * e) + 5
-             * operations; 69,413 in the worst case (x = 709 or -709):
-             * - (12 * ceil(|x| * e)) + 2 multiplications
-             * - (12 * ceil(|x| * e)) + 1 divisions
-             * - (12 * ceil(|x| * e)) additions
-             * - 1 rounding
-             * - 1 absolute value
-             * Accuracy - Over a sample of 10,000 linearly spaced points in
-             * [-709, 709] we have the following error statistics:
-             * - Max relative error = 8.39803e-15
-             * - Min relative error = 0.0
-             * - Avg relative error = 0.0
-             * - Med relative error = 1.90746e-15
-             * - Var relative error = 0.0
-             * - 0.88 percent of the values have less than 15 digits of precision
-             * Args:
-             *      - x: power of e to evaluate
-             * Returns:
-             *      - approximation of e^x in VariantType precision
-             */
-             // Check that x is a valid input.
-            assert(x.IntHalf.Value < 709);
-            // When x = 0 we already know e^x = 1.
-            if (x.IsZero()) {
-                return VariantType::One;
-            }
-            // Normalize x to a non-negative value to take advantage of
-            // reciprocal symmetry. But keep track of the original sign
-            // in case we need to return the reciprocal of e^x later.
-            VariantType x0 = VariantType::Abs(x);
-            // First term of Taylor expansion of e^x at a = 0 is 1.
-            // tn is the variable we we will return for e^x, and its
-            // value at any time is the sum of all currently evaluated
-            // Taylor terms thus far.
-            VariantType tn = VariantType::One;
-            // Chose a truncation point for the Taylor series using the
-            // heuristic bound 12 * ceil(|x| e), then work down from there
-            // using Horner's method.
-            int n = VariantType::CeilInt(x0 * VariantType::E) * 12;
-            for (int i = n; i > 0; --i) {
-                tn = tn * (x0 / i) + VariantType::One;
-            }
-            // If the original input x is less than 0, we want the reciprocal
-            // of the e^x we calculated.
-            if (x.IsNegative()) {
-                tn = VariantType::One / tn;
-            }
-            return tn;
-        }
-
-        //Common log calculations for when value is between 0 and one
-        template<SmallUDecVariant VariantType=SmallUDec>
-        VariantType LogZeroRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
-        {
-            VariantType TotalRes = (*this - 1)/ (*this + 1);
-            VariantType WSquared = TotalRes * TotalRes;
-            VariantType LastPow = -TotalRes;
-            int WPow = 3;
-            VariantType AddRes;
-
-            do
-            {
-                LastPow *= WSquared;
-                AddRes = LastPow / WPow;
-                TotalRes -= AddRes;
-                WPow += 2;
-            } while (AddRes > VariantType::JustAboveZero);
-            return TotalRes;
-        }
-
-        //Common natural log calculations for range one to two
-        template<SmallUDecVariant VariantType=SmallUDec>
-        const VariantType LnOfOneSection(const VariantType& threshold = VariantType::FiveBillionth) const
-        {
-            VariantType base = *this - 1;        // Base of the numerator; exponent will be explicit
-            bool posSign = true;             // Used to swap the sign of each term
-            VariantType term = base;       // First term
-            VariantType prev;          // Previous sum
-            VariantType result = term;     // Kick it off
-            // den = Denominator of the nth term
-            for(unsigned int den = 2;VariantType::Abs(prev - result) > threshold;++den){
-                posSign = !posSign;
-                term *= base;
-                prev = result;
-                if (posSign)
-                    result += term / den;
-                else
-                    result -= term / den;
-            }
-            return result;
-        }
-
-        //Common log calculations for when value is greater than one
-        template<SmallUDecVariant VariantType=SmallUDec>
-        VariantType LogGreaterRangePart02(const VariantType& AccuracyLevel=VariantType::JustAboveZero) const
-        {
-            //Increasing iterations brings closer to accurate result(Larger numbers need more iterations to get accurate level of result)
-            VariantType TotalRes = (*this - 1) / (*this + 1);
-            VariantType LastPow = TotalRes;
-            VariantType WSquared = TotalRes * TotalRes;
-            VariantType AddRes;
-            int WPow = 3;
-            do
-            {
-                LastPow *= WSquared;
-                AddRes = LastPow / WPow;
-                TotalRes += AddRes; WPow += 2;
-            } while (AddRes > AccuracyLevel);
-            return TotalRes;
-        }
-
-        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
-        static VariantType LogGreaterRangeIntPart02(const IntType& value, const VariantType& AccuracyLevel=VariantType::JustAboveZero)
-        {
-            VariantType tValue = VariantType(value);
-            return tValue.LogGreaterRangePart02(AccuracyLevel);
-        }
-
-        /// <summary>
-        /// Natural log (Equivalent to Log_E(value))
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <returns>SmallUDec variant</returns>
-        template<SmallUDecVariant VariantType = SmallUDec>
-        #if defined(AltNum_UseCustomLnAccuracy)
-        const VariantType LnOfV1(const VariantType& threshold = VariantType::FiveMillionth) const
-        #else
-        const VariantType LnOfV1() const
-        #endif
-        {//Negative values for natural log return value of LnV1(-value) * i
-            //if (value <= 0) {}else//Error if equal or less than 0
-            if (IsOne())
-                return VariantType::Zero;
-            if (IntHalf == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
-                throw("Unsigned class can't return negative numbers);
-            else if (IntHalf == 1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
-            {//This section gives accurate answer(for values between 1 and 2)
-                #if defined(AltNum_UseCustomLnAccuracy)
-                return LnOfOneSection(threshold);
-                #else
-                return LnOfOneSection();
-                #endif
-            }
-            else
-            {//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-                #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                return LogGreaterRangePart02(threshold).MultipliedByTwo();
-                #else
-                return LogGreaterRangePart02().MultipliedByTwo();
-                #endif
-            }
-        }
-
-        /// <summary>
-        /// Natural log (Equivalent to Log_E(value))
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <returns>SmallUDec variant</returns>
-        template<SmallUDecVariant VariantType = SmallUDec>
-        static VariantType LnV1(const VariantType& value)
-        {
-            return value.LnOfV1();
-        }
-
-        /// <summary>
-        /// Log Base 10 of tValue
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <returns>SmallUDec</returns>
-        template<SmallUDecVariant VariantType = SmallUDec>
-        #if defined(AltNum_UseCustomLnAccuracy)
-        static VariantType Log10V1(const VariantType& lValue, const VariantType& threshold = VariantType::FiveMillionth)
-        #else
-        static VariantType Log10V1(const VariantType& lValue)
-        #endif
-        {
-            if (lValue.IsOne())
-                return VariantType::Zero;
-            #if !defined(AltNum_PreventLog10IntegerLoop)
-            if (lValue.DecimalHalf == 0 && lValue.IntHalf.Value % 10 == 0)
-            {//Might not be worth using checking to use this alternative code since since 10s aren't that common
-                for (int index = 1; index < 9; ++index)
-                {
-                    if (lValue.IntHalf.Value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return VariantType::InitializeV2(index, 0);
-                }
-                return VariantType::InitializeV2(9, 0);
-            }
-            #endif
-            const VariantType lnMultiplier = VariantType::InitializeV2(0, LN10Div_DecSection);
-            if (lValue.IntHalf == MirroredInt::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                VariantType result = lValue.LogZeroRangePart02(threshold); return result.MultiplyByUnsigned(lnMultiplier);
-                #else
-                VariantType result = lValue.LogZeroRangePart02(); return result.MultiplyByUnsigned(lnMultiplier);
-                #endif
-            }
-            else if (lValue.IntHalf == MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
-            {//This section gives accurate answer for values between 1 & 2
-                #if defined(AltNum_UseCustomLnAccuracy)
-                VariantType result = lValue.LnOfOneSection(threshold); return result.MultiplyByUnsigned(lnMultiplier);
-                #else
-                VariantType result = lValue.LnOfOneSection(); return result.MultiplyByUnsigned(lnMultiplier);
-                #endif
-            }
-            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                VariantType result = lValue.LogGreaterRangePart02(threshold); return result.MultiplyByUnsigned(lnMultiplier);
-                #else
-                VariantType result = lValue.LogGreaterRangePart02(); return result.MultiplyByUnsigned(lnMultiplier);
-                #endif
-            }
-        }
-
-        /// <summary>
-        /// Log Base 10 of tValue(integer value variant)
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <returns>SmallUDec</returns>
-        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
-        static VariantType Log10OfIntV1(const IntType& value)
-        {
-            if (value == 1)
-                return VariantType::Zero;
-            if (value % 10 == 0)
-            {
-                for (int index = 1; index < 9; ++index)
-                {
-                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return VariantType(index);
-                }
-                return VariantType(9);
-            }
-            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
-                return LogGreaterRangeIntPart02(value).MultiplyByUnsigned(lnMultiplier);
-            }
-        }
-
-        /// <summary>
-        /// Log with Base of BaseVal of tValue
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="baseVal">The base of Log</param>
-        /// <returns>SmallUDec Variant</returns>
-        template<SmallUDecVariant VariantType=SmallUDec>
-        static VariantType LogV1(const VariantType& value, const VariantType& baseVal)
-        {
-            if (value == VariantType::One)
-                return VariantType::Zero;
-            return Log10V1(value) / Log10V1(baseVal);
-        }
-
-        /// <summary>
-        /// Log with Base of BaseVal of tValue
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <param name="BaseVal">The base of Log</param>
-        /// <returns>VariantType</returns>
-        template<SmallUDecVariant VariantType=SmallUDec, IntegerType IntType = unsigned int>
-        static VariantType LogOfIntV1(const VariantType& value, const IntType& baseVal)
-        {
-            //Calculate Base log first
-            VariantType baseTotalRes;
-            bool lnMultLog = true;
-            if (baseVal % 10 == 0)
-            {
-                for (int index = 1; index < 9; ++index)
-                {
-                    if (baseVal == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                    {
-                        baseTotalRes = VariantType::Initialize(index, 0);
-                        break;
-                    }
-                }
-                baseTotalRes = VariantType(9, 0); lnMultLog = false;
-            }
-            else//Returns a positive baseVal(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                baseTotalRes = LogGreaterRangeIntPart02(baseVal);
-            }
-            VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
-            //Now calculate other log
-            if (value.DecimalHalf == 0 && value.IntHalf.Value % 10 == 0)
-            {
-                for (int index = 1; index < 9; ++index)
-                {
-                    if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return lnMultLog ? VariantType::Initialize(index, 0) / (baseTotalRes * lnMultiplier): VariantType::Initialize(index, 0)/ baseTotalRes;
-                }
-                return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyByUnsigned(lnMultiplier)):VariantType::Initialize(9, 0)/baseTotalRes;
-            }
-            if(value.IntHalf==MirroredInt::Zero)//Not tested this block but should work
-            {
-                VariantType TotalRes = value.LogZeroRangePart02();
-                if(lnMultLog)
-                    return TotalRes.DivideBy(baseTotalRes);
-                else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
-            }
-            else if (value.IntHalf==MirroredInt::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
-            {//This section gives accurate answer for values between 1 & 2
-                if(lnMultLog)
-                    return value.LnOfOneSection()/baseTotalRes;
-                else
-                    return (value.LnOfOneSection().MultipliedByTwo())/ baseTotalRes;
-            }
-            else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
-            {
-                VariantType TotalRes = value.LogGreaterRangePart02();
-                if(lnMultLog)
-                    return TotalRes.DivideBy(baseTotalRes);
-                else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
-            }
-        }
-
-public:
-
-        /// <summary>
-        /// Taylor Series Exponential function derived from https://www.pseudorandom.com/implementing-exp
-        /// </summary>
-        /// <param name="x">The value to apply the exponential function to.</param>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec Exp(const SmallUDec& x) { return ExpV1(x); }
-
-        /// <summary>
-        /// Natural log (Equivalent to Log_E(value))
-        /// </summary>
-        /// <param name="value">The target value.</param>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec Ln(const SmallUDec& value)
-        { return LnV1(value); }
-
-        /// <summary>
-        /// Log Base 10 of tValue
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec Log10(const SmallUDec& value)
-        { return Log10V1(value); }
-
-        /// <summary>
-        /// Log Base 10 of tValue(integer value variant)
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec Log10OfInt(const unsigned int& value)
-        { return Log10OfIntV1(value); }
-
-        /// <summary>
-        /// Log with Base of BaseVal of tValue
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="baseVal">The base of Log</param>
-        /// <returns>SmallUDec Variant</returns>
-        static SmallUDec Log(const SmallUDec& value, const SmallUDec& baseVal)
-        { return LogV1(value, baseVal); }
-
-        /// <summary>
-        /// Log with Base of BaseVal of tValue
-        /// Based on http://home.windstream.net/okrebs/page57.html
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        /// <param name="BaseVal">The base of Log</param>
-        /// <returns>SmallUDec</returns>
-        static SmallUDec LogOfInt(const SmallUDec& value, const unsigned int& baseVal)
-        { return LogOfIntV1(value, baseVal); }
-
-    #pragma endregion Log Functions
 
     #pragma region Trigonomic Functions
 protected:

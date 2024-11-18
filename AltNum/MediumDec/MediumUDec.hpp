@@ -2291,11 +2291,10 @@ public:
 protected:
 
         /// <summary>
-        /// Perform square root on this instance.
-        /// (Code other than switch statement adjusted from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
+        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
         /// </summary>
         template<MediumUDecVariant VariantType = MediumUDec>
-        static VariantType UnsignedSqrtV1(VariantType value, const int& precision=7)
+        static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
         {
             if (value.DecimalHalf == 0)
             {
@@ -2327,7 +2326,7 @@ protected:
                     AutoSetValue = false;
                     break;
                 }
-                if(AutoSetValue)
+                if (AutoSetValue)
                     return value;//Technically both positive and negative numbers of same equal the result
             }
 
@@ -2376,17 +2375,6 @@ protected:
             return ans;
         }
 
-        /// <summary>
-        /// Perform square root on this instance.(Code other than switch statement from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
-        /// </summary>
-        template<MediumUDecVariant VariantType = MediumUDec>
-        static VariantType SqrtV1(VariantType value,const unsigned int& precision=7)
-        {
-            if(value.IsNegative())
-                throw "Can't display result of negative square root without imaginary number support";
-            return UnsignedSqrtV1(value, precision);
-        }
-
 public:
 
         /// <summary>
@@ -2422,8 +2410,7 @@ protected:
             {
                 IntType exp = expValue;
                 //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-                VariantType self = tValue.AbsOf();
+                VariantType self = tValue;
                 VariantType result = VariantType::One;
                 while (exp > 0)
                 {
@@ -2432,7 +2419,7 @@ protected:
                         result.UnsignedMultOp(self);
                     // n must be even now
                     exp = exp >> 1; // y = y/2
-                    self.UnsignedMultOp(self); // Change x to x^2
+                    self.MultOp(self); // Change x to x^2
                 }
                 return result;
             }
@@ -2457,9 +2444,7 @@ protected:
                 else
                 {
                     //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-                    //Switches from negative to positive if exp is odd number
-                    bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-                    VariantType self = tValue.AbsOf();//Prevent needing to flip the sign
+                    VariantType self = tValue;
                     VariantType result = VariantType::One;
                     while (exp > 0)
                     {
@@ -2468,10 +2453,9 @@ protected:
                             result.DivOp(self);
                         // n must be even now
                         exp = exp >> 1; // y = y/2
-                        self.UnsignedMultOp(self); //  Change x to x^2
+                        self.MultOp(self); //  Change x to x^2
                     }
-                    if(IsNegative)
-                        result.IntHalf.Sign = unsigned int::NegativeSign;
+                    return result;
                 }
             }
             else
@@ -2483,9 +2467,7 @@ protected:
         {
             unsigned int exp = expValue;
             //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-            //Switches from negative to positive if exp is odd number
-            bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
-            VariantType self = tValue.AbsOf();
+            VariantType self = tValue;
             VariantType result = VariantType::One;
             while (exp > 0)
             {
@@ -2494,7 +2476,7 @@ protected:
                     result.DivOp(self);
                 // n must be even now
                 exp = exp >> 1; // y = y/2
-                self.UnsignedMultOp(self); // Change x to x^2
+                self.MultOp(self); // Change x to x^2
             }
             return result;
         }
@@ -2548,10 +2530,14 @@ protected:
         /// <summary>
         /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
         /// </summary>
+        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
+        /// <param name="nValue">The nth root degree value.</param>
+        /// <param name="precision">Precision level (smaller = more precise)</param>
         template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
-            VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            //Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            VariantType xPre = IntHalf==0 ? tValue / n: ((tValue - 1) / n) + 1;
             int nMinus1 = n - 1;
 
             // initializing difference between two
@@ -2570,24 +2556,10 @@ protected:
                 xK = xPre * nMinus1;
                 xK += DivisionV1(tValue, UIntPowV1(xPre, nMinus1));
                 xK /= n;
-                delX = VariantType::Abs(xK - xPre);
+                delX = xK - xPre;
                 xPre = xK;
             } while (delX > precision);
             return xK;
-        }
-
-        /// <summary>
-        /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
-        /// </summary>
-        /// <param name="tValue">The target value(radicand) to perform operation on.</param>
-        /// <param name="nValue">The nth root degree value.</param>
-        /// <param name="precision">Precision level (smaller = more precise)</param>
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
-        {
-            if (tValue.IsNegative())
-                throw "Nth root of a negative number requires imaginary number support";
-            return UnsignedNthRootV1(tValue, n, precision);
         }
 
         /// <summary>
@@ -2767,7 +2739,7 @@ protected:
             // Normalize x to a non-negative value to take advantage of
             // reciprocal symmetry. But keep track of the original sign
             // in case we need to return the reciprocal of e^x later.
-            VariantType x0 = VariantType::Abs(x);
+            VariantType x0 = x;
             // First term of Taylor expansion of e^x at a = 0 is 1.
             // tn is the variable we we will return for e^x, and its
             // value at any time is the sum of all currently evaluated
@@ -2779,11 +2751,6 @@ protected:
             int n = VariantType::CeilInt(x0 * VariantType::E) * 12;
             for (int i = n; i > 0; --i) {
                 tn = tn * (x0 / i) + VariantType::One;
-            }
-            // If the original input x is less than 0, we want the reciprocal
-            // of the e^x we calculated.
-            if (x.IsNegative()) {
-                tn = VariantType::One / tn;
             }
             return tn;
         }
@@ -2872,7 +2839,7 @@ protected:
             if (IsOne())
                 return VariantType::Zero;
             if (IntHalf == 0)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
-                throw("Unsigned class can't return negative numbers");
+                throw "Unsigned class can't return negative numbers";
             else if (IntHalf == 1)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer(for values between 1 and 2)
                 #if defined(AltNum_UseCustomLnAccuracy)

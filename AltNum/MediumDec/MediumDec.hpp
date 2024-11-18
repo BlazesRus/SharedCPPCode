@@ -3041,6 +3041,7 @@ protected:
                     }
                     if(IsNegative)
                         result.IntHalf.Sign = MirroredInt::NegativeSign;
+                    return result;
                 }
             }
             else
@@ -3145,7 +3146,7 @@ protected:
 		template<MediumDecVariant VariantType=MediumDec>
         static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
         {
-            VariantType xPre = ((tValue - 1) / n) + 1;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
+            VariantType xPre = IntHalf.Value==0 ? tValue / n: ((tValue - 1) / n) + 1;;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
             int nMinus1 = n - 1;
 
             // initializing difference between two

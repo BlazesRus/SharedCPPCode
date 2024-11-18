@@ -588,7 +588,6 @@ std::string BlazesRusCode::MediumUDec::ToFullString()
     {
         unsigned __int8 CurrentDigit;
         Value += ".";
-        bool HasDigitsUsed = false;
         unsigned int CurrentSection = DecimalHalf.Value;
         for (__int8 Index = 8; Index >= 0; --Index)
         {
