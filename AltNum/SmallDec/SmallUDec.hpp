@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -1831,7 +1831,7 @@ public:
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         /// <returns>SmallUDec</returns>
-        friend SmallUDec operator+(SmallUDec lValue, const SmallUDec& rValue) { return lValue.AddOperation(rValue); }
+        friend SmallUDec operator+(SmallUDec lValue, const SmallUDec& rValue) { lValue.AddOp(rValue); return *lValue; }
 
         /// <summary>
         /// Addition operation between SmallUDec variant and Integer rValue.
@@ -1868,7 +1868,7 @@ public:
         /// <param name="lValue">The left side value</param>
         /// <param name="rValue">The right side value.</param>
         /// <returns>SmallUDec</returns>
-        friend SmallUDec& operator-=(SmallUDec& lValue, const SmallUDec& rValue) { return lValue.SubOperation(rValue); }
+        friend SmallUDec& operator-=(SmallUDec& lValue, const SmallUDec& rValue) { lValue.SubOp(rValue); return *lValue; }
 
         /// <summary>
         /// -= operation between SmallUDec variant and Integer rValue.
