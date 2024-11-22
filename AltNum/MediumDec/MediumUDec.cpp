@@ -442,29 +442,9 @@ MediumUDec BlazesRusCode::MediumUDec::MultipliedByFour() const
 
 #pragma region NormalRep Integer Addition Operations
 
-void MediumUDec::UIntAddOp(const unsigned int& rValue)
-{
-    IntHalf += rValue;
-}
-
-MediumUDec& BlazesRusCode::MediumUDec::UIntAddOperation(const unsigned int& rValue)
-{
-    IntHalf += rValue; return *this;
-}
-
 #pragma endregion NormalRep Integer Addition Operations
 
 #pragma region NormalRep Integer Subtraction Operations
-
-void BlazesRusCode::MediumUDec::UIntSubOp(const unsigned int& rValue)
-{
-    IntHalf -= rValue;
-}
-
-MediumUDec& BlazesRusCode::MediumUDec::UIntSubOperation(const unsigned int& rValue)
-{
-    IntHalf -= rValue; return *this;
-}
 
 #pragma endregion NormalRep Integer Subtraction Operations
 

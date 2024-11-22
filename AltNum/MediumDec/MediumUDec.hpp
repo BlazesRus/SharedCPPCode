@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -1635,18 +1635,13 @@ public:
 
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
-        void UIntAddOp(const unsigned int& rValue);
+        void UIntAddOp(const unsigned int& rValue) { UIntAddOpV1(rValue); }
         void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
-
-        void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
         MediumUDec& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
         MediumUDec& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
-        MediumUDec& UIntAddOperation(const unsigned int& rValue);
+        MediumUDec& UIntAddOperation(const unsigned int& rValue) { return UIntAddOperationV1(rValue); }
         MediumUDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
-
-        MediumUDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
-        MediumUDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
 
         MediumUDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
         MediumUDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
@@ -1738,7 +1733,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UIntSubOp(const unsigned int& rValue);
+        void UIntSubOp(const unsigned int& rValue) { UIntSubOpV1(rValue); }
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 

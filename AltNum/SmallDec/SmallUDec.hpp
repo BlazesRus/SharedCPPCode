@@ -1,4 +1,4 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
@@ -1541,18 +1541,13 @@ public:
 
         void UInt8AddOp(const unsigned char& rValue) { UIntAddOpV1(rValue); }
         void UInt16AddOp(const unsigned short& rValue) { UIntAddOpV1(rValue); }
-        void UIntAddOp(const unsigned int& rValue);
+        void UIntAddOp(const unsigned int& rValue) { UIntAddOpV1(rValue); }
         void UInt64AddOp(const unsigned __int64& rValue) { UIntAddOpV1(rValue); }
-
-        void UnsignedIntegerAddOp(const signed int& rValue) { UIntAddOpV1(rValue); }
 
         SmallUDec& UInt8AddOperation(const unsigned char& rValue) { return UIntAddOperationV1(rValue); }
         SmallUDec& UInt16AddOperation(const unsigned short& rValue) { return UIntAddOperationV1(rValue); }
-        SmallUDec& UIntAddOperation(const unsigned int& rValue);
+        SmallUDec& UIntAddOperation(const unsigned int& rValue) { return UIntAddOperationV1(rValue); }
         SmallUDec& UInt64AddOperation(const unsigned __int64& rValue) { return UIntAddOperationV1(rValue); }
-
-        SmallUDec UnsignedAddByInt(const signed int& rValue) { return AddByUIntV1(rValue); }
-        SmallUDec UnsignedAddByInt64(const signed __int64& rValue) { return AddByUIntV1(rValue); }
 
         SmallUDec AddByUInt8(const unsigned char& rValue) { return AddByUIntV1(rValue); }
         SmallUDec AddByUInt16(const unsigned short& rValue) { return AddByUIntV1(rValue); }
@@ -1644,7 +1639,7 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue">The right side value</param>
-        void UIntSubOp(const unsigned int& rValue);
+        void UIntSubOp(const unsigned int& rValue) { UIntSubOpV1(rValue); }
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
@@ -1657,7 +1652,7 @@ public:
 
         SmallUDec& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
         SmallUDec& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
-        SmallUDec& UIntSubOperation(const unsigned int& rValue);
+        SmallUDec& UIntSubOperation(const unsigned int& rValue) { return UIntSubOperationV1(rValue); }
         SmallUDec& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
 
         SmallUDec UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
@@ -2222,25 +2217,25 @@ public:
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-        signed int FloorIntOf() const;
+        unsigned int FloorIntOf() const;
 
         /// <summary>
         /// Returns the largest integer that is smaller than or equal to tValue (Rounds downs to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-        static signed int FloorInt(const SmallUDec& tValue) { return tValue.FloorIntOf(); }
+        static unsigned int FloorInt(const SmallUDec& tValue) { return tValue.FloorIntOf(); }
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-        int CeilIntOf() const;
+        unsigned int CeilIntOf() const;
 
         /// <summary>
         /// Returns the smallest integer that is greater than or equal to tValue (Rounds up to integer value).
         /// </summary>
         /// <returns>SmallUDec&</returns>
-        static signed int CeilInt(const SmallUDec& tValue) { return tValue.CeilIntOf(); }
+        static unsigned int CeilInt(const SmallUDec& tValue) { return tValue.CeilIntOf(); }
 
         static SmallUDec Trunc(const SmallUDec& tValue);
 

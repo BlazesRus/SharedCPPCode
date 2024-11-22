@@ -247,29 +247,9 @@ SmallUDec BlazesRusCode::SmallUDec::MultipliedByFour() const
 
 #pragma region NormalRep Integer Addition Operations
 
-void SmallUDec::UIntAddOp(const unsigned int& rValue)
-{
-    IntHalf += rValue;
-}
-
-SmallUDec& BlazesRusCode::SmallUDec::UIntAddOperation(const unsigned int& rValue)
-{
-    IntHalf += rValue; return *this;
-}
-
 #pragma endregion NormalRep Integer Addition Operations
 
 #pragma region NormalRep Integer Subtraction Operations
-
-void BlazesRusCode::SmallUDec::UIntSubOp(const unsigned int& rValue)
-{
-    IntHalf -= rValue;
-}
-
-SmallUDec& BlazesRusCode::SmallUDec::UIntSubOperation(const unsigned int& rValue)
-{
-    IntHalf -= rValue; return *this;
-}
 
 #pragma endregion NormalRep Integer Subtraction Operations
 
@@ -279,7 +259,7 @@ void BlazesRusCode::SmallUDec::ApplyFloorOf(const int& precision)
 {
     switch (precision)
     {
-    case 8: DecimalHalf.Value /= 10; DecimalHalf.Value *= 10; break;
+    case 8: DecimalHalf /= 10; DecimalHalf *= 10; break;
     default:
         DecimalHalf = 0;
         break;
