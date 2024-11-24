@@ -794,12 +794,12 @@ protected:
             unsigned _int64 Res;
             unsigned _int64 IntHalfRes;
             unsigned _int64 DecimalRes;
-            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf.Value: DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
+            SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf: DecimalOverflowX * IntHalf + DecimalHalf.Value;
             Res = SelfRes / rValue;
 
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-            IntHalf.Value = (unsigned int)IntHalfRes;
+            IntHalf = (unsigned int)IntHalfRes;
             DecimalHalf.Value = (unsigned int)DecimalRes;
         }
 
@@ -891,12 +891,12 @@ protected:
         template<MediumUDecVariant VariantType=MediumUDec>
         bool PartialDivOpV1(const VariantType& rValue)
         {
-            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
+            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf + DecimalHalf.Value;
             unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf.Value;
 
             unsigned _int64 IntHalfRes = SelfRes / ValueRes;
             unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntHalf.Value = (unsigned int) IntHalfRes;
+            IntHalf = (unsigned int) IntHalfRes;
             DecimalHalf.Value = DecimalRes;
             if (IntHalfRes == 0 && DecimalRes == 0)
                 return true;
@@ -916,35 +916,35 @@ protected:
             {
                 if(rValue.DecimalHalf==0)
                 {
-                    switch(rValue.IntHalf.Value)
+                    switch(rValue.IntHalf)
                     {
                         case 2:
-                            if((IntHalf.Value&1)==1)//Check if number is odd
+                            if((IntHalf&1)==1)//Check if number is odd
                                 UIntDivOp(2);
                             else
-                                IntHalf.Value /= 2;
+                                IntHalf /= 2;
                             break;
                         case 4:
-                            if(((IntHalf.Value >> 2) << 2) == IntHalf.Value)
-                                IntHalf.Value /= 4;
+                            if(((IntHalf >> 2) << 2) == IntHalf)
+                                IntHalf /= 4;
                             else
                                 UIntDivOp(4);
                             break;
                         case 8:
-                            if(((IntHalf.Value >> 3) << 3) == IntHalf.Value)
-                                IntHalf.Value /= 8;
+                            if(((IntHalf >> 3) << 3) == IntHalf)
+                                IntHalf /= 8;
                             else
                                 UIntDivOp(4);
                             break;
                         case 16:
-                            if(((IntHalf.Value >> 4) << 4) == IntHalf.Value)
-                                IntHalf.Value /= 16;
+                            if(((IntHalf >> 4) << 4) == IntHalf)
+                                IntHalf /= 16;
                             else
                                 UIntDivOp(4);
                             break;
                         case 32:
-                            if(((IntHalf.Value >> 5) << 5) == IntHalf.Value)
-                                IntHalf.Value /= 32;
+                            if(((IntHalf >> 5) << 5) == IntHalf)
+                                IntHalf /= 32;
                             else
                                 UIntDivOp(4);
                             break;
@@ -952,7 +952,7 @@ protected:
                             throw "Target rValue can not be divided by zero";
                             break;
                         default:
-                            UIntDivOp(rValue.IntHalf.Value);
+                            UIntDivOp(rValue.IntHalf);
                             break;
                     }
                 }
@@ -1110,21 +1110,21 @@ protected:
         void PartialUIntMultOpV1(const IntType& rValue)
         {
             if (DecimalHalf == 0)
-                IntHalf.Value *= rValue;
+                IntHalf *= rValue;
             else
             {
-                __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
+                __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
                     __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
-                    IntHalf.Value = (unsigned int)OverflowVal;
+                    IntHalf = (unsigned int)OverflowVal;
                     DecimalHalf.Value = (unsigned int)SRep;
                 }
                 else
                 {
-                    IntHalf.Value = 0;
+                    IntHalf = 0;
                     DecimalHalf.Value = (unsigned int)SRep;
                 }
             }
@@ -1259,27 +1259,24 @@ protected:
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
         template<MediumUDecVariant VariantType=MediumUDec>
-        void UnsignedMultOpV1(const VariantType& rValue)
+        void MultOpV1(const VariantType& rValue)
         {
             if (DecimalHalf == 0)
             {
-                if (IntHalf.Value == 1)
+                if (IntHalf == 1)
                 {
-                    if(IntHalf.IsNegative())
-                        IntHalf = -rValue.IntHalf;
-                    else
-                        IntHalf = rValue.IntHalf;
+                    IntHalf = rValue.IntHalf;
                     DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
                     IntHalf *= rValue.IntHalf;
                 else {
-                    __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf.Value : DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
+                    __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf.Value : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf.Value;
                     if (rRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = rRep / DecimalOverflowX;
                         rRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
+                        IntHalf = (unsigned int)OverflowVal;
                         DecimalHalf.Value = (unsigned int)rRep;
                         return;
                     }
@@ -1289,16 +1286,13 @@ protected:
                     #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                         if(DecimalHalf==0)
                             DecimalHalf.Value = 1;
-                    #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                     #endif
-                        IntHalf.Value = 0;
+                        IntHalf = 0;
                         return;
                     }
                 }
             }
-            else if (IntHalf.Value == 0)
+            else if (IntHalf == 0)
             {
                 __int64 SRep = (__int64)DecimalHalf;
                 SRep *= rValue.DecimalHalf.Value;
@@ -1309,20 +1303,17 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                     if (DecimalHalf == 0)
                         DecimalHalf.Value = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                    if(DecimalHalf==0){
-                        SetAsZero(); return; }
                 #endif
                     return;
                 }
                 else
                 {
-                    SRep += (__int64)DecimalHalf.Value * rValue.IntHalf.Value;
+                    SRep += (__int64)DecimalHalf.Value * rValue.IntHalf;
                     if (SRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / DecimalOverflowX;
                         SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = OverflowVal;
+                        IntHalf = OverflowVal;
                         DecimalHalf.Value = (signed int)SRep;
                         return;
                     }
@@ -1332,9 +1323,6 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                         if(DecimalHalf==0)
                             DecimalHalf.Value = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         return;
                     }
@@ -1344,13 +1332,13 @@ protected:
             {
                 if (rValue.DecimalHalf == 0)//Y is integer
                 {
-                    __int64 SRep = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-                    SRep *= rValue.IntHalf.Value;
+                    __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf.Value;
+                    SRep *= rValue.IntHalf;
                     if (SRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / DecimalOverflowX;
                         SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
+                        IntHalf = (unsigned int)OverflowVal;
                         DecimalHalf.Value = (unsigned int)SRep;
                     }
                     else
@@ -1361,25 +1349,22 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf.Value = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         }
-                        IntHalf.Value = 0;
+                        IntHalf = 0;
                     }
                     return;
                 }
                 else if (rValue.IntHalf == 0)
                 {
-                    __int64 SRep = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
+                    __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf.Value;
                     SRep *= rValue.DecimalHalf.Value;
                     SRep /= DecimalOverflowX;
                     if (SRep >= DecimalOverflowX)
                     {
                         __int64 OverflowVal = SRep / DecimalOverflowX;
                         SRep -= OverflowVal * DecimalOverflowX;
-                        IntHalf.Value = (unsigned int)OverflowVal;
+                        IntHalf = (unsigned int)OverflowVal;
                         DecimalHalf.Value = (unsigned int)SRep;
                     }
                     else
@@ -1390,57 +1375,39 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf.Value = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         }
-                        IntHalf.Value = 0;
+                        IntHalf = 0;
                     }
                     return;
                 }
                 else
                 {
                     //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-                    unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-                    SRep *= rValue.IntHalf.Value;//SRep holds __int64 version of X.Y * Z
+                    unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
+                    SRep *= rValue.IntHalf;//SRep holds __int64 version of X.Y * Z
                     //X.Y *.V
-                    unsigned __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf.Value);//Temp03 holds __int64 version of X *.V
+                    unsigned __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
                     unsigned __int64 Temp04 = (__int64)DecimalHalf.Value * (__int64)rValue.DecimalHalf.Value;
                     Temp04 /= DecimalOverflow;
                     //Temp04 holds __int64 version of .Y * .V
                     unsigned __int64 IntegerRep = SRep + Temp03 + Temp04;
                     unsigned __int64 intHalf = IntegerRep / DecimalOverflow;
                     IntegerRep -= intHalf * DecimalOverflowX;
-                    IntHalf.Value = (unsigned int) intHalf;
+                    IntHalf = (unsigned int) intHalf;
                     DecimalHalf.Value = (unsigned int)IntegerRep;
                 }
             }
             #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf.Value = 1;
-            #elif !defined(AltNum_AllowNegativeZero)
-            if(DecimalHalf==0)
-                SetAsZero();
             #endif
         }
 
         template<MediumUDecVariant VariantType=MediumUDec>
-        void MultOpV1(const VariantType& rValue)
+        static VariantType MultiplicationV1(VariantType lValue, const VariantType& rValue)
         {
-            if(rValue.IsNegative())
-            {
-                SwapNegativeStatus();
-                UnsignedMultOp(-rValue);
-            }
-            else
-                UnsignedMultOp(rValue);
-        }
-
-        template<MediumUDecVariant VariantType=MediumUDec>
-        static VariantType UnsignedMultiplicationV1(VariantType lValue, const VariantType& rValue)
-        {
-            lValue.UnsignedMultOpV1(rValue); return lValue;
+            lValue.MultOpV1(rValue); return lValue;
         }
 
 public:
@@ -1450,20 +1417,10 @@ public:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
-        void UnsignedMultOp(const MediumUDec& rValue){ UnsignedMultOpV1(rValue); }
-
         void MultOp(const MediumUDec& rValue){ MultOpV1(rValue); }
 
         /// <summary>
         /// Basic unsigned multiplication operation that ignores special decimal status
-        /// (Modifies owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        MediumUDec& UnsignedMultOperation(const MediumUDec& rValue)
-        { UnsignedMultOp(rValue); return *this; }
-
-        /// <summary>
-        /// Basic multiplication operation that ignores special decimal status
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
@@ -1472,14 +1429,6 @@ public:
 
         /// <summary>
         /// Basic unsigned multiplication operation that ignores special decimal status
-        /// (Doesn't modify owner object)
-        /// </summary>
-        /// <param name="rValue.">The right side tValue</param>
-        MediumUDec MultiplyByUnsigned(const MediumUDec& rValue) const
-        { MediumUDec lValue = *this; return lValue.UnsignedMultOperation(rValue); }
-
-        /// <summary>
-        /// Basic multiplication operation that ignores special decimal status
         /// (Doesn't modify owner object)
         /// </summary>
         /// <param name="rValue.">The right side tValue</param>
@@ -1737,8 +1686,6 @@ public:
         void UInt16SubOp(const unsigned short& rValue) { UIntSubOpV1(rValue); }
         void UInt64SubOp(const unsigned __int64& rValue) { UIntSubOpV1(rValue); }
 
-        void UnsignedIntegerSubOp(const signed int& rValue) { UIntSubOpV1(rValue); }
-
         void Int8SubOp(const signed char& rValue) { IntSubOpV1(rValue); }
         void IntSubOp(const signed int& rValue) { IntSubOpV1(rValue); }
         void Int16SubOp(const signed short& rValue) { IntSubOpV1(rValue); }
@@ -1746,11 +1693,8 @@ public:
 
         MediumUDec& UInt8SubOperation(const unsigned char& rValue) { return UIntSubOperationV1(rValue); }
         MediumUDec& UInt16SubOperation(const unsigned short& rValue) { return UIntSubOperationV1(rValue); }
-        MediumUDec& UIntSubOperation(const unsigned int& rValue);
+        MediumUDec& UIntSubOperation(const unsigned int& rValue) { return UIntSubOperationV1(rValue); }
         MediumUDec& UInt64SubOperation(const unsigned __int64& rValue) { return UIntSubOperationV1(rValue); }
-
-        MediumUDec UnsignedSubtractByInt(const signed int& rValue) { return SubtractByUIntV1(rValue); }
-        MediumUDec UnsignedSubtractByInt64(const signed __int64& rValue) { return SubtractByUIntV1(rValue); }
 
         MediumUDec SubtractByUInt8(const unsigned char& rValue) { return SubtractByUIntV1(rValue); }
         MediumUDec SubtractByUInt16(const unsigned short& rValue) { return SubtractByUIntV1(rValue); }
@@ -1789,7 +1733,7 @@ protected:
                 unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
                 if (decResult == DecimalOverflow) {//5.4 + 4.6
                     ++IntHalf;
-                    if (IntHalf.Value == 0)
+                    if (IntHalf == 0)
                         SetAsZero();
                     else
                         DecimalHalf.Value = 0;
@@ -1819,7 +1763,7 @@ protected:
                 IntHalf -= rValue.IntHalf;
                 //5.XX - B
                 if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 - 5.5 = 10
-                    if (IntHalf.Value == 0)
+                    if (IntHalf == 0)
                         SetAsZero();
                     else
                         DecimalHalf.Value = 0;
@@ -2024,7 +1968,7 @@ public:
                 IntHalf %= rValue.IntHalf;
             else {
                 auto divRes = DivideBy(rValue);
-                SubOp(divRes.MultiplyByUnsigned(rValue));
+                SubOp(divRes.MultiplyBy(rValue));
             }
         }
 
@@ -2294,7 +2238,7 @@ protected:
             if (value.DecimalHalf == 0)
             {
                 bool AutoSetValue = true;
-                switch (value.IntHalf.Value)
+                switch (value.IntHalf)
                 {
                 case 1: value.IntHalf = 1; break;
                 case 4: value.IntHalf = 2; break;
@@ -2395,10 +2339,10 @@ protected:
                 return tValue;
             else if (expValue == 0)
                 return VariantType::One;
-            else if (tValue.DecimalHalf == 0 && tValue.IntHalf.Value == 10)
+            else if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10)
             {
                 VariantType result = tValue;
-                result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
+                result.IntHalf = VariableConversionFunctions::PowerOfTens[expValue];
                 return result;
             }
             else
@@ -2411,7 +2355,7 @@ protected:
                 {
                     // If expValue is odd, multiply self with result
                     if ((exp&1) == 1)
-                        result.UnsignedMultOp(self);
+                        result.MultOp(self);
                     // n must be even now
                     exp = exp >> 1; // y = y/2
                     self.MultOp(self); // Change x to x^2
@@ -2634,10 +2578,10 @@ protected:
         const VariantType UnsignedPowOfV1(const auto& expValue)
         {
             boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumUDecVariant::DecimalOverflow);
-            if(expValue.IntHalf.Value==0)
+            if(expValue.IntHalf==0)
                 return FractionalPowV1(Frac);
             else {
-                VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+                VariantType CalcVal = UIntPowOp(expValue.IntHalf);
                 CalcVal *= FractionalPowV1(Frac);
                 return CalcVal;
             }
@@ -2652,18 +2596,18 @@ protected:
         {
             boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumUDecVariant::DecimalOverflow);
             if (expValue.IntHalf.IsNegative()){//Negative Exponent
-                if(expValue.IntHalf.Value==0)
+                if(expValue.IntHalf==0)
                     return VariantType::One/FractionalPowV1(Frac);
                 else {
-                    VariantType CalcVal = One / UIntPowOf(expValue.IntHalf.Value);
+                    VariantType CalcVal = One / UIntPowOf(expValue.IntHalf);
                     CalcVal /= FractionalPowV1(Frac);
                     return CalcVal;
                 }
             } else {
-                if(expValue.IntHalf.Value==0)
+                if(expValue.IntHalf==0)
                     return FractionalPowV1(Frac);
                 else {
-                    VariantType CalcVal = UIntPowOp(expValue.IntHalf.Value);
+                    VariantType CalcVal = UIntPowOp(expValue.IntHalf);
                     CalcVal *= FractionalPowV1(Frac);
                     return CalcVal;
                 }
@@ -2726,7 +2670,7 @@ protected:
              *      - approximation of e^x in VariantType precision
              */
              // Check that x is a valid input.
-            assert(x.IntHalf.Value < 709);
+            assert(x.IntHalf < 709);
             // When x = 0 we already know e^x = 1.
             if (x.IsZero()) {
                 return VariantType::One;
@@ -2879,11 +2823,11 @@ protected:
             if (lValue.IsOne())
                 return VariantType::Zero;
             #if !defined(AltNum_PreventLog10IntegerLoop)
-            if (lValue.DecimalHalf == 0 && lValue.IntHalf.Value % 10 == 0)
+            if (lValue.DecimalHalf == 0 && lValue.IntHalf % 10 == 0)
             {//Might not be worth using checking to use this alternative code since since 10s aren't that common
                 for (int index = 1; index < 9; ++index)
                 {
-                    if (lValue.IntHalf.Value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
+                    if (lValue.IntHalf == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
                         return VariantType::InitializeV2(index, 0);
                 }
                 return VariantType::InitializeV2(9, 0);
@@ -2893,25 +2837,25 @@ protected:
             if (lValue.IntHalf == unsigned int::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                VariantType result = lValue.LogZeroRangePart02(threshold); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LogZeroRangePart02(threshold); return result.MultiplyBy(lnMultiplier);
                 #else
-                VariantType result = lValue.LogZeroRangePart02(); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LogZeroRangePart02(); return result.MultiplyBy(lnMultiplier);
                 #endif
             }
             else if (lValue.IntHalf == unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
                 #if defined(AltNum_UseCustomLnAccuracy)
-                VariantType result = lValue.LnOfOneSection(threshold); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LnOfOneSection(threshold); return result.MultiplyBy(lnMultiplier);
                 #else
-                VariantType result = lValue.LnOfOneSection(); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LnOfOneSection(); return result.MultiplyBy(lnMultiplier);
                 #endif
             }
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)
-                VariantType result = lValue.LogGreaterRangePart02(threshold); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LogGreaterRangePart02(threshold); return result.MultiplyBy(lnMultiplier);
                 #else
-                VariantType result = lValue.LogGreaterRangePart02(); return result.MultiplyByUnsigned(lnMultiplier);
+                VariantType result = lValue.LogGreaterRangePart02(); return result.MultiplyBy(lnMultiplier);
                 #endif
             }
         }
@@ -2938,7 +2882,7 @@ protected:
             else//Returns a positive value(http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
-                return LogGreaterRangeIntPart02(value).MultiplyByUnsigned(lnMultiplier);
+                return LogGreaterRangeIntPart02(value).MultiplyBy(lnMultiplier);
             }
         }
 
@@ -2988,14 +2932,14 @@ protected:
             }
             VariantType lnMultiplier = VariantType(0, TwiceLN10Div_DecSection);
             //Now calculate other log
-            if (value.DecimalHalf == 0 && value.IntHalf.Value % 10 == 0)
+            if (value.DecimalHalf == 0 && value.IntHalf % 10 == 0)
             {
                 for (int index = 1; index < 9; ++index)
                 {
                     if (value == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
                         return lnMultLog ? VariantType::Initialize(index, 0) / (baseTotalRes * lnMultiplier): VariantType::Initialize(index, 0)/ baseTotalRes;
                 }
-                return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyByUnsigned(lnMultiplier)):VariantType::Initialize(9, 0)/baseTotalRes;
+                return lnMultLog? VariantType(9, 0) / (baseTotalRes.MultiplyBy(lnMultiplier)):VariantType::Initialize(9, 0)/baseTotalRes;
             }
             if(value.IntHalf==unsigned int::Zero)//Not tested this block but should work
             {
@@ -3003,7 +2947,7 @@ protected:
                 if(lnMultLog)
                     return TotalRes.DivideBy(baseTotalRes);
                 else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
+                    return (TotalRes.MultiplyBy(lnMultiplier)).DivideBy(baseTotalRes);
             }
             else if (value.IntHalf==unsigned int::One)//Threshold between 0 and 2 based on Taylor code series from https://stackoverflow.com/questions/26820871/c-program-which-calculates-ln-for-a-given-variable-x-without-using-any-ready-f
             {//This section gives accurate answer for values between 1 & 2
@@ -3018,7 +2962,7 @@ protected:
                 if(lnMultLog)
                     return TotalRes.DivideBy(baseTotalRes);
                 else
-                    return (TotalRes.MultiplyByUnsigned(lnMultiplier)).DivideBy(baseTotalRes);
+                    return (TotalRes.MultiplyBy(lnMultiplier)).DivideBy(baseTotalRes);
             }
         }
 
@@ -3214,21 +3158,21 @@ protected:
         {
             if (tValue.IsNegative())
             {
-                if (tValue.IntHalf.Value == 0)
+                if (tValue.IntHalf == 0)
                 {
                     tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
                 }
                 else
                 {
                     tValue.SwapNegativeStatus();
-                    tValue.IntHalf.Value %= 360;
-                    tValue.IntHalf.Value = 360 - tValue.IntHalf.Value;
+                    tValue.IntHalf %= 360;
+                    tValue.IntHalf = 360 - tValue.IntHalf;
                     if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
                 }
             }
             else
             {
-                tValue.IntHalf.Value %= 360;
+                tValue.IntHalf %= 360;
             }
             return tValue;
         }
@@ -3244,7 +3188,7 @@ protected:
             VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
-                switch(lValue.IntHalf.Value)
+                switch(lValue.IntHalf)
                 {
                     case 0:
                     case 180://Pi Radians
@@ -3288,7 +3232,7 @@ protected:
             VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
-                switch(lValue.IntHalf.Value)
+                switch(lValue.IntHalf)
                 {
                     case 0:
                         return VariantType::One;
@@ -3332,7 +3276,7 @@ protected:
             VariantType lValue = NormalizeForTrig(tValue);
             if(lValue.DecimalHalf==0)
             {
-                switch(lValue.IntHalf.Value)
+                switch(lValue.IntHalf)
                 {
                     case 0:
                     case 180://Pi Radians
