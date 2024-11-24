@@ -123,7 +123,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetValue(const MediumUDec& rValue)
         {
             IntHalf = rValue.IntHalf;
@@ -459,7 +459,7 @@ public:
         /// <summary>
         /// Reads the string.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
 
         /// <summary>
@@ -471,7 +471,7 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         MediumUDec(const std::string& Value);
 
 public:
@@ -503,19 +503,19 @@ public:
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetFloatVal(const float& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetDoubleVal(const double& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetDecimalVal(const long double& tValue);
 
     #endif
@@ -523,13 +523,13 @@ public:
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetBoolVal(const bool& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetIntVal(const unsigned int& Value);
 
     #if defined(AltNum_EnableFloatingConversion)
@@ -537,19 +537,19 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         MediumUDec(const float& tValue){ this->SetFloatVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         MediumUDec(const double& tValue){ this->SetDoubleVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediumUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         MediumUDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
     #endif
@@ -1104,7 +1104,7 @@ protected:
         /// Partial version of UIntMultOpV1 without zero checks
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>MediumUDec</returns>
         template<IntegerType IntType=int>
         void PartialUIntMultOpV1(const IntType& rValue)
@@ -2811,7 +2811,7 @@ protected:
         /// <summary>
         /// Log Base 10 of tValue
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>MediumUDec</returns>
         template<MediumUDecVariant VariantType = MediumUDec>
         #if defined(AltNum_UseCustomLnAccuracy)
@@ -2863,7 +2863,7 @@ protected:
         /// <summary>
         /// Log Base 10 of tValue(integer value variant)
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="value">The target value to apply method.</param>
         /// <returns>MediumUDec</returns>
         template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType = unsigned int>
         static VariantType Log10OfIntV1(const IntType& value)
@@ -2890,7 +2890,7 @@ protected:
         /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="value">The value.</param>
+        /// <param name="value">The target value to apply method.</param>
         /// <param name="baseVal">The base of Log</param>
         /// <returns>MediumUDec Variant</returns>
         template<MediumUDecVariant VariantType=MediumUDec>
@@ -2905,7 +2905,7 @@ protected:
         /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="value">The target value to apply method.</param>
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>VariantType</returns>
         template<MediumUDecVariant VariantType=MediumUDec, IntegerType IntType = unsigned int>
@@ -2986,7 +2986,7 @@ public:
         /// <summary>
         /// Log Base 10 of tValue
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="value">The target value to apply method.</param>
         /// <returns>MediumUDec</returns>
         static MediumUDec Log10(const MediumUDec& value)
         { return Log10V1(value); }
@@ -2994,7 +2994,7 @@ public:
         /// <summary>
         /// Log Base 10 of tValue(integer value variant)
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="value">The target value to apply method.</param>
         /// <returns>MediumUDec</returns>
         static MediumUDec Log10OfInt(const unsigned int& value)
         { return Log10OfIntV1(value); }
@@ -3013,7 +3013,7 @@ public:
         /// Log with Base of BaseVal of tValue
         /// Based on http://home.windstream.net/okrebs/page57.html
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="value">The target value to apply method.</param>v
         /// <param name="BaseVal">The base of Log</param>
         /// <returns>MediumUDec</returns>
         static MediumUDec LogOfInt(const MediumUDec& value, const unsigned int& baseVal)

@@ -112,7 +112,7 @@ namespace BlazesRusCode
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetValue(const SmallUDec& rValue)
         {
             IntHalf = rValue.IntHalf;
@@ -340,7 +340,7 @@ public:
         /// <summary>
         /// Reads the string.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void ReadString(const std::string& Value);
 
         /// <summary>
@@ -352,7 +352,7 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="SmallUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         SmallUDec(const std::string& Value);
 
 public:
@@ -384,19 +384,19 @@ public:
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetFloatVal(const float& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetDoubleVal(const double& tValue);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetDecimalVal(const long double& tValue);
 
     #endif
@@ -404,13 +404,13 @@ public:
         /// <summary>
         /// Sets the value(false equals zero; otherwise is true).
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetBoolVal(const bool& Value);
 
         /// <summary>
         /// Sets the value.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         void SetIntVal(const unsigned int& Value);
 
     #if defined(AltNum_EnableFloatingConversion)
@@ -418,19 +418,19 @@ public:
         /// <summary>
         /// Initializes a new instance of the <see cref="SmallUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         SmallUDec(const float& tValue){ this->SetFloatVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmallUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         SmallUDec(const double& tValue){ this->SetDoubleVal(tValue); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmallUDec"/> class.
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         SmallUDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
     #endif
@@ -1004,7 +1004,7 @@ protected:
         /// Partial version of UIntMultOpV1 without zero checks
         /// (Modifies owner object)
         /// </summary>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>SmallUDec</returns>
         template<IntegerType IntType=int>
         void PartialUIntMultOpV1(const IntType& rValue)
@@ -1993,7 +1993,7 @@ public:
         /// Bitwise XOR Operation Between SmallUDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>SmallUDec</returns>
         template<IntegerType IntType=signed int>
         friend SmallUDec operator^(SmallUDec self, IntType tValue)
@@ -2020,7 +2020,7 @@ public:
         /// Bitwise Or Operation Between SmallUDec and Integer tValue
         /// </summary>
         /// <param name="self">The self.</param>
-        /// <param name="tValue">The value.</param>
+        /// <param name="Value">The value.</param>
         /// <returns>SmallUDec</returns>
         template<IntegerType IntType=signed int>
         friend SmallUDec operator|(SmallUDec self, IntType tValue)
