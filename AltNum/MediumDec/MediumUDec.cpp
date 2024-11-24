@@ -598,22 +598,13 @@ void BlazesRusCode::MediumUDec::SetFloatVal(const float& Value)
     #if defined(AltNum_UseLegacyFloatingConversion)
     float lValue = Value;
     bool IsNegative = Value < 0.0f;
-    if (IsNegative) { lValue *= -1.0f; }
+    if (IsNegative)
+        SetAsZero();
     //Cap value if too big on initialize (preventing overflow on conversion)
-    if (Value >= 2147483648.0f)
+    else if (Value >= 4294967296.0f)
     {
-        if (IsNegative)
-            IntHalf = MirroredInt(2147483647, 0);
-        else
-            IntHalf = 2147483647;
+        IntHalf = 4294967295;
         DecimalHalf = 999999999;
-    }
-    else
-    {
-        signed __int64 WholeValue = (signed __int64)std::floor(Value);
-        lValue -= (float)WholeValue;
-        DecimalHalf = (signed int)Value * 10000000000;
-        IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
     }
     #else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     //To-Do:Add code here
@@ -625,22 +616,13 @@ void BlazesRusCode::MediumUDec::SetDoubleVal(const double& Value)
     #if defined(AltNum_UseLegacyFloatingConversion)
     double lValue = Value;
     bool IsNegative = Value < 0.0;
-    if (IsNegative) { lValue *= -1.0; }
+    if (IsNegative)
+        SetAsZero();
     //Cap value if too big on initialize (preventing overflow on conversion)
-    if (Value >= 2147483648.0)
+    else if (Value >= 4294967296.0)
     {
-        if (IsNegative)
-            IntHalf = MirroredInt(2147483647, 0);
-        else
-            IntHalf = 2147483647;
+        IntHalf = 4294967295;
         DecimalHalf = 999999999;
-    }
-    else
-    {
-        signed __int64 WholeValue = (signed __int64)std::floor(Value);
-        lValue -= (double)WholeValue;
-        DecimalHalf = (signed int)Value * 10000000000;
-        IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
     }
     #else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     //To-Do:Add code here
@@ -652,22 +634,13 @@ void BlazesRusCode::MediumUDec::SetDecimalVal(const long double& Value)
     #if defined(AltNum_UseLegacyFloatingConversion)
     long double lValue = Value;
     bool IsNegative = Value < 0.0L;
-    if (IsNegative) { lValue *= -1.0L; }
+    if (IsNegative)
+        SetAsZero();
     //Cap value if too big on initialize (preventing overflow on conversion)
-    if (lValue >= 2147483648.0L)
+    else if (Value >= 4294967296.0L)
     {
-        if (IsNegative)
-            IntHalf = MirroredInt(2147483647, 0);
-        else
-            IntHalf = 2147483647;
+        IntHalf = 4294967295;
         DecimalHalf = 999999999;
-    }
-    else
-    {
-        signed __int64 WholeValue = (signed __int64)std::floor(lValue);
-        lValue -= (long double)WholeValue;
-        DecimalHalf = (signed int)lValue * 10000000000;
-        IntHalf = MirroredInt((unsigned int)WholeValue, IsNegative ? 0 : 1);
     }
     #else//Extract number from "2^Exp + SignifNum*(2^(Exp - DenomMaxExp))" format
     //To-Do:Add code here
