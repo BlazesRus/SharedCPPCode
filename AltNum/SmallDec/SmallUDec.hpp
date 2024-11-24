@@ -411,13 +411,7 @@ public:
         /// Sets the value.
         /// </summary>
         /// <param name="tValue">The value.</param>
-        void SetIntVal(const int& Value);
-
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetUIntVal(const unsigned int& Value);
+        void SetIntVal(const unsigned int& Value);
 
     #if defined(AltNum_EnableFloatingConversion)
 
