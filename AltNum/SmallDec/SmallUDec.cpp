@@ -353,7 +353,7 @@ std::string BlazesRusCode::SmallUDec::ToString()
     if (DecimalHalf != 0)
     {
         Value += ".";
-        Value += std::string(DecimalHalf);
+        Value += VariableConversionFunctions::UIntToStringConversion(DecimalHalf);
     }
     return Value;
 }
@@ -365,9 +365,9 @@ std::string BlazesRusCode::SmallUDec::ToFullString()
     {
         unsigned __int8 CurrentDigit;
         Value += ".";
+        unsigned __int8 CurrentSection = DecimalHalf;
         if (DecimalHalf > 0)
         {
-            unsigned __int8 CurrentSection = DecimalHalf;
             CurrentDigit = CurrentSection / 10;
             CurrentSection -= CurrentDigit * 10;
             Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
@@ -375,16 +375,6 @@ std::string BlazesRusCode::SmallUDec::ToFullString()
         }
         else
             Value += "00";
-
-            if (CurrentSection > 0)
-            {
-                CurrentDigit = (unsigned __int8)(CurrentSection / VariableConversionFunctions::PowerOfTens[Index]);
-                CurrentSection -= (CurrentDigit * VariableConversionFunctions::PowerOfTens[Index]);
-                Value += VariableConversionFunctions::DigitAsChar(CurrentDigit);
-            }
-            else
-                Value += "0";
-        }
     }
     else
     {
