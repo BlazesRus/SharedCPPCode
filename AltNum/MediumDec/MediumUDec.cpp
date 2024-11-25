@@ -1,4 +1,5 @@
 ﻿#include "MediumUDec.hpp"
+#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 using MediumUDec = BlazesRusCode::MediumUDec;
 
 #pragma region ValueSetters

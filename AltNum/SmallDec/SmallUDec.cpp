@@ -1,4 +1,5 @@
 ﻿#include "SmallUDec.hpp"
+#include "..\..\OtherFunctions\VariableConversionFunctions.h"
 using SmallUDec = BlazesRusCode::SmallUDec;
 
 #pragma region ValueSetters
