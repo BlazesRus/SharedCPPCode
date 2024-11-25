@@ -2818,14 +2818,14 @@ protected:
                         return VariantType::One;
                         break;
                     case 270://1.5 Pi Radians
-                        return VariantType::NegativeOne;
+                        return throw "Result is unsupported negative number.";
                         break;
                     case 30://0.1666666666 Pi Radians
                     case 150://0.833333333 Pi Radians
                         return VariantType::PointFive;
                     case 210:
                     case 330:
-                        return VariantType::NegativePointFive;
+                        return throw "Result is unsupported negative number.";
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
@@ -2865,11 +2865,11 @@ protected:
                         return VariantType::Zero;
                         break;
                     case 180://Pi Radians
-                        return VariantType::NegativeOne;
+                        return throw "Result is unsupported negative number.";
                         break;
                     case 120:
                     case 240:
-                        return VariantType::NegativePointFive;
+                        return throw "Result is unsupported negative number.";
                     default:
                         //Angle as Radian
                         VariantType Radius = PiNum * lValue / 180;
