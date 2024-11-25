@@ -1153,7 +1153,6 @@ public:
         void UnsignedPartialInt64MultOp(const signed __int64& rValue) { PartialUIntMultOpV1(rValue); }
 
 protected:
-
         template<IntegerType IntType=signed int>
         void UIntMultOpV1(const IntType& rValue)
         {
@@ -2030,38 +2029,6 @@ public:
 
     #pragma endregion Bitwise Operations
 
-    /*
-    #pragma region Floating Operator Overrides
-
-        friend MediumUDec operator+(const MediumUDec& self, const float& tValue) { return self + (MediumUDec)tValue; }
-        friend MediumUDec operator-(const MediumUDec& self, const float& tValue) { return self - (MediumUDec)tValue; }
-        friend MediumUDec operator*(const MediumUDec& self, const float& tValue) { return self * (MediumUDec)tValue; }
-        friend MediumUDec operator/(const MediumUDec& self, const float& tValue) { return self / (MediumUDec)tValue; }
-
-        friend MediumUDec operator+(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue + self; }
-        friend MediumUDec operator-(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue - self; }
-        friend MediumUDec operator*(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue * self; }
-        friend MediumUDec operator/(const float& tValue, const MediumUDec& self) { return (MediumUDec)tValue / self; }
-
-        friend MediumUDec operator+(const MediumUDec& self, const double& tValue) { return self + (MediumUDec)tValue; }
-        friend MediumUDec operator-(const MediumUDec& self, const double& tValue) { return self - (MediumUDec)tValue; }
-        friend MediumUDec operator*(const MediumUDec& self, const double& tValue) { return self * (MediumUDec)tValue; }
-        friend MediumUDec operator/(const MediumUDec& self, const double& tValue) { return self / (MediumUDec)tValue; }
-
-        friend MediumUDec operator+(const MediumUDec& self, const long double& tValue) { return self + (MediumUDec)tValue; }
-        friend MediumUDec operator-(const MediumUDec& self, const long double& tValue) { return self - (MediumUDec)tValue; }
-        friend MediumUDec operator*(const MediumUDec& self, const long double& tValue) { return self * (MediumUDec)tValue; }
-        friend MediumUDec operator/(const MediumUDec& self, const long double& tValue) { return self / (MediumUDec)tValue; }
-
-        friend MediumUDec operator+(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue + self; }
-        friend MediumUDec operator-(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue - self; }
-        friend MediumUDec operator*(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue * self; }
-        friend MediumUDec operator/(const long double& tValue, const MediumUDec& self) { return (MediumUDec)tValue / self; }
-
-    #pragma endregion Floating Operator Overrides
-    */
-
-
     #pragma region Other Operators
 
         /// <summary>
@@ -2481,7 +2448,7 @@ protected:
 
             // initializing difference between two
             // roots by INT_MAX
-            VariantType delX = VariantType(2147483647);
+            VariantType delX = VariantType(4294967295);
 
             //  xK denotes current value of x
             VariantType xK;
@@ -2516,7 +2483,8 @@ protected:
             VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
             InitialX1 += DivisionV1(tValue, tValue.UIntPowOf(nMinus1));
             VariantType x[2] = { InitialX1, tValue };
-            while (Abs(x[0] - x[1]) > Precision)
+            //Needs alternative to Abs for unsigned version since negative number results not allowed
+            while ((x[0]>=x[1]?x[0] - x[1): x[1) - x[0]) > Precision)
             {
                 x[1] = x[0];
                 x[0] = OneByN * ((x[1]*nMinus1) + DivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
@@ -2724,7 +2692,7 @@ protected:
             VariantType prev;          // Previous sum
             VariantType result = term;     // Kick it off
             // den = Denominator of the nth term
-            for(unsigned int den = 2;VariantType::Abs(prev - result) > threshold;++den){
+            for(unsigned int den = 2;(prev>=result? prev - result: result - prev) > threshold;++den){
                 posSign = !posSign;
                 term *= base;
                 prev = result;
@@ -3134,46 +3102,19 @@ protected:
         {
             VariantType coeff_1 = VariantType::PiNum.DividedByFour();
             VariantType coeff_2 = coeff_1.MultiplyByUInt(3);
-            VariantType abs_y = VariantType::Abs(y) + VariantType::JustAboveZero;// kludge to prevent 0/0 condition
+            VariantType abs_y = y + VariantType::JustAboveZero;// kludge to prevent 0/0 condition
             VariantType r;
             VariantType angle;
-            if (x.IsPositive())
-            {
-                r = (x - abs_y) / (x + abs_y);
-                angle = coeff_1 - coeff_1 * r;
-            }
-            else
-            {
-                r = (x + abs_y) / (abs_y - x);
-                angle = coeff_2 - coeff_1 * r;
-            }
-            if (y.IsNegative())
-                return -angle;// negate if in quad III or IV
-            else
-                return angle;
+
+            r = (x - abs_y) / (x + abs_y);
+            angle = coeff_1 - coeff_1 * r;
+            return angle;// positive if in quad I or III
         }
 
     	template<MediumUDecVariant VariantType=MediumUDec>
         static VariantType NormalizeForTrig(VariantType tValue)
         {
-            if (tValue.IsNegative())
-            {
-                if (tValue.IntHalf == 0)
-                {
-                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
-                }
-                else
-                {
-                    tValue.SwapNegativeStatus();
-                    tValue.IntHalf %= 360;
-                    tValue.IntHalf = 360 - tValue.IntHalf;
-                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
-                }
-            }
-            else
-            {
-                tValue.IntHalf %= 360;
-            }
+            tValue.IntHalf %= 360;
             return tValue;
         }
 
