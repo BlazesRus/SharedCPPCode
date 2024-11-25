@@ -2563,22 +2563,12 @@ protected:
         const VariantType PowOfV1(const auto& expValue)
         {
             boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, MediumUDecVariant::DecimalOverflow);
-            if (expValue.IntHalf.IsNegative()){//Negative Exponent
-                if(expValue.IntHalf==0)
-                    return VariantType::One/FractionalPowV1(Frac);
-                else {
-                    VariantType CalcVal = One / UIntPowOf(expValue.IntHalf);
-                    CalcVal /= FractionalPowV1(Frac);
-                    return CalcVal;
-                }
-            } else {
-                if(expValue.IntHalf==0)
-                    return FractionalPowV1(Frac);
-                else {
-                    VariantType CalcVal = UIntPowOp(expValue.IntHalf);
-                    CalcVal *= FractionalPowV1(Frac);
-                    return CalcVal;
-                }
+            if (expValue.IntHalf == 0)
+                return FractionalPowV1(Frac);
+            else {
+                VariantType CalcVal = UIntPowOp(expValue.IntHalf);
+                CalcVal *= FractionalPowV1(Frac);
+                return CalcVal;
             }
         }
 
@@ -2796,12 +2786,12 @@ protected:
                 for (int index = 1; index < 9; ++index)
                 {
                     if (lValue.IntHalf == BlazesRusCode::VariableConversionFunctions::PowerOfTens[index])
-                        return VariantType::InitializeV2(index, 0);
+                        return VariantType::Initialize(index, 0);
                 }
-                return VariantType::InitializeV2(9, 0);
+                return VariantType::Initialize(9, 0);
             }
             #endif
-            const VariantType lnMultiplier = VariantType::InitializeV2(0, LN10Div_DecSection);
+            const VariantType lnMultiplier = VariantType::Initialize(0, LN10Div_DecSection);
             if (lValue.IntHalf == unsigned int::Zero)//Returns a negative number derived from (http://www.netlib.org/cephes/qlibdoc.html#qlog)
             {
                 #if defined(AltNum_UseCustomLnAccuracy)&&!defined(AltNum_UseSeparateLnAccuracyRanges)

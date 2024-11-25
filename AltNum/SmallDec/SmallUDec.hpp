@@ -687,11 +687,8 @@ protected:
         template<IntegerType IntType=signed int>
         void PartialIntDivOpV1(const IntType& Value)
         {
-            if(Value<0)
-            {
-                SwapNegativeStatus();
-                PartialUIntDivOp(-Value);
-            }
+            if (Value < 0)
+                throw "Negative number result not allowed with unsigned variant.";
             else
                 PartialUIntDivOp(Value);
         }
@@ -1164,10 +1161,7 @@ protected:
             {
                 if (IntHalf == 1)
                 {
-                    if(IntHalf.IsNegative())
-                        IntHalf = -rValue.IntHalf;
-                    else
-                        IntHalf = rValue.IntHalf;
+                    IntHalf = rValue.IntHalf;
                     DecimalHalf = rValue.DecimalHalf;
                 }
                 else if (rValue.DecimalHalf == 0)
@@ -1188,9 +1182,6 @@ protected:
                     #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                         if(DecimalHalf==0)
                             DecimalHalf = 1;
-                    #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                     #endif
                         IntHalf = 0;
                         return;
@@ -1208,9 +1199,6 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                     if (DecimalHalf == 0)
                         DecimalHalf = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                    if(DecimalHalf==0){
-                        SetAsZero(); return; }
                 #endif
                     return;
                 }
@@ -1231,9 +1219,6 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                         if(DecimalHalf==0)
                             DecimalHalf = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         return;
                     }
@@ -1260,9 +1245,6 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         }
                         IntHalf = 0;
@@ -1289,9 +1271,6 @@ protected:
                 #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
                             if(DecimalHalf==0)
                                 DecimalHalf = 1;
-                #elif !defined(AltNum_AllowNegativeZero)
-                        if(DecimalHalf==0){
-                            SetAsZero(); return; }
                 #endif
                         }
                         IntHalf = 0;
@@ -1318,22 +1297,7 @@ protected:
             #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0&&IntHalf==0)
                 DecimalHalf = 1;
-            #elif !defined(AltNum_AllowNegativeZero)
-            if(DecimalHalf==0)
-                SetAsZero();
             #endif
-        }
-
-        template<SmallUDecVariant VariantType=SmallUDec>
-        void MultOpV1(const VariantType& rValue)
-        {
-            if(rValue.IsNegative())
-            {
-                SwapNegativeStatus();
-                MultOp(-rValue);
-            }
-            else
-                MultOp(rValue);
         }
 
         template<SmallUDecVariant VariantType=SmallUDec>
@@ -1985,97 +1949,8 @@ public:
     #pragma region Modulus Operations
 
     #pragma region Bitwise Operations
-    //Update code later
-    /*
-    #if defined(AltNum_EnableBitwiseOverride)
-        /// <summary>
-        /// Bitwise XOR Operation Between SmallUDec and Integer tValue
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>SmallUDec</returns>
-        template<IntegerType IntType=signed int>
-        friend SmallUDec operator^(SmallUDec self, IntType tValue)
-        {
-            if (self.DecimalHalf == 0) { self.IntHalf ^= tValue; return self; }
-            else
-            {
-                bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = tValue < 0;
-                if (SelfIsNegative && self.IntHalf == NegativeRep)
-                {
-                    self.IntHalf = (0 & tValue) * -1;
-                    self.DecimalHalf ^= tValue;
-                }
-                else
-                {
-                    self.IntHalf ^= tValue; self.DecimalHalf ^= tValue;
-                }
-            }
-            return self;
-        }
 
-        /// <summary>
-        /// Bitwise Or Operation Between SmallUDec and Integer tValue
-        /// </summary>
-        /// <param name="self">The self.</param>
-        /// <param name="Value">The value.</param>
-        /// <returns>SmallUDec</returns>
-        template<IntegerType IntType=signed int>
-        friend SmallUDec operator|(SmallUDec self, IntType tValue)
-        {
-            if (self.DecimalHalf == 0) { self.IntHalf |= tValue; return self; }
-            else
-            {
-                bool SelfIsNegative = self.IntHalf < 0;
-                bool ValIsNegative = tValue < 0;
-                if (SelfIsNegative && self.IntHalf == NegativeRep)
-                {
-                    self.IntHalf = (0 & tValue) * -1;
-                    self.DecimalHalf |= tValue;
-                }
-                else
-                {
-                    self.IntHalf |= tValue; self.DecimalHalf |= tValue;
-                }
-            }
-            return self;
-        }
-    #endif
-    */
     #pragma endregion Bitwise Operations
-
-    /*
-    #pragma region Floating Operator Overrides
-
-        friend SmallUDec operator+(const SmallUDec& self, const float& tValue) { return self + (SmallUDec)tValue; }
-        friend SmallUDec operator-(const SmallUDec& self, const float& tValue) { return self - (SmallUDec)tValue; }
-        friend SmallUDec operator*(const SmallUDec& self, const float& tValue) { return self * (SmallUDec)tValue; }
-        friend SmallUDec operator/(const SmallUDec& self, const float& tValue) { return self / (SmallUDec)tValue; }
-
-        friend SmallUDec operator+(const float& tValue, const SmallUDec& self) { return (SmallUDec)tValue + self; }
-        friend SmallUDec operator-(const float& tValue, const SmallUDec& self) { return (SmallUDec)tValue - self; }
-        friend SmallUDec operator*(const float& tValue, const SmallUDec& self) { return (SmallUDec)tValue * self; }
-        friend SmallUDec operator/(const float& tValue, const SmallUDec& self) { return (SmallUDec)tValue / self; }
-
-        friend SmallUDec operator+(const SmallUDec& self, const double& tValue) { return self + (SmallUDec)tValue; }
-        friend SmallUDec operator-(const SmallUDec& self, const double& tValue) { return self - (SmallUDec)tValue; }
-        friend SmallUDec operator*(const SmallUDec& self, const double& tValue) { return self * (SmallUDec)tValue; }
-        friend SmallUDec operator/(const SmallUDec& self, const double& tValue) { return self / (SmallUDec)tValue; }
-
-        friend SmallUDec operator+(const SmallUDec& self, const long double& tValue) { return self + (SmallUDec)tValue; }
-        friend SmallUDec operator-(const SmallUDec& self, const long double& tValue) { return self - (SmallUDec)tValue; }
-        friend SmallUDec operator*(const SmallUDec& self, const long double& tValue) { return self * (SmallUDec)tValue; }
-        friend SmallUDec operator/(const SmallUDec& self, const long double& tValue) { return self / (SmallUDec)tValue; }
-
-        friend SmallUDec operator+(const long double& tValue, const SmallUDec& self) { return (SmallUDec)tValue + self; }
-        friend SmallUDec operator-(const long double& tValue, const SmallUDec& self) { return (SmallUDec)tValue - self; }
-        friend SmallUDec operator*(const long double& tValue, const SmallUDec& self) { return (SmallUDec)tValue * self; }
-        friend SmallUDec operator/(const long double& tValue, const SmallUDec& self) { return (SmallUDec)tValue / self; }
-
-    #pragma endregion Floating Operator Overrides
-    */
-
 
     #pragma region Other Operators
 
@@ -2524,7 +2399,7 @@ protected:
             VariantType InitialX1 = tValue - tValue/n;//One/n * tValue * (n- 1) == tValue/n * (n - 1) == tValue - tValue/n
             InitialX1 += DivisionV1(tValue, tValue.UIntPowOf(nMinus1));
             VariantType x[2] = { InitialX1, tValue };
-            while (Abs(x[0] - x[1]) > Precision)
+            while ((x[0] >= x[1]? x[0] - x[1]: x[1] - x[0]) > Precision)
             {
                 x[1] = x[0];
                 x[0] = OneByN * ((x[1]*nMinus1) + DivisionV1(tValue, x[1].UIntPowOf(nMinus1)));
@@ -2603,22 +2478,12 @@ protected:
         const VariantType PowOfV1(const auto& expValue)
         {
             boost::rational<unsigned int> Frac = boost::rational<unsigned int>(expValue.DecimalHalf, SmallUDecVariant::DecimalOverflow);
-            if (expValue.IntHalf.IsNegative()){//Negative Exponent
-                if(expValue.IntHalf==0)
-                    return VariantType::One/FractionalPowV1(Frac);
-                else {
-                    VariantType CalcVal = One / UIntPowOf(expValue.IntHalf);
-                    CalcVal /= FractionalPowV1(Frac);
-                    return CalcVal;
-                }
-            } else {
-                if(expValue.IntHalf==0)
-                    return FractionalPowV1(Frac);
-                else {
-                    VariantType CalcVal = UIntPowOp(expValue.IntHalf);
-                    CalcVal *= FractionalPowV1(Frac);
-                    return CalcVal;
-                }
+            if (expValue.IntHalf == 0)
+                return FractionalPowV1(Frac);
+            else {
+                VariantType CalcVal = UIntPowOp(expValue.IntHalf);
+                CalcVal *= FractionalPowV1(Frac);
+                return CalcVal;
             }
         }
 
@@ -2753,46 +2618,19 @@ protected:
         {
             VariantType coeff_1 = VariantType::PiNum.DividedByFour();
             VariantType coeff_2 = coeff_1.MultiplyByUInt(3);
-            VariantType abs_y = VariantType::Abs(y) + VariantType::JustAboveZero;// kludge to prevent 0/0 condition
+            VariantType abs_y = y + VariantType::JustAboveZero;// kludge to prevent 0/0 condition
             VariantType r;
             VariantType angle;
-            if (x.IsPositive())
-            {
-                r = (x - abs_y) / (x + abs_y);
-                angle = coeff_1 - coeff_1 * r;
-            }
-            else
-            {
-                r = (x + abs_y) / (abs_y - x);
-                angle = coeff_2 - coeff_1 * r;
-            }
-            if (y.IsNegative())
-                return -angle;// negate if in quad III or IV
-            else
-                return angle;
+
+            r = (x - abs_y) / (x + abs_y);
+            angle = coeff_1 - coeff_1 * r;
+            return angle;// positive if in quad I or II
         }
 
     	template<SmallUDecVariant VariantType=SmallUDec>
         static VariantType NormalizeForTrig(VariantType tValue)
         {
-            if (tValue.IsNegative())
-            {
-                if (tValue.IntHalf == 0)
-                {
-                    tValue.IntHalf = 359; tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf;
-                }
-                else
-                {
-                    tValue.SwapNegativeStatus();
-                    tValue.IntHalf %= 360;
-                    tValue.IntHalf = 360 - tValue.IntHalf;
-                    if (tValue.DecimalHalf != 0) { tValue.DecimalHalf = DecimalOverflow - tValue.DecimalHalf; }
-                }
-            }
-            else
-            {
-                tValue.IntHalf %= 360;
-            }
+            tValue.IntHalf %= 360;
             return tValue;
         }
 
