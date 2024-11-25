@@ -1100,6 +1100,7 @@ public:
 
     #pragma region NormalRep Integer Multiplication Operations
 protected:
+
         /// <summary>
         /// Partial version of UIntMultOpV1 without zero checks
         /// (Modifies owner object)
@@ -1113,11 +1114,11 @@ protected:
                 IntHalf *= rValue;
             else
             {
-                __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
+                unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
                 {
-                    __int64 OverflowVal = SRep / DecimalOverflowX;
+                    unsigned __int64 OverflowVal = SRep / DecimalOverflowX;
                     SRep -= OverflowVal * DecimalOverflowX;
                     IntHalf = (unsigned int)OverflowVal;
                     DecimalHalf.Value = (unsigned int)SRep;
@@ -1132,17 +1133,15 @@ protected:
 
         //Partial version of BasicIntMultOpV1 without zero checks
         //Modifies owner object
-        template<IntegerType IntType=signed int>
+        template<IntegerType IntType = signed int>
         void PartialIntMultOpV1(const IntType& rValue)
         {
-            if(rValue<0)
-            {
-                SwapNegativeStatus();
-                PartialUIntMultOpV1(-rValue);
-            }
+            if (rValue < 0)
+                throw "Returns unsupported negative number.";
             else
                 PartialUIntMultOp(rValue);
         }
+
 public:
 
         void PartialUIntMultOp(const unsigned int& rValue) { PartialUIntMultOpV1(rValue); }
@@ -1154,6 +1153,7 @@ public:
         void UnsignedPartialInt64MultOp(const signed __int64& rValue) { PartialUIntMultOpV1(rValue); }
 
 protected:
+
         template<IntegerType IntType=signed int>
         void UIntMultOpV1(const IntType& rValue)
         {
