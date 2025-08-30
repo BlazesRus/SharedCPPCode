@@ -229,3 +229,13 @@ AltNum/AltDec/DivOpTemp.cpp
 AltNum/MediumDecV2/DivOpTemp.cpp
 
 enc_temp_folder/*
+
+AltNum/AltDec1_5/
+
+AltNum/MixedDecOld/
+
+AltNum/PartialDec/ExpandedUDecFull.hpp
+
+AltNum/MixedDecV2/
+
+AltNum/MixedDec/

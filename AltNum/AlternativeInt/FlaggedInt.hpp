@@ -13,23 +13,23 @@
 
 namespace BlazesRusCode
 {
-	class DLL_API FlaggedInt {
+    class DLL_API FlaggedInt {
     public:
     #pragma region DigitStorage
 
-		//Is either mixed fraction or power of representation if this value is one
-		unsigned int IsAltRep:1;
+        //Is either mixed fraction or power of representation if this value is one
+        unsigned int IsAltRep:1;
 
-		//Stores non-signed part of value
-		unsigned int Value:31;
+        //Stores non-signed part of value
+        unsigned int Value:31;
 
     #pragma endregion DigitStorage
 
     #pragma region class_constructors
 
-		FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
+        FlaggedInt(const unsigned int& value=0, const unsigned int& isAltRep=0);
 
-		FlaggedInt(const signed int& value, const unsigned int& isAltRep=0);
+        FlaggedInt(const signed int& value, const unsigned int& isAltRep=0);
 
 
         FlaggedInt(const FlaggedInt& rhs);
@@ -45,14 +45,14 @@ namespace BlazesRusCode
 
         FlaggedInt& operator=(const unsigned int& rhs)
         {
-		    Value = rhs;
+            Value = rhs;
             IsAltRep = 0;
             return *this;
         }
 
         FlaggedInt& operator=(const signed int& rhs)
         {
-		    Value = rhs;
+            Value = rhs;
             IsAltRep = 0;
             return *this;
         }
@@ -68,11 +68,11 @@ namespace BlazesRusCode
 
         bool IsAlternative() const;
 
-		bool IsNormal();
+        bool IsNormal();
 
-		void SwitchToAlternative();
+        void SwitchToAlternative();
 
-		void SwitchToNormal();
+        void SwitchToNormal();
 
         //Is at zero value
         bool IsAtZero() const;
@@ -86,15 +86,15 @@ namespace BlazesRusCode
         //Is at neither zero or negative one
         bool IsNotOne() const;
 
-		bool IsEven() const;
+        bool IsEven() const;
 
-		bool IsOdd() const;
+        bool IsOdd() const;
 
     #pragma endregion Check_if_value
 
 #pragma region StringOperations
 
-		void ReadString(const std::string& value);
+        void ReadString(const std::string& value);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FlaggedInt"/> class from string literal
@@ -118,46 +118,46 @@ namespace BlazesRusCode
 
     #pragma region Comparison Operators
 
-		std::strong_ordering operator<=>(const FlaggedInt& that) const
-		{
-			if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
-				return ValueCmp;
-		}
+        std::strong_ordering operator<=>(const FlaggedInt& that) const
+        {
+            if (auto ValueCmp = Value <=> that.Value; ValueCmp != 0)
+                return ValueCmp;
+        }
 
-		std::strong_ordering operator<=>(const unsigned int& that) const
-		{
-			if (auto ValueCmp = Value <=> that; ValueCmp != 0)
-				return ValueCmp;
-		}
+        std::strong_ordering operator<=>(const unsigned int& that) const
+        {
+            if (auto ValueCmp = Value <=> that; ValueCmp != 0)
+                return ValueCmp;
+        }
 
-		std::strong_ordering operator<=>(const signed int& that) const
-		{
-			if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
-				return ValueCmp;
-		}
+        std::strong_ordering operator<=>(const signed int& that) const
+        {
+            if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
+                return ValueCmp;
+        }
 
-		bool operator==(const FlaggedInt& that) const
-		{
-			if (Value!=that.Value)
-				return false;
+        bool operator==(const FlaggedInt& that) const
+        {
+            if (Value!=that.Value)
+                return false;
             if(IsAltRep!=that.IsAltRep)
                 return false;
-			return true;
-		}
+            return true;
+        }
 
-		bool operator==(const unsigned int& that) const
-		{
-			if (Value==that)
-				return true;
-		}
+        bool operator==(const unsigned int& that) const
+        {
+            if (Value==that)
+                return true;
+        }
 
-		bool operator==(const signed int& that) const
-		{
-			if (that < 0)
-				return false;
-			else if (Value==(unsigned int)that)
-				return false;
-		}
+        bool operator==(const signed int& that) const
+        {
+            if (that < 0)
+                return false;
+            else if (Value==(unsigned int)that)
+                return false;
+        }
 
     #pragma endregion Comparison Operators
 
@@ -185,7 +185,7 @@ namespace BlazesRusCode
         /// <returns>The result of the operator.</returns>
         explicit operator signed __int64() { return (signed __int64) Value; }
 
-	protected:
+    protected:
         /// <summary>
         /// Returns maximum stored value(2147483647)
         /// </summary>
@@ -211,7 +211,7 @@ namespace BlazesRusCode
         /// </summary>
         static FlaggedInt ZeroValue();
 
-	public:
+    public:
 
         static const FlaggedInt Maximum;
 
@@ -221,45 +221,45 @@ namespace BlazesRusCode
 
         static const FlaggedInt Two;
 
-		static const FlaggedInt Zero;
+        static const FlaggedInt Zero;
 
 private:
 
-		void UInt64DivOp(const unsigned __int64& rValue);
+        void UInt64DivOp(const unsigned __int64& rValue);
 
-		void Int64DivOp(const signed __int64& rValue);
+        void Int64DivOp(const signed __int64& rValue);
 
-		void UInt64MultOp(const unsigned __int64& rValue);
+        void UInt64MultOp(const unsigned __int64& rValue);
 
-		void Int64MultOp(const signed __int64& rValue);
+        void Int64MultOp(const signed __int64& rValue);
 
 public:
 
- 		friend FlaggedInt& operator/=(FlaggedInt& lValue, const FlaggedInt& rValue){
-			lValue.Value /= rValue.Value; return lValue;
+         friend FlaggedInt& operator/=(FlaggedInt& lValue, const FlaggedInt& rValue){
+            lValue.Value /= rValue.Value; return lValue;
         }
 
         friend FlaggedInt& operator/=(FlaggedInt& lValue, const unsigned int& rValue){
             lValue.Value /= rValue; return lValue;
         }
 
-		friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed int& rValue){
-			lValue.Value /= rValue; return lValue;
+        friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed int& rValue){
+            lValue.Value /= rValue; return lValue;
         }
 
-		friend FlaggedInt operator/(const FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt operator/(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value /= rValue.Value; return newVal;
+            newVal.Value /= rValue.Value; return newVal;
         }
 
-		friend FlaggedInt operator/(const FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt operator/(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value /= rValue; return newVal;
+            newVal.Value /= rValue; return newVal;
         }
 
-		friend FlaggedInt operator/(const FlaggedInt& lValue, const signed int& rValue){
+        friend FlaggedInt operator/(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value /= rValue; return newVal;
+            newVal.Value /= rValue; return newVal;
         }
 
         friend FlaggedInt& operator*=(FlaggedInt& lValue, const FlaggedInt& rValue){
@@ -274,73 +274,73 @@ public:
             lValue.Value *= rValue; return lValue;
         }
 
-		friend FlaggedInt operator*(const FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt operator*(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value *= rValue.Value; return newVal;
+            newVal.Value *= rValue.Value; return newVal;
         }
 
-		friend FlaggedInt operator*(const FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt operator*(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value *= rValue; return newVal;
+            newVal.Value *= rValue; return newVal;
         }
 
-		friend FlaggedInt operator*(const FlaggedInt& lValue, const signed int& rValue){
+        friend FlaggedInt operator*(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value *= rValue; return newVal;
+            newVal.Value *= rValue; return newVal;
         }
 
-		friend FlaggedInt& operator+=(FlaggedInt& lValue, const FlaggedInt& rValue){
-			lValue.Value += rValue.Value; return lValue;
+        friend FlaggedInt& operator+=(FlaggedInt& lValue, const FlaggedInt& rValue){
+            lValue.Value += rValue.Value; return lValue;
         }
 
-		friend FlaggedInt& operator+=(FlaggedInt& lValue, const unsigned int& rValue){
-			lValue.Value += rValue; return lValue;
+        friend FlaggedInt& operator+=(FlaggedInt& lValue, const unsigned int& rValue){
+            lValue.Value += rValue; return lValue;
         }
 
-		friend FlaggedInt& operator+=(FlaggedInt& lValue, const signed int& rValue){
-			lValue.Value += rValue; return lValue;
+        friend FlaggedInt& operator+=(FlaggedInt& lValue, const signed int& rValue){
+            lValue.Value += rValue; return lValue;
         }
 
-		friend FlaggedInt operator+(const FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt operator+(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value += rValue.Value; return newVal;
+            newVal.Value += rValue.Value; return newVal;
         }
 
-		friend FlaggedInt operator+(const FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt operator+(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value += rValue; return newVal;
+            newVal.Value += rValue; return newVal;
         }
 
-		friend FlaggedInt operator+(const FlaggedInt& lValue, const signed int& rValue){
+        friend FlaggedInt operator+(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value += rValue; return newVal;
+            newVal.Value += rValue; return newVal;
         }
 
-		friend FlaggedInt& operator-=(FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt& operator-=(FlaggedInt& lValue, const FlaggedInt& rValue){
             lValue.Value -= rValue.Value; return lValue;
         }
 
-		friend FlaggedInt& operator-=(FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt& operator-=(FlaggedInt& lValue, const unsigned int& rValue){
             lValue.Value -= rValue; return lValue;
         }
 
-		friend FlaggedInt& operator-=(FlaggedInt& lValue, const signed int& rValue){
+        friend FlaggedInt& operator-=(FlaggedInt& lValue, const signed int& rValue){
             lValue.Value -= rValue; return lValue;
         }
 
-		friend FlaggedInt operator-(const FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt operator-(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value -= rValue.Value; return newVal;
+            newVal.Value -= rValue.Value; return newVal;
         }
 
-		friend FlaggedInt operator-(const FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt operator-(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value -= rValue; return newVal;
+            newVal.Value -= rValue; return newVal;
         }
 
-		friend FlaggedInt operator-(const FlaggedInt& lValue, const signed int& rValue){
+        friend FlaggedInt operator-(const FlaggedInt& lValue, const signed int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value -= rValue; return newVal;
+            newVal.Value -= rValue; return newVal;
         }
 
         friend FlaggedInt& operator/=(FlaggedInt& lValue, const signed __int64& rValue) {
@@ -380,22 +380,22 @@ public:
             newVal.Int64MultOp(rValue); return newVal;
         }
 
-		friend FlaggedInt& operator%=(FlaggedInt& lValue, const unsigned int& rValue)
-		{ lValue.Value %= rValue; return lValue; }
+        friend FlaggedInt& operator%=(FlaggedInt& lValue, const unsigned int& rValue)
+        { lValue.Value %= rValue; return lValue; }
 
-		friend FlaggedInt operator%(const FlaggedInt& lValue, const unsigned int& rValue){
+        friend FlaggedInt operator%(const FlaggedInt& lValue, const unsigned int& rValue){
             FlaggedInt newVal = lValue;
-			newVal.Value %= rValue; return newVal;
+            newVal.Value %= rValue; return newVal;
         }
 
-		friend FlaggedInt& operator%=(FlaggedInt& lValue, const FlaggedInt& rValue)
-		{
-			lValue.Value %= rValue.Value; return lValue;
-		}
+        friend FlaggedInt& operator%=(FlaggedInt& lValue, const FlaggedInt& rValue)
+        {
+            lValue.Value %= rValue.Value; return lValue;
+        }
 
-		friend FlaggedInt operator%(const FlaggedInt& lValue, const FlaggedInt& rValue){
+        friend FlaggedInt operator%(const FlaggedInt& lValue, const FlaggedInt& rValue){
             FlaggedInt newVal = lValue;
-			return newVal%=rValue;
+            return newVal%=rValue;
         }
 
     #pragma region Other Operators
@@ -448,5 +448,5 @@ public:
 
     #pragma endregion Other Operators
 
-	};
+    };
 }

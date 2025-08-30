@@ -2,9 +2,6 @@
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
-/*	Code Created by James Michael Armstrong (NexusName:BlazesRus)(https://github.com/BlazesRus)
-    Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
-*/
 #pragma once
 #ifndef QuadVector_IncludeGuard
 #define QuadVector_IncludeGuard

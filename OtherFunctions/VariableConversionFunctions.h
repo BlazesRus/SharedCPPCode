@@ -6,6 +6,7 @@
 
 #include <string>
 #include <stdint.h>
+#include <bit> // since C++20
 
 namespace BlazesRusCode
 {
@@ -169,6 +170,45 @@ namespace BlazesRusCode
         static unsigned __int8 UBytePowerOfTens[3];
         static unsigned int PowerOfTens[10];
         static unsigned __int64 PowerOfTens64Bit[19];
+        
+        template <typename LaneT, unsigned Limit>
+        static constexpr std::array<LaneT, Limit + 1> makePowerOfTens() {
+            std::array<LaneT, Limit + 1> tbl{};
+            LaneT val = 1;
+            for (unsigned i = 0; i <= Limit; ++i) {
+                tbl[i] = val;
+                val *= static_cast<LaneT>(10);
+            }
+            return tbl;
+        }
+        
+        constexpr unsigned int_log10_u64(uint64_t v) noexcept {
+            static constexpr uint64_t powers[] = {
+                1ULL, 10ULL, 100ULL, 1000ULL, 10000ULL,
+                100000ULL, 1000000ULL, 10000000ULL, 100000000ULL,
+                1000000000ULL, 10000000000ULL, 100000000000ULL,
+                1000000000000ULL, 10000000000000ULL, 100000000000000ULL,
+                1000000000000000ULL, 10000000000000000ULL,
+                100000000000000000ULL, 1000000000000000000ULL
+            };
+            unsigned r = 0;
+            while (r + 1 < std::size(powers) && v >= powers[r + 1])
+                ++r;
+            return r;
+        }
+
+        constexpr unsigned char log10_by_bit[] = {
+            /*  0- 3 */ 0,0,0,0,
+            /*  4- 6 */ 1,1,1,
+            /*  7- 9 */ 2,2,2,
+            /* ... fill up to 64 */
+        };
+
+        constexpr unsigned int_log10_branchless(uint64_t v) noexcept {
+            unsigned b = 63u - __builtin_clzll(v | 1u); // bit index
+            unsigned approx = log10_by_bit[b];
+            return approx + (v >= VariableConversionFunctions::PowerOfTens64Bit[approx+1]);
+        }
 
         /// <summary>
         /// Outputs the number of digits found inside Integer Value type
@@ -537,6 +577,14 @@ namespace BlazesRusCode
 
         template<typename IntType>
         static IntType Sqrt(IntType value);
+        
+        constexpr bool isPowerOfTwo(auto d) noexcept {
+          return d > 0 && (d & (d - 1)) == 0;
+        }
+
+        constexpr unsigned shiftAmount(auto d) noexcept {
+          return std::countr_zero(d); // O(1) on all mainstream compilers
+        }
     };
 }
 #endif
