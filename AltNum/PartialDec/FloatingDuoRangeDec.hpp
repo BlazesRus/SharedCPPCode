@@ -28,49 +28,49 @@ AltNum_EnableAlternativeModulusResult
 
 namespace BlazesRusCode
 {
-	using UInt128 = boost::multiprecision::uint128_t;
-	using UInt64 = unsigned __int64;
+    using UInt128 = boost::multiprecision::uint128_t;
+    using UInt64 = unsigned __int64;
     class FloatingDuoRangeDec;
 
     /// <summary>
     /// Represents range of numbers from only 0 to 1.999999999
-	/// </summary>
+    /// </summary>
     class DLL_API FloatingDuoRangeDec
     {
-	#pragma region DigitStorage
-		#pragma options align=bit_packed
-		unsigned int IntHalf:1;
-		//Stores non-signed part of value
-		unsigned int DecimalHalf:31;
-		#pragma options align=reset
-		
-		//Return IntHalf as unsigned int
+    #pragma region DigitStorage
+        #pragma options align=bit_packed
+        unsigned int IntHalf:1;
+        //Stores non-signed part of value
+        unsigned int DecimalHalf:31;
+        #pragma options align=reset
+        
+        //Return IntHalf as unsigned int
         unsigned unsigned int GetIntSection()
         {
-			return IntHalf;
+            return IntHalf;
         }
-		
-		//Return DecHalf as unsigned int
+        
+        //Return DecHalf as unsigned int
         unsigned unsigned int GetDecSection()
         {
-			return DecimalHalf;
+            return DecimalHalf;
         }
-	#pragma endregion DigitStorage
-	
-	private:
+    #pragma endregion DigitStorage
+    
+    private:
         static unsigned _int64 const UInt64Max = 18446744073709551615;
 
         /// <summary>
         /// The decimal overflow
         /// </summary>
         static unsigned int const DecimalOverflow = 1000000000;
-		
+        
         /// <summary>
         /// The decimal overflow
         /// </summary>
         static UInt128 const DecimalOverflowX = 1000000000;
-		
-	public:
+        
+    public:
 
         /// <summary>
         /// long double (Extended precision double)
@@ -79,7 +79,7 @@ namespace BlazesRusCode
 
         bool IsNegative()
         {
-			return false;
+            return false;
         }
 
         /// <summary>
@@ -89,16 +89,16 @@ namespace BlazesRusCode
         /// <param name="decVal01">The non-whole based half of the representation(and other special statuses)</param>
         FloatingDuoRangeDec(const int& intVal, const int& decVal)
         {
-			IntHalf = intVal;
-			DecHalf = decVal;
+            IntHalf = intVal;
+            DecHalf = decVal;
         }
 
         FloatingDuoRangeDec(const FloatingDuoRangeDec&) = default;
 
         FloatingDuoRangeDec& operator=(const unsigned _int64& rhs)
         {
-			IntHalf = rhs;
-			DecimalHalf = 0;
+            IntHalf = rhs;
+            DecimalHalf = 0;
             ExtraRep = 0;
             return *this;
         } const
@@ -108,8 +108,8 @@ namespace BlazesRusCode
             // Check for self-assignment
             if (this == &rhs)      // Same object?
                 return *this;        // Yes, so skip assignment, and just return *this.
-			Value = rValue.Value;
-			Flags = rValue.Flags;
+            Value = rValue.Value;
+            Flags = rValue.Flags;
             return *this;
         } const
 
@@ -125,10 +125,10 @@ namespace BlazesRusCode
         }
 
         //Detect if at exactly zero
-		bool IsZero()
-		{
+        bool IsZero()
+        {
             return DecimalHalf==0&&IntHalf==0;
-		}
+        }
 
         /// <summary>
         /// Sets the value.
@@ -170,10 +170,10 @@ public:
         void SetAsMaximum()
         {
             IntHalf = 18446744073709551615;
-			DecimalHalf = 999999999;
-			ExtraRep = 0;
+            DecimalHalf = 999999999;
+            ExtraRep = 0;
         }
-	
+    
         /// <summary>
         /// Sets value to the lowest value that can be stored(zero)
         /// </summary>
@@ -483,8 +483,8 @@ public:
 
 //private:
         //std::string BasicToStringOp();
-		
-		//std::string BasicToFullStringOp();
+        
+        //std::string BasicToFullStringOp();
 public:
 
         /// <summary>
@@ -507,8 +507,8 @@ public:
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
-		//Using just Legaacy floating conversion for now since not important for this variant
-	
+        //Using just Legaacy floating conversion for now since not important for this variant
+    
         /// <summary>
         /// Sets the value.
         /// </summary>
@@ -516,13 +516,13 @@ public:
         void SetFloatVal(const float& Value)
         {
             if (Value < 0.0f) { SetAsZero(); }
-			else if (Value >= 18446744073709551616f){//Cap value if too big on initialize (preventing overflow on conversion)
+            else if (Value >= 18446744073709551616f){//Cap value if too big on initialize (preventing overflow on conversion)
                 IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
-				float lValue = Value;
+                float lValue = Value;
                 signed __int64 WholeValue = (signed __int64)std::floor(Value);
                 lValue -= (float)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
@@ -537,13 +537,13 @@ public:
         void SetDoubleVal(const double& Value)
         {
             if (Value < 0.0) { SetAsZero(); }
-			else if (Value >= 18446744073709551616){//Cap value if too big on initialize (preventing overflow on conversion)
+            else if (Value >= 18446744073709551616){//Cap value if too big on initialize (preventing overflow on conversion)
                 IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
-				auto lValue = Value;
+                auto lValue = Value;
                 UInt64 WholeValue = (UInt64)std::floor(Value);
                 lValue -= (double)WholeValue;
                 DecimalHalf = (unsigned int)Value * 10000000000;
@@ -558,13 +558,13 @@ public:
         void SetDecimalVal(const long double& Value)
         {
             if (Value < 0.0L) { SetAsZero(); }
-			else if (Value >= 18446744073709551616L){//Cap value if too big on initialize (preventing overflow on conversion)
+            else if (Value >= 18446744073709551616L){//Cap value if too big on initialize (preventing overflow on conversion)
                 IntHalf = UInt64Max;
                 DecimalHalf = 999999999;
             }
             else
             {
-				auto lValue = Value;
+                auto lValue = Value;
                 signed __int64 WholeValue = (UInt64)std::floor(lValue);
                 lValue -= (long double)WholeValue;
                 DecimalHalf = (unsigned int)lValue * 10000000000;
@@ -588,8 +588,8 @@ public:
         /// <param name="Value">The value.</param>
         void SetIntVal(UInt64& Value)
         {
-			IntHalf = Value;
-			DecimalHalf = 0;
+            IntHalf = Value;
+            DecimalHalf = 0;
         }
 
         /// <summary>
@@ -645,7 +645,7 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    float Value = lValue.IntHalf;
+            float Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((float)lValue.DecimalHalf * 0.000000001f);
             return Value;
@@ -660,7 +660,7 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    double Value = lValue.IntHalf;
+            double Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((double)lValue.DecimalHalf * 0.000000001);
             return Value;
@@ -675,12 +675,12 @@ public:
             auto lValue = *this;
             if(ExtraRep!=0)
                 lValue /= ExtraRep;
-		    long double Value = lValue.IntHalf;
+            long double Value = lValue.IntHalf;
             if (DecimalHalf != 0) 
                Value += ((long double)lValue.DecimalHalf * 0.000000001L);
             return Value;
         }
-		
+        
         /// <summary>
         /// MediumDec Variant to int explicit conversion
         /// </summary>
@@ -698,13 +698,13 @@ public:
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator float() { return toFloatV1(); }
-		
+        
         /// <summary>
         /// MediumDec Variant to double explicit conversion
         /// </summary>
         /// <returns>The result of the operator.</returns>
         explicit operator double() { return toDoubleV1(); }
-		
+        
         /// <summary>
         /// MediumDec Variant to decimal explicit conversion
         /// </summary>
@@ -724,32 +724,32 @@ public:
         explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
-	
+    
     #pragma region Comparison Operators
 protected:
-		
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicIntComparison(const int& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-				return IntHalfCmp;
-			if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
+        
+        //Compare only as if in NormalType representation mode
+        std::strong_ordering BasicIntComparison(const int& that) const
+        {
+            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+                return IntHalfCmp;
+            if (auto DecimalHalfCmp = DecimalHalf <=> 0; DecimalHalfCmp != 0)
+                return DecimalHalfCmp;
+        }
 
-		//Compare only as if in NormalType representation mode
-		std::strong_ordering BasicComparison(const FloatingDuoRangeDec& that) const
-		{
-			if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-				return IntHalfCmp;
-			if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
-				return DecimalHalfCmp;
-		}
-	
+        //Compare only as if in NormalType representation mode
+        std::strong_ordering BasicComparison(const FloatingDuoRangeDec& that) const
+        {
+            if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+                return IntHalfCmp;
+            if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
+                return DecimalHalfCmp;
+        }
+    
 public:
 
-		std::strong_ordering operator<=>(const FloatingDuoRangeDec& that) const
-		{
+        std::strong_ordering operator<=>(const FloatingDuoRangeDec& that) const
+        {
             if(ExtraRep!=0)
             {
                 FloatingDuoRangeDec lValue = *this;
@@ -757,10 +757,10 @@ public:
                 if(that.ExtraRep!=0){
                     FloatingDuoRangeDec rValue = that;
                     rValue.BasicIntDivOp(that.ExtraRep);
-			        return lValue.BasicComparison(rValue);
+                    return lValue.BasicComparison(rValue);
                 }
                 else
-			        return lValue.BasicComparison(that);
+                    return lValue.BasicComparison(that);
             }
             else if(that.ExtraRep!=0)
             {
@@ -770,36 +770,36 @@ public:
             }
             else
                 return BasicComparison(that);
-		}
+        }
 
-		std::strong_ordering operator<=>(const int& that) const
-		{
+        std::strong_ordering operator<=>(const int& that) const
+        {
             if(ExtraRep!=0)
             {
                 FloatingDuoRangeDec lValue = *this;
                 lValue.BasicIntDivOp(ExtraRep);
-			    return lValue.BasicIntComparison(that);
+                return lValue.BasicIntComparison(that);
             }
             else
-			    return BasicIntComparison(that);
-		}
+                return BasicIntComparison(that);
+        }
 
-		bool operator==(const int& that) const
-		{
-			if (IntHalf!=that)
-				return false;
-			if (DecimalHalf!=0)
-				return false;
-			return true;
-		}
+        bool operator==(const int& that) const
+        {
+            if (IntHalf!=that)
+                return false;
+            if (DecimalHalf!=0)
+                return false;
+            return true;
+        }
 
-		bool operator==(const FloatingDuoRangeDec& that) const
-		{
-			if (IntHalf!=that.IntHalf)
-				return false;
-			if (DecimalHalf!=that.IntHalf)
-				return false;
-		}
+        bool operator==(const FloatingDuoRangeDec& that) const
+        {
+            if (IntHalf!=that.IntHalf)
+                return false;
+            if (DecimalHalf!=that.IntHalf)
+                return false;
+        }
     #pragma endregion Comparison Operators
 
     #pragma region NormalRep Integer division operations
@@ -817,8 +817,8 @@ protected:
             
             IntHalfRes = Res/DecimalOverflowX;
             DecimalRes = (unsigned _int64)(Res - DecimalOverflowX * IntHalfRes);
-		    IntHalf = (unsigned _int64)IntHalfRes;
-			DecimalHalf = DecimalRes;
+            IntHalf = (unsigned _int64)IntHalfRes;
+            DecimalHalf = DecimalRes;
         }
 
 protected:
@@ -834,7 +834,7 @@ protected:
             if (IntHalf == 0 && DecimalHalf == 0) { DecimalHalf = 1; }//Prevent Dividing into nothing
             return *this;
         }
-		
+        
 public:
         void DivideByTwo()
         {
@@ -850,11 +850,11 @@ public:
 
         }
 
-		void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
+        void BasicIntDivOp(unsigned _int64& Value) { BasicUnsignedIntDivOp(Value); }
         void BasicInt64DivOp(UInt64& Value) { BasicUnsignedIntDivOp(Value); }
 
     #pragma endregion NormalRep Integer division operations
-		
+        
     #pragma region NormalRep Integer Multiplication Operations
 protected:
         template<IntegerType IntType=unsigned int>
@@ -862,7 +862,7 @@ protected:
             if (DecimalHalf == 0)
                 IntHalf *= rValue;
             else
-			{
+            {
                 __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf.Value + DecimalHalf;
                 SRep *= rValue;
                 if (SRep >= DecimalOverflowX)
@@ -874,19 +874,19 @@ protected:
                 }
                 else
                 {
-					IntHalf = 0;
+                    IntHalf = 0;
                     DecimalHalf = (unsigned int)SRep;
                 }
             }
         }
 
 public:
-		
+        
         constexpr auto PartialUIntMultOp = PartialUIntMultOpV1<const unsigned int>;
         constexpr auto PartialIntMultOp = PartialUIntMultOpV1<const signed int>;
         constexpr auto PartialUInt64MultOp = PartialUIntMultOpV1<const UInt64>;
         constexpr auto PartialInt64MultOp = PartialUIntMultOpV1<const Int64>;
-		
+        
 protected:
         template<MediumDecVariant VariantType=FloatingDuoRangeDec, IntegerType IntType=signed int>
         VariantType& BasicUIntMultOpV1(const IntType& Value)
@@ -901,7 +901,7 @@ protected:
             PartialUIntMultOp(Value);
             return *this;
         }
-		
+        
 public:
 
         constexpr auto BasicUIntMultOp = BasicUIntMultOpV1<const unsigned int>;
@@ -911,7 +911,7 @@ public:
 
     #pragma endregion NormalRep Integer Multiplication Operations
 
-	#pragma region NormalRep Integer Addition Operations
+    #pragma region NormalRep Integer Addition Operations
 protected:
 
 public:
@@ -935,14 +935,14 @@ public:
         constexpr auto BasicUInt64AddOp = BasicUIntAddOpV1<const UInt64>;
         constexpr auto BasicInt64AddOp = BasicUIntAddOpV1<const Int64>;
 
-	#pragma endregion NormalRep Integer Addition Operations
+    #pragma endregion NormalRep Integer Addition Operations
 
-	#pragma region NormalRep Integer Subtraction Operations
+    #pragma region NormalRep Integer Subtraction Operations
 protected:
-	
+    
 public:
 
-		/// <summary>
+        /// <summary>
         /// Basic subtraction operation between FloatingDuoRangeDec and Integer value 
         /// that ignores special representation status
         /// (Modifies owner object)
@@ -961,30 +961,30 @@ public:
         constexpr auto BasicUInt64AddOp = BasicUIntSubOpV1<const UInt64>;
         constexpr auto BasicInt64AddOp = BasicUIntSubOpV1<const Int64>;
 
-	#pragma endregion NormalRep Integer Subtraction Operations
+    #pragma endregion NormalRep Integer Subtraction Operations
 
-	#pragma region NormalRep AltNum division operations
+    #pragma region NormalRep AltNum division operations
 protected:
-	
+    
 public:
 /*
         constexpr auto BasicDivOp = BasicDivOpV1<FloatingDuoRangeDec>;
 */
-	#pragma endregion NormalRep AltNum division operations
+    #pragma endregion NormalRep AltNum division operations
 
-	#pragma region NormalRep AltNum Multiplication Operations
+    #pragma region NormalRep AltNum Multiplication Operations
 protected:
 
 public:
 
-		/// <summary>
+        /// <summary>
         /// Basic multiplication operation that ignores special decimal status with unsigned FloatingDuoRangeDec
         /// Return true if divide into zero
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side Value</param>
         FloatingDuoRangeDec& BasicMultOp(const FloatingDuoRangeDec& rValue)
-		{
+        {
             if (DecimalHalf == 0)
             {
                 if (IntHalf == 1)
@@ -1041,7 +1041,7 @@ public:
                         SRep -= OverflowVal * FloatingDuoRangeDec::DecimalOverflowX;
                         IntHalf = (unsigned _int64) OverflowVal;
                         DecimalHalf = (unsigned int)SRep;
-						return *this;
+                        return *this;
                     }
                     else
                     {
@@ -1079,7 +1079,7 @@ public:
                         }
                         IntHalf = SelfIsNegative ? FloatingDuoRangeDec::NegativeRep : 0;
                     }
-				    return *this;
+                    return *this;
                 }
                 else if (rValue.IntHalf == 0)
                 {
@@ -1129,13 +1129,13 @@ public:
                 DecimalHalf = 1;
 #endif
             return *this;
-		}
+        }
 
-	#pragma endregion NormalRep AltNum Multiplication Operations
+    #pragma endregion NormalRep AltNum Multiplication Operations
 
     #pragma region NormalRep AltNum Addition Operations
 protected:
-	
+    
 public:
         /// <summary>
         /// Basic addition Operation
@@ -1147,50 +1147,50 @@ public:
             IntHalf += Value.IntHalf;
             if (Value.DecimalHalf != 0)
             {
-				DecimalHalf += Value.DecimalHalf;
-				if (DecimalHalf >= MediumDec::DecimalOverflow) {
-					DecimalHalf -= MediumDec::DecimalOverflow; ++IntHalf; }
+                DecimalHalf += Value.DecimalHalf;
+                if (DecimalHalf >= MediumDec::DecimalOverflow) {
+                    DecimalHalf -= MediumDec::DecimalOverflow; ++IntHalf; }
             }
         }
-		
-	#pragma endregion NormalRep AltNum Addition Operations
+        
+    #pragma endregion NormalRep AltNum Addition Operations
 
-	#pragma region NormalRep AltNum Subtraction Operations
+    #pragma region NormalRep AltNum Subtraction Operations
 protected:
-	
+    
 public:
 /*
         constexpr auto BasicSubOp = BasicSubOpV1<FloatingDuoRangeDec>;
 */
-	#pragma endregion NormalRep AltNum Subtraction Operations
+    #pragma endregion NormalRep AltNum Subtraction Operations
 
-	#pragma region Mixed Fraction Operations
-	//Used only in AltDec/MixedDec
-	#pragma endregion Mixed Fraction Operations
+    #pragma region Mixed Fraction Operations
+    //Used only in AltDec/MixedDec
+    #pragma endregion Mixed Fraction Operations
 
-	#pragma region Other division operations
+    #pragma region Other division operations
 
-	#pragma endregion Other division operations	
+    #pragma endregion Other division operations    
 
-	#pragma region Other Multiplication Operations
+    #pragma region Other Multiplication Operations
 
-	#pragma endregion Other Multiplication Operations
+    #pragma endregion Other Multiplication Operations
 
-	#pragma region Other Addition Operations
+    #pragma region Other Addition Operations
 
-	#pragma endregion Other Addition Operations
+    #pragma endregion Other Addition Operations
 
-	#pragma region Other Subtraction Operations
+    #pragma region Other Subtraction Operations
 
-	#pragma endregion Other Subtraction Operations
+    #pragma endregion Other Subtraction Operations
 
-	#pragma region Modulus Operations
-	//Not supported at moment
-	#pragma endregion Modulus Operations
+    #pragma region Modulus Operations
+    //Not supported at moment
+    #pragma endregion Modulus Operations
 
-	#pragma region Bitwise Operations
-	//Not supported at moment
-	#pragma endregion Bitwise Operations
+    #pragma region Bitwise Operations
+    //Not supported at moment
+    #pragma endregion Bitwise Operations
 
     #pragma region Main Operator Overrides
         /// <summary>
@@ -1488,8 +1488,8 @@ public:
         /// <returns>FloatingDuoRangeDec &</returns>
         FloatingDuoRangeDec& operator --()
         {
-			if(IntHalf==0)
-				throw "Can't reduce number into negative values";
+            if(IntHalf==0)
+                throw "Can't reduce number into negative values";
             else
                 --IntHalf;
             return *this;
@@ -1527,15 +1527,15 @@ public:
         }
     #pragma endregion Other Operators
 
-	#pragma region Math Etc Functions
-	//Not Supported at moment
-	#pragma endregion Math Etc Functions
+    #pragma region Math Etc Functions
+    //Not Supported at moment
+    #pragma endregion Math Etc Functions
 
-	#pragma region Pow and Sqrt Functions
-	//Not Supported at moment
-	#pragma endregion Pow and Sqrt Functions
+    #pragma region Pow and Sqrt Functions
+    //Not Supported at moment
+    #pragma endregion Pow and Sqrt Functions
 
-	#pragma region Log Functions
+    #pragma region Log Functions
 protected:
 
 public:
@@ -1623,7 +1623,7 @@ public:
             }
             return x[0];
         }
-	#pragma endregion Log Functions
+    #pragma endregion Log Functions
     };
 
     #pragma region ValueDefine Source
@@ -1638,9 +1638,9 @@ public:
     inline void MediumDec::ReadString(std::string Value)
     {
         IntHalf = 0; DecimalHalf = 0;
-	#if !defined(AltNum_EnableMirroredSection)
+    #if !defined(AltNum_EnableMirroredSection)
         bool IsNegative = false;
-	#endif
+    #endif
         int PlaceNumber;
         std::string WholeNumberBuffer = "";
         std::string DecimalBuffer = "";
@@ -1657,11 +1657,11 @@ public:
             }
             else if (StringChar == '-')
             {
-	#if !defined(AltNum_EnableMirroredSection)
+    #if !defined(AltNum_EnableMirroredSection)
                 IsNegative = true;
-	#else
-				IntHalf.Sign = 0;
-	#endif
+    #else
+                IntHalf.Sign = 0;
+    #endif
             }
             else if (StringChar == '.')
             {
@@ -1696,13 +1696,13 @@ public:
                 PlaceNumber--;
             }
         }
-	#if !defined(AltNum_EnableMirroredSection)
+    #if !defined(AltNum_EnableMirroredSection)
         if (IsNegative)
         {
             if (IntHalf == 0) { IntHalf = NegativeRep; }
             else { IntHalf *= -1; }
         }
-	#endif
+    #endif
     }
 
     /// <summary>
