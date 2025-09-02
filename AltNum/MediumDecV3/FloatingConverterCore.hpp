@@ -455,54 +455,47 @@ public:
     #endif
   }
 
-  float to_float_from_signif(uint64_t signif, uint64_t denom, int exp) {
-    float mant = static_cast<float>(signif) / static_cast<float>(denom);
-    return std::ldexp(mant, exp);
-  }
-  
-  double to_double_from_signif(uint64_t signif, uint64_t denom, int exp) {
-    double mant = static_cast<double>(signif) / static_cast<double>(denom);
-    return std::ldexp(mant, exp);
-  }
+	float to_float() {
+			using SignifT = uint32_t;
+			constexpr auto MaxDenom = 1u << 24; // 24‑bit mantissa
 
-  float to_float() {
-    using SignifT = uint32_t;           // 24-bit mantissa fits in 32 bits
-    constexpr auto MaxDenom = 1u << 24; // IEEE-754 float mantissa scale
+			auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
 
-    auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
+			float mant = static_cast<float>(signif) / static_cast<float>(MaxDenom);
+			float value = std::ldexp(mant, exp);
+			return IsNegative() ? -value : value;
+	}
 
-    float mant = static_cast<float>(signif) / static_cast<float>(MaxDenom);
-    return std::ldexp(mant, exp);
-  }
+	double to_double() {
+			using SignifT = uint64_t;
+			constexpr auto MaxDenom = 1ull << 53; // 53‑bit mantissa
 
-  double to_double() {
-    using SignifT = uint64_t;           // 53-bit mantissa fits in 64 bits
-    constexpr auto MaxDenom = 1ull << 53; // IEEE-754 double mantissa scale
+			auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
 
-    auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
+			double mant = static_cast<double>(signif) / static_cast<double>(MaxDenom);
+			double value = std::ldexp(mant, exp);
+			return IsNegative() ? -value : value;
+	}
 
-    double mant = static_cast<double>(signif) / static_cast<double>(MaxDenom);
-    return std::ldexp(mant, exp);
-  }
-  
-  long double toLongDouble() const {
-    // Adjust SignifT/MaxDenom to your platform’s long double precision
-#if LDBL_MANT_DIG == 64
-    using SignifT = uint64_t;
-    constexpr auto MaxDenom = 1ull << 64;
-#elif LDBL_MANT_DIG == 113
-    using SignifT = unsigned __int128;
-    constexpr auto MaxDenom = static_cast<SignifT>(1) << 113;
-#else
-    using SignifT = uint64_t;
-    constexpr auto MaxDenom = 1ull << 53;
-#endif
+	long double toLongDouble() const {
+	#if LDBL_MANT_DIG == 64
+			using SignifT = uint64_t;
+			constexpr auto MaxDenom = 1ull << 64;
+	#elif LDBL_MANT_DIG == 113
+			using SignifT = unsigned __int128;
+			constexpr auto MaxDenom = static_cast<SignifT>(1) << 113;
+	#else
+			using SignifT = uint64_t;
+			constexpr auto MaxDenom = 1ull << 53;
+	#endif
 
-    auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
+			auto [exp, signif] = extract_exp_signif<SignifT, MaxDenom>();
 
-    long double mant = static_cast<long double>(signif) / static_cast<long double>(MaxDenom);
-    return std::ldexpl(mant, exp);
-  }
+			long double mant = static_cast<long double>(signif) / static_cast<long double>(MaxDenom);
+			long double value = std::ldexpl(mant, exp);
+			return IsNegative() ? -value : value;
+	}
+
 };
 
 } // namespace BlazesRusCode
