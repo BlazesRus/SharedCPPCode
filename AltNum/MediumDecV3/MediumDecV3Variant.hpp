@@ -13,15 +13,12 @@
 #include <cstddef>
 #include <compare>//used for C++20 feature of spaceship operator
 
-#include "..\AlternativeInt\PartialInt.hpp"
-using PartialInt = BlazesRusCode::PartialInt;
+#include "RepTypeV2.hpp"
 
 namespace BlazesRusCode
 {
   class MediumDecV3Variant;
-	
-	
-
+  
   /**
    * Variants (via Policy presets):
    *   - MediumDecV3VariantV3 : 0 .. 4,294,967,295.999999999 — tuned defaults for unsigned range
@@ -33,14 +30,14 @@ namespace BlazesRusCode
    * - Variants are aliases to MediumDecV3Variant<TPolicy> with curated defaults.
    * - Any variant can enable/disable additional features via Policy without separate builds.
    * - MediumDecV3Variant and these presets are safe derivation targets; base internals are not.
-	 *
-	 * Conexpr settings partially based on initial policy but final settings based on combination of flags from policy
+   *
+   * Conexpr settings partially based on initial policy but final settings based on combination of flags from policy
   */
   template<class VariantName, typename Policy:FixedDecDefaultPolicy>
   class MediumDecV3Variant
-	{
-	protected:
-	  using RepTypeUnderlayer as unsigned int;//Adjust based on policy later
+  {
+  protected:
+    using RepType as RepTypeV2;
   //Constructor type enum
 
   //Doesn't derive directly from Policy instead checks policy and creates policy based constexpr based on flags
@@ -48,12 +45,9 @@ namespace BlazesRusCode
 
   #pragma endregion Policy_extractor
   public:
-	//RepTypeV2 (templatable version of RepType for MediumDecV3Variant based on policy settings
-	
-	
-	
+  //RepTypeV2 (templatable version of RepType for MediumDecV3Variant based on policy settings
+  
   #pragma region class_constructors
-
 
     VariantName& operator=(const VariantName& rhs)
     {
@@ -92,12 +86,6 @@ namespace BlazesRusCode
 
   #pragma endregion Negative_Status
 
-  #pragma region Check_if_value
-  #pragma endregion Check_if_value
-
-  #pragma region RangeLimits
-  #pragma endregion RangeLimits
-
   #pragma region ValueSetters
 protected://Work around for not allowing to use incomplete class statics during forming of class
     static const unsigned int LN10Div_DecSection = 434294482;
@@ -110,62 +98,62 @@ public:
     /// (Stored as 3.141592654)
     /// </summary>
     void  SetValueToPiNum()
-		{//Closest RestrictedFloat value to match 10th+ digits of pi (0, 39 580 354)
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-				IntHalf = 3; DecimalHalf = 141592654;
-			}
-			else
-			{
-			
-			}
-		}
+    {//Closest RestrictedFloat value to match 10th+ digits of pi (0, 39 580 354)
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 3; DecimalHalf = 141592654;
+      }
+      else
+      {
+      
+      }
+    }
 
     //100,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToHundredMilPiNum()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-				IntHalf = 314159265; DecimalHalf = 358979324;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 314159265; DecimalHalf = 358979324;
+      }
+      else
+      {
+      
+      }
+    }
 
     //10,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToTenMilPiNum()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-	      IntHalf = 31415926; DecimalHalf = 535897932;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 31415926; DecimalHalf = 535897932;
+      }
+      else
+      {
+      
+      }
+    }
 
     //1,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToOneMilPiNum()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 3141592; DecimalHalf = 653589793;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 3141592; DecimalHalf = 653589793;
+      }
+      else
+      {
+      
+      }
+    }
 
     //10xPi(Rounded to 9th decimal digit)
     void  SetValueToTenPiNum(){
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 31; DecimalHalf = 415926536;
-			}
-			else
-			{
-			
-			}
-		}
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 31; DecimalHalf = 415926536;
+      }
+      else
+      {
+      
+      }
+    }
 
 
     /// <summary>
@@ -174,158 +162,158 @@ public:
     /// (about 2.71828182845904523536028747135266249775724709369995)
     /// </summary>
     void  SetValueToENum(){
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 2; DecimalHalf = 718281828;
-			}
-			else
-			{
-			
-			}
-		}
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 2; DecimalHalf = 718281828;
+      }
+      else
+      {
+      
+      }
+    }
 
     //Sets value to value at 0.5
     void  SetValueToPoint5(){
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 500000000;
-			}
-			else
-			{
-			
-			}
-		}
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 500000000;
+      }
+      else
+      {
+      
+      }
+    }
 
     void  SetValueToJustAboveZero()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 1;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 1;
+      }
+      else
+      {
+      
+      }
+    }
     /// <summary>
     /// Sets the value at .000001000
     /// </summary>
     void  SetValueToOneMillionth()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 1000;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 1000;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// Sets the value at "0.005"
     /// </summary>
     /// <returns>MediumDecV3Variant</returns>
     void  SetValueToFiveThousandth()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 5000000;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 5000000;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// Sets the value at "0.000005"
     /// </summary>
     void  SetValueToFiveMillionth()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 5000;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 5000;
+      }
+      else
+      {
+      
+      }
+    }
 
     //0e-7
     void  SetValueToTenMillionth()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 100;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 100;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// Sets the value to .000000010
     /// </summary>
     void  SetValueToOneHundredMillionth()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 10;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 10;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// 2.3025850929940456840179914546844
     /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
     /// </summary>
     void  SetValueToLN10()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-	      IntHalf = 2; DecimalHalf = 302585093;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 2; DecimalHalf = 302585093;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
     /// </summary>
     void  SetValueToLN10Div()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
-      	IntHalf = 0; DecimalHalf = 434294482;
-			}
-			else
-			{
-			
-			}
-		}
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
+        IntHalf = 0; DecimalHalf = 434294482;
+      }
+      else
+      {
+      
+      }
+    }
 
     /// <summary>
     /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
     /// </summary>
     void  SetValueToTwiceLN10Div()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
         IntHalf = 0; DecimalHalf = 868588964;
-			}
-			else
-			{
-			
-			}
-		}
+      }
+      else
+      {
+      
+      }
+    }
 
     void SetValueToPointOne()
-		{
-			if constexpr (Policy::DisableBitwiseMaskMode) {
+    {
+      if constexpr (Policy::DisableBitwiseMaskMode) {
         IntHalf = 0; DecimalHalf = 100000000;
-			}
-			else
-			{
-			
-			}
-		}
+      }
+      else
+      {
+      
+      }
+    }
 
   #pragma endregion ValueSetters
 
@@ -343,9 +331,59 @@ public:
 
   #pragma region ConvertToOtherTypes
 
+		bool toBool() const { return IntHalf.IsZero() ? false : true; }
+		/// <summary>
+		/// MediumDec Variant to float explicit conversion
+		/// </summary>
+		/// <returns>The result of the operator.</returns>
+		explicit operator float() { return toFloat(); }
+
+		/// <summary>
+		/// MediumDec Variant to double explicit conversion
+		/// </summary>
+		/// <returns>The result of the operator.</returns>
+		explicit operator double() { return toDouble(); }
+
+		/// <summary>
+		/// MediumDec Variant to decimal explicit conversion
+		/// </summary>
+		/// <returns>The result of the operator.</returns>
+		explicit operator long double() { return toDecimal(); }
+
+    /// <summary>
+    /// MediumDec Variant to signed integer conversion (truncates toward zero)
+    /// </summary>
+    /// <returns>The integer half with sign applied if negative.</returns>
+    constexpr IntHalfSignedT ConvertToSigned() const noexcept {
+        const auto mag = static_cast<IntHalfSignedT>(GetIntHalf());
+        return IsNegative() ? -mag : mag;
+    }
+
+    /// <summary>
+    /// MediumDec Variant to signed integer explicit conversion
+    /// </summary>
+    /// <returns>The integer half with sign applied if negative.</returns>
+		explicit operator IntHalfSignedT() {
+			return ConvertToSigned();
+		}
+
+		/// <summary>
+		/// MediumDec Variant to unsigned integer explicit conversion
+		/// </summary>
+		/// <returns>The result of the operator.</returns>
+		explicit operator IntHalfValueT() { return GetIntHalf(); }
+
+		/// <summary>
+		/// MediumDec Variant to bool explicit conversion
+		/// </summary>
+		/// <returns>The result of the operator.</returns>
+		explicit operator bool() { return toBool(); }
+
   #pragma endregion ConvertToOtherTypes
 
   #pragma region Pi Conversion
+
+	 //void ConvertPiToNum()
 
   #pragma endregion Pi Conversion
 
@@ -364,178 +402,178 @@ public:
   #pragma region Comparison Operators
 
    /*
-		//Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
-		void ConvertDownToMediumDecV2Equiv()
-		{
-			RepTypeV2 repType = GetRepType();
-			switch(repType)
-			{
-		#if defined(AltNum_EnableMixedFractional)
-			#if defined(AltNum_EnablePiRep)
-				case RepTypeEnum::MixedPi:
-			#endif
-			#if defined(AltNum_EnableERep)
-				case RepTypeEnum::MixedE:
-			#endif
-			#if defined(AltNum_EnableIRep)
-				case RepTypeEnum::MixedI:
-			#endif
-				case RepTypeEnum::MixedFrac:
-					ConvertFromMixedFracToMediumDecV2Equiv(); break;
-		#elif defined(AltNum_EnablePowerOfRepresentation)
-			#if defined(AltNum_EnablePiRep)
-				case RepTypeEnum::PiPower:
-					ConvertPiPowerToPiRep(); break;
-			#endif
-			#if defined(AltNum_EnableERep)
-				case RepTypeEnum::EPower:
-					ConvertEPowerToERep(); break;
-			#endif
-				case RepTypeEnum::ToPowerOf:
-					ConvertToNormType(repType); break;
-		#endif
-		#if defined(AltNum_EnableFractionals)
-			#if defined(AltNum_EnablePiRep)
-				case RepTypeEnum::PiNumByDiv:
-			#endif
-			#if defined(AltNum_EnableERep)
-				case RepTypeEnum::ENumByDiv:
-			#endif
-			#if defined(AltNum_EnableIRep)
-				case RepTypeEnum::INumByDiv:
-			#endif
-				case RepTypeEnum::NumByDiv:
-					BasicIntDivOp(ExtraRep.Value);
-					ResetDivisor();
-		#endif
-				default:
-					ConvertToNormType(repType);
-			}
-			ConvertToNormTypeV2();
-		}*/
-
-		std::strong_ordering operator<=>(const VariantName& that) const
-		{
-			return CompareWith(that);
-		}
-
-		std::strong_ordering operator<=>(const int& that) const
-		{
-			return CompareWithInt(that);
-		}
-
-		bool operator==(const int& that) const
-		{
-      if constexpr (Base::DisableBitwiseMaskMode) {
-  			if (IntHalf!=that)
-  				return false;
-  			if (DecimalHalf!=0)
-  				return false;
-  			return true;
-      } else {
+    //Converts Representation down to basic PiNum,ENum,INum, and NormalType representations 
+    void ConvertDownToMediumDecV2Equiv()
+    {
+      RepTypeV2 repType = GetRepType();
+      switch(repType)
+      {
+    #if defined(AltNum_EnableMixedFractional)
+      #if defined(AltNum_EnablePiRep)
+        case RepTypeEnum::MixedPi:
+      #endif
+      #if defined(AltNum_EnableERep)
+        case RepTypeEnum::MixedE:
+      #endif
+      #if defined(AltNum_EnableIRep)
+        case RepTypeEnum::MixedI:
+      #endif
+        case RepTypeEnum::MixedFrac:
+          ConvertFromMixedFracToMediumDecV2Equiv(); break;
+    #elif defined(AltNum_EnablePowerOfRepresentation)
+      #if defined(AltNum_EnablePiRep)
+        case RepTypeEnum::PiPower:
+          ConvertPiPowerToPiRep(); break;
+      #endif
+      #if defined(AltNum_EnableERep)
+        case RepTypeEnum::EPower:
+          ConvertEPowerToERep(); break;
+      #endif
+        case RepTypeEnum::ToPowerOf:
+          ConvertToNormType(repType); break;
+    #endif
+    #if defined(AltNum_EnableFractionals)
+      #if defined(AltNum_EnablePiRep)
+        case RepTypeEnum::PiNumByDiv:
+      #endif
+      #if defined(AltNum_EnableERep)
+        case RepTypeEnum::ENumByDiv:
+      #endif
+      #if defined(AltNum_EnableIRep)
+        case RepTypeEnum::INumByDiv:
+      #endif
+        case RepTypeEnum::NumByDiv:
+          BasicIntDivOp(ExtraRep.Value);
+          ResetDivisor();
+    #endif
+        default:
+          ConvertToNormType(repType);
       }
-		}
+      ConvertToNormTypeV2();
+    }*/
 
-		bool operator==(const MediumDec& that) const
-		{
+    std::strong_ordering operator<=>(const VariantName& that) const
+    {
+      return CompareWith(that);
+    }
+
+    std::strong_ordering operator<=>(const int& that) const
+    {
+      return CompareWithInt(that);
+    }
+
+    bool operator==(const int& that) const
+    {
       if constexpr (Base::DisableBitwiseMaskMode) {
-    		#if defined(AltNum_EnableUndefinedButInRange)
-    			if(DecimalHalf==UndefinedInRangeMinMaxRep)
-    			  return false;
-    			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
-    			  return false;
-          #if defined(AltNum_EnableWithinMinMaxRange)
-            //ToDo:Add comparison code for comparing unknown number within range
-          #endif
-    		#endif
-    		#if defined(AltNum_UseIntForDecimalHalf)
-    			VariantName LValue = this;
-    			LValue.ConvertToNormTypeV2();
-    			MediumDec RValue = that;
-    			RValue.ConvertToNormTypeV2();
-    		#else
-    			VariantName LValue = this;
-    			MediumDec RValue = that;
-    			if(DecimalHalf.Flags!=0)
-    				return false;
-    		#endif
-    			if (LValue.IntHalf!=RValue.IntHalf)
-    				return false;
-    			if (LValue.DecimalHalf!=RValue.IntHalf)
-    				return false;
+        if (IntHalf!=that)
+          return false;
+        if (DecimalHalf!=0)
+          return false;
+        return true;
       } else {
       }
     }
 
-		bool operator==(const MediumDecV2& that) const
-		{
+    bool operator==(const MediumDec& that) const
+    {
       if constexpr (Base::DisableBitwiseMaskMode) {
-		#if defined(AltNum_EnableUndefinedButInRange)
-			if(DecimalHalf==UndefinedInRangeMinMaxRep)
-			  return false;
-			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
-			  return false;
-      #if defined(AltNum_EnableWithinMinMaxRange)
-        //ToDo:Add comparison code for comparing unknown number within range
-      #endif
-		#endif
-		#if defined(AltNum_UseIntForDecimalHalf)
-			VariantName LValue = this;
-			LValue.ConvertToNormTypeV2();
-			MediumDecV2 RValue = that;
-			RValue.ConvertToNormTypeV2();
-		#else
-			VariantName LValue = this;
-			MediumDecV2 RValue = that;
-			if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
-				LValue.ConvertDownToMediumDecV2Equiv();
-			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
-				throw "Can't compare imaginary number with real number";
-			else if(DecimalHalf.Flags!=0)
-				return false;
-		#endif
-			if (LValue.IntHalf!=RValue.IntHalf)
-				return false;
-			if (LValue.DecimalHalf!=RValue.IntHalf)
-				return false;
-      } else {
-      }
-		}
-
-		bool operator==(const VariantName& that) const
-		{
-      if constexpr (Base::DisableBitwiseMaskMode) {
-    		#if defined(AltNum_EnableUndefinedButInRange)
-    			if(DecimalHalf==UndefinedInRangeMinMaxRep)
-    			  return false;
-    			else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
-    			  return false;
+        #if defined(AltNum_EnableUndefinedButInRange)
+          if(DecimalHalf==UndefinedInRangeMinMaxRep)
+            return false;
+          else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+            return false;
           #if defined(AltNum_EnableWithinMinMaxRange)
             //ToDo:Add comparison code for comparing unknown number within range
           #endif
-    		#endif
-    		#if defined(AltNum_UseIntForDecimalHalf)
-    			VariantName LValue = this;
-    			LValue.ConvertToNormTypeV2();
-    			VariantName RValue = that;
-    			RValue.ConvertToNormTypeV2();
-    		#else
-    			VariantName LValue = this;
-    			VariantName RValue = that;
-    			if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+        #endif
+        #if defined(AltNum_UseIntForDecimalHalf)
+          VariantName LValue = this;
+          LValue.ConvertToNormTypeV2();
+          MediumDec RValue = that;
+          RValue.ConvertToNormTypeV2();
+        #else
+          VariantName LValue = this;
+          MediumDec RValue = that;
+          if(DecimalHalf.Flags!=0)
+            return false;
+        #endif
+          if (LValue.IntHalf!=RValue.IntHalf)
+            return false;
+          if (LValue.DecimalHalf!=RValue.IntHalf)
+            return false;
+      } else {
+      }
+    }
+
+    bool operator==(const MediumDecV2& that) const
+    {
+      if constexpr (Base::DisableBitwiseMaskMode) {
+    #if defined(AltNum_EnableUndefinedButInRange)
+      if(DecimalHalf==UndefinedInRangeMinMaxRep)
+        return false;
+      else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+        return false;
+      #if defined(AltNum_EnableWithinMinMaxRange)
+        //ToDo:Add comparison code for comparing unknown number within range
+      #endif
+    #endif
+    #if defined(AltNum_UseIntForDecimalHalf)
+      VariantName LValue = this;
+      LValue.ConvertToNormTypeV2();
+      MediumDecV2 RValue = that;
+      RValue.ConvertToNormTypeV2();
+    #else
+      VariantName LValue = this;
+      MediumDecV2 RValue = that;
+      if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
+        LValue.ConvertDownToMediumDecV2Equiv();
+      else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
+        throw "Can't compare imaginary number with real number";
+      else if(DecimalHalf.Flags!=0)
+        return false;
+    #endif
+      if (LValue.IntHalf!=RValue.IntHalf)
+        return false;
+      if (LValue.DecimalHalf!=RValue.IntHalf)
+        return false;
+      } else {
+      }
+    }
+
+    bool operator==(const VariantName& that) const
+    {
+      if constexpr (Base::DisableBitwiseMaskMode) {
+        #if defined(AltNum_EnableUndefinedButInRange)
+          if(DecimalHalf==UndefinedInRangeMinMaxRep)
+            return false;
+          else if(that.DecimalHalf==UndefinedInRangeMinMaxRep)
+            return false;
+          #if defined(AltNum_EnableWithinMinMaxRange)
+            //ToDo:Add comparison code for comparing unknown number within range
+          #endif
+        #endif
+        #if defined(AltNum_UseIntForDecimalHalf)
+          VariantName LValue = this;
+          LValue.ConvertToNormTypeV2();
+          VariantName RValue = that;
+          RValue.ConvertToNormTypeV2();
+        #else
+          VariantName LValue = this;
+          VariantName RValue = that;
+          if(DecimalHalf.Flags==RValue.DecimalHalf.Flags)
           {
-    				LValue.ConvertDownToMediumDecV2Equiv();
+            LValue.ConvertDownToMediumDecV2Equiv();
             RValue.ConvertDownToMediumDecV2Equiv();
           }
-    			else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
-    				throw "Can't compare imaginary number with real number";
-    			else
-    				return false;
-    		#endif
-    			if (LValue.IntHalf!=RValue.IntHalf)
-    				return false;
-    			if (LValue.DecimalHalf!=RValue.IntHalf)
-    				return false;
+          else if((DecimalHalf.Flags==3 && RValue.DecimalHalf.Flags!=3)||(RValue.DecimalHalf.Flags==3 && LValue.DecimalHalf.Flags!=3))
+            throw "Can't compare imaginary number with real number";
+          else
+            return false;
+        #endif
+          if (LValue.IntHalf!=RValue.IntHalf)
+            return false;
+          if (LValue.DecimalHalf!=RValue.IntHalf)
+            return false;
       } else {
       }
     }
@@ -550,9 +588,9 @@ public:
 
   #pragma endregion NormalRep Integer Multiplication Operations
 
-	#pragma region NormalRep Integer Addition Operations
+  #pragma region NormalRep Integer Addition Operations
 
-	#pragma endregion NormalRep Integer Addition Operations
+  #pragma endregion NormalRep Integer Addition Operations
 
   #pragma region NormalRep Integer Subtraction Operations
 
@@ -574,17 +612,17 @@ public:
 
   #pragma endregion NormalRep AltNum Multiplication Operations
 
-	#pragma region NormalRep AltNum Addition Operations
+  #pragma region NormalRep AltNum Addition Operations
 
-	#pragma endregion NormalRep AltNum Addition Operations
+  #pragma endregion NormalRep AltNum Addition Operations
 
-	#pragma region NormalRep AltNum Subtraction Operations
+  #pragma region NormalRep AltNum Subtraction Operations
 
-	#pragma endregion NormalRep AltNum Subtraction Operations
+  #pragma endregion NormalRep AltNum Subtraction Operations
 
-	#pragma region Other division operations
+  #pragma region Other division operations
 
-	#pragma endregion Other division operations
+  #pragma endregion Other division operations
 
   #pragma region Other multiplication operations
 

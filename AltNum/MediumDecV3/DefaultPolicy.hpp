@@ -40,6 +40,7 @@ namespace BlazesRusCode
     #define HAVE_NATIVE_UInt128 0
   #endif
   using u32  = std::uint32_t;
+  using int32  = std::int32_t;
   using u64  = std::uint64_t;
 
   //Default Sentinal Policy for MediumDecV3
@@ -61,9 +62,9 @@ namespace BlazesRusCode
     static constexpr bool DisableApproachingTop = false;
     static constexpr bool EnableNaN = false;
     static constexpr bool EnableApproachingDivided = false;
-		//Defined when ExtraRep is equal to 0, Represents a number within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
+    //Defined when ExtraRep is equal to 0, Represents a number within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
     static constexpr bool EnableWithinMinMaxRange = false;
-		//Defined when ExtraRep is equal to ??????????, Represents a number not within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
+    //Defined when ExtraRep is equal to ??????????, Represents a number not within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
     static constexpr bool EnableNotWithinMinMaxRange = false;
     static constexpr bool EnableIndeterminateForms = false; 
     
@@ -95,6 +96,8 @@ namespace BlazesRusCode
     //Defines default type for IntHalf portion
     using IntHalfT      = u32;
     using IntHalfValueT      = u32;
+    //Value as signed
+    using IntHalfSignedT      = int32;
     //Defines default type for DecimalHalf portion
     using DecimalHalfT      = u32;
     using DecimalHalfValueT      = u32;
