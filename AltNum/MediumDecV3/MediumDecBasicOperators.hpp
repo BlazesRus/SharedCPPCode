@@ -87,20 +87,17 @@ protected:
         /// (Modifies owner object)
         /// </summary>
         /// <param name="rValue.">The right side value</param>
-        template<VariantNameVariant VariantType=VariantName>
-        bool UnsignedPartialDivOpV1(const VariantType& rValue)
+        bool UnsignedPartialDivOp(const VariantName& rValue)
         {
-            unsigned _int64 SelfRes = DecimalOverflowX * IntHalf.Value + DecimalHalf.Value;
-            unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf.Value + rValue.DecimalHalf.Value;
+					ValueT SelfRes = Value();
+					ValueT ValueRes = rValue.Value();
 
-            unsigned _int64 IntHalfRes = SelfRes / ValueRes;
-            unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
-            IntHalf.Value = (unsigned int) IntHalfRes;
-            DecimalHalf.Value = DecimalRes;
-            if (IntHalfRes == 0 && DecimalRes == 0)
-                return true;
-            else
-                return false;
+					ValueT IntHalfRes = SelfRes / ValueRes;
+					ValueT DecimalRes = SelfRes - ValueRes * IntHalfRes;
+					SetValue(IntHalfRes, DecimalRes);
+					if(IntHalfRes==0&&DecimalRes==0)
+						  return true;
+					return false;
         }
 
         /// <summary>

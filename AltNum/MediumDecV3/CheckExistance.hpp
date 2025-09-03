@@ -31,10 +31,5 @@ namespace BlazesRusCode
               { t.Flags }    -> std::convertible_to<std::uint32_t>;
           };
 
-      template<class T>
-      concept HasValueMember =
-          requires(T t) {
-              { t.Value }    -> std::convertible_to<std::uint32_t>;
-          };
   }
 }

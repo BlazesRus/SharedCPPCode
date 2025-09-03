@@ -391,9 +391,9 @@ public:
 
   #pragma endregion E Conversion
 
-  #pragma region region Imaginary Conversion
+  #pragma region Imaginary Conversion
 
-  #pragma endregion region Imaginary Conversion
+  #pragma endregion Imaginary Conversion
 
   #pragma region Other RepType Conversion
 

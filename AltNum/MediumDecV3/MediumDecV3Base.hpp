@@ -47,6 +47,8 @@ namespace AltNum {
   #endif
   using u32  = std::uint32_t;
   using u64  = std::uint64_t;
+  using int32  = std::int32_t;
+  using int64  = std::int64_t;
 
   //CheckMemberOrMethodExistance is now CheckExistance inside CheckExistance.hpp
 
@@ -84,19 +86,101 @@ namespace AltNum {
   struct MDBaseStorage
   {
     //Both bitwise and RawBlobe share features here
+		//Generate global policy based static const here
     struct GlobalStorage {
     protected:
-      static inline constexpr bool PositiveSign   = Policy::PositiveSign;
+      //If true than Positive sign is defined by Sign of 1
+      static inline constexpr bool PositiveSign   = Policy::PositiveSign ? Policy::PositiveSign : true;
+
+      static inline constexpr bool EnablePi = Policy::EnablePi ? Policy::EnablePi  : false;
+      static inline constexpr bool EnableE = Policy::EnableE ? Policy::EnableE  : false;
+      static inline constexpr bool EnablePiE = Policy::EnablePiE&&EnablePi&&EnableE ? Policy::EnablePiE  : false;
+      static inline constexpr bool EnableI = Policy::EnableI&&EnablePiE==false ? Policy::EnableI  : false;
+      
+      static inline constexpr bool EnableInfinity = Policy::EnableInfinity ? Policy::EnableInfinity  : false;
+      static inline constexpr bool EnableApproaching = Policy::EnableApproaching ? Policy::EnableApproaching  : false;
+      static inline constexpr bool DisableApproachingTop = 
+      Policy::DisableApproachingTop ? Policy::DisableApproachingTop  : false;
+
+      static inline constexpr bool EnableNaN = Policy::EnableNaN ? Policy::EnableNaN  : false;
+      static inline constexpr bool EnableApproachingDivided = 
+      Policy::EnableWithinMinMaxRange ? Policy::EnableWithinMinMaxRange  : false;
+
+      static inline constexpr bool EnableIndeterminateForms = 
+      Policy::EnableIndeterminateForms ? Policy::EnableIndeterminateForms  : false; 
+
+      //If enabled OpMethods return Trailing digits lost during operation for use in MixedDec variant operations
+      static constexpr bool EnableMixedMode = false;
 
       static inline constexpr bool EnableStateFlags   =
-      Policy::EnablePi || Policy::EnableE || Policy::EnableI;
+      EnablePi || Policy::EnableE || Policy::EnableI;
 
-      using IntHalfT   = typename Policy::IntHalfT;
-      using DecimalHalfT = typename Policy::DecimalHalfT;
+			using IntHalfT = std::conditional_t<
+					requires { typename Policy::IntHalfT; },
+					typename Policy::IntHalfT,
+					u32
+			>;
 
+			using DecimalHalfT = std::conditional_t<requires { typename Policy::DecimalHalfT; },
+					typename Policy::DecimalHalfT,u32>;
+
+			using IntHalfValueT = std::conditional_t<requires { typename Policy::IntHalfValueT; },
+					typename Policy::IntHalfValueT, typename IntHalfT>;
+
+			using DecimalHalfValueT = std::conditional_t<requires { typename Policy::DecimalHalfValueT; },
+					typename Policy::DecimalHalfValueT, typename IntHalfT>;
+
+			using IntHalfSignedT = std::conditional_t<requires { typename Policy::IntHalfValueT; },
+					typename Policy::IntHalfValueT,int32>;
+
+			template<class T>
+			concept HasValueMember =
+					requires(T t) {
+							{ t.Value } -> std::convertible_to<IntHalfValueT>;
+					};
+					
+			template<class T>
+			concept HasDecimalValueMember =
+					requires(T t) {
+							{ t.Value } -> std::convertible_to<DecimalHalfValueT>;
+					};
+
+      //Both Unsigned and SignedMode flags to make boolean checks easier
+      static inline constexpr bool UnsignedMode     = Policy::UnsignedMode ? Policy::UnsignedMode : (Policy::SignedMode?false:true);
+      static inline constexpr bool SignedMode     = Policy::SignedMode ? Policy::SignedMode : (Policy::UnsignedMode?false:true);
+			
+      static inline constexpr bool DisableBitwiseMaskMode = Policy::DisableBitwiseMaskMode ? Policy::DisableBitwiseMaskMode : false;
+      static inline constexpr bool EnableExtraRep = Policy::EnableExtraRep ? Policy::EnableExtraRep||Policy::EnableMaskedExtraRep : false;
+		  using ExtraRepT = Policy::EnableExtraRep ? (Policy::ExtraRepT ? typename ExtraRepT: typename u32) : void;
+			
+      static inline constexpr bool EnableMixedFrac     = Policy::EnableMixedFrac&&EnableExtraRep ? Policy::EnableMixedFrac : false;
+      static inline constexpr bool EnablePowerOf     = Policy::EnablePowerOf&&EnableExtraRep ? Policy::EnablePowerOf : false;
+		  static inline constexpr bool EnableExtraRepFlags = Policy::EnablePowerOf || Policy::EnableMixedFrac;
+			
+      static inline constexpr unsigned FractionalMaximum = Policy::FractionalMaximum ? Policy::FractionalMaximum : 
+      (EnableExtraRep?2147483647:0);
+
+      //Defined when ExtraRep is equal to 0, Represents a number 
+      //within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
+      static inline constexpr bool EnableWithinMinMaxRange = 
+      Policy::EnableWithinMinMaxRange&&EnableExtraRep ? Policy::EnableWithinMinMaxRange  : false;
+      //Defined when ExtraRep is equal to ??????????, Represents a number 
+      //not within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
+      static inline constexpr bool EnableNotWithinMinMaxRange = 
+      Policy::EnableNotWithinMinMaxRange&&EnableExtraRep ? Policy::EnableNotWithinMinMaxRange  : false;
+
+      //Max IntHalf magnitude
+      static constexpr unsigned MaxIntHalfMag = Policy::MaxIntHalfMag? Policy::MaxIntHalfMag:
+      (UnsignedMode? 4294967295:2147483647); 
+
+      //ExtraRep only exists as variable if EnableExtraRep is enabled
+      using ExtraRepT = std::conditional_t<requires { typename Policy::ExtraRepT; }, typename Policy::ExtraRepT, u32>;
+
+      //Unsigned value type that is big enough to hold both IntHalf*DecimalOverflow+DecimalHalf 
+      using ValueT = std::conditional_t<requires { typename Policy::ValueT; }, typename Policy::ValueT, u64>;
     };
     // when bitwise mode:
-    struct RawBlob : GlobalStorage {
+    struct RawBlob : public GlobalStorage {
     //IntValue is magnitude of Integer Half even when negative
     protected:
       using StoreT  = typename Policy::StoreT;
@@ -146,13 +230,13 @@ namespace AltNum {
       //->Flag State(FLAG_BITS Bits)->Masked ExtraRep(EXTRA_BITS Bits)->AltRepFlag(s)(ALTREP_BITS Bits)
 
       // --- Effective flags ---
-      static inline constexpr bool UnsignedMode     = Policy::UnsignedMode;
-      static inline constexpr bool DisableBitwiseMaskMode = Policy::DisableBitwiseMaskMode;
-
       static inline constexpr bool EnableMaskedExtraRep =
-        Policy::EnableMaskedExtraRep && !Policy::DisableBitwiseMaskMode;
-      static inline constexpr bool EnableExtraRep =
-        Policy::EnableExtraRep || Policy::EnableMaskedExtraRep;
+        Policy::EnableMaskedExtraRep ? Policy::EnableMaskedExtraRep&&EXTRA_BITS > 0 : false;
+
+		  static constexpr unsigned MixedFracDivisorLimit = Policy::MixedFracDivisorLimit ? Policy::MixedFracDivisorLimit : 
+			(EnableMixedFrac?(EnableMaskedExtraRep?(1u << EXTRA_BITS) - 1u):1073741804):0);
+		
+
 
       // --- Widths ---
       static inline constexpr unsigned SIGN_BITS  = UnsignedMode ? 0u : 1u;
@@ -274,7 +358,8 @@ namespace AltNum {
         return unsigned(value & PURE_DEC_MASK);
       }
       
-      static constexpr StoreT mergeParts(unsigned intPart, unsigned decPart) noexcept {
+			//Sets IntHalf and DecimalHalf field at same time without modifying other parts
+      static constexpr StoreT SetValue(unsigned intPart, unsigned decPart) noexcept {
         return ((StoreT(intPart) & PURE_INT_MASK) << DECIMAL_BITS) |
            (StoreT(decPart) & PURE_DEC_MASK);
       }
@@ -318,6 +403,34 @@ namespace AltNum {
       constexpr unsigned Value() const noexcept {
         return unsigned((raw & Value_MASK) >> SHIFT_VALUE);
       }
+
+      //Get Integer half of value magnitude
+      constexpr IntHalfValueT GetIntHalf() const noexcept
+			{
+			  return unsigned((raw & Int_MASK) >> SHIFT_INT);
+			}
+
+      //Get Decimal half of value magnitude
+      constexpr DecimalHalfValueT GetDecimalHalf() const noexcept
+			{
+			  return unsigned((raw & Dec_MASK) >> SHIFT_DECIMAL);
+			}
+			
+      inline void SetIntHalfMag(IntHalfValueT val)
+			{
+			  if constexpr (HasValueMember<decltype(IntHalf)>)
+				  IntHalf.Value = val;
+				else
+				  IntHalf = val;
+			}
+
+      inline void SetDecHalfMag(DecimalHalfValueT val)
+			{
+			  if constexpr (HasDecimalValueMember<decltype(DecimalHalf)>)
+				  DecimalHalf.Value = val;
+				else
+				  DecimalHalf = val;
+			}
 
       //Returns Pi, e, i, or Normal state value(1,2,3,0)
       constexpr unsigned FlagState() const noexcept {
@@ -394,7 +507,7 @@ namespace AltNum {
       }
 
       void Bitwise_SubOp(const ValueT& r, const bool rightIsPositive=true) const noexcept {
-        if constexpr ((UnsignedMode))
+        if constexpr (UnsignedMode)
           Value() -= r;
         else {
           if(IsPositive()){
@@ -411,49 +524,60 @@ namespace AltNum {
         }
       }
 
-      void Bitwise_UIntMultOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-      }
-
-      void Bitwise_UIntDivOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-
-      }
-			
-      void Bitwise_IntMultOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-      }
-
-      void Bitwise_IntDivOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-
-      }
-
-      void Bitwise_UnsignedMultOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-      }
-
-      void Bitwise_UnsignedDivOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-
-      }
-			
-      void Bitwise_MultOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-      }
-
-      void Bitwise_DivOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-
-      }
-
-      //BitwiseExtended versions catch the lost digits
-      constexpr ValueT BitwiseExtended_MultOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-      }
-
-      constexpr ValueT BitwiseExtended_DivOp(const ValueT& r, bool rightIsPositive=true) const noexcept {
-
-      }
-
     };
 
     // when split mode:
-    struct SplitFields : GlobalStorage {
+    struct SplitFields : public GlobalStorage {
     public:
+      static inline constexpr bool EnableMaskedExtraRep = false;
+			
+		  static constexpr unsigned MixedFracDivisorLimit =
+			(Policy::EnableMixedFrac && Policy::MixedFracDivisorLimit)
+				Policy::MixedFracDivisorLimit)
+		  : 0;
+		
       IntHalfT   IntHalf;
       DecimalHalfT DecimalHalf;
+
+      //Get Integer half of value magnitude
+      constexpr IntHalfValueT GetIntHalf() const noexcept
+			{
+			  if constexpr (HasValueMember<decltype(IntHalf)>)
+				  return IntHalf.Value;
+				else
+				  return IntHalf;
+			}
+
+      //Get Decimal half of value magnitude
+      constexpr DecimalHalfValueT GetDecimalHalf() const noexcept
+			{
+			  if constexpr (HasDecimalValueMember<decltype(DecimalHalf)>)
+				  return DecimalHalf.Value;
+				else
+				  return DecimalHalf;
+			}
+			
+      inline void SetIntHalfMag(IntHalfValueT val)
+			{
+			  if constexpr (HasValueMember<decltype(IntHalf)>)
+				  IntHalf.Value = val;
+				else
+				  IntHalf = val;
+			}
+
+      inline void SetDecHalfMag(DecimalHalfValueT val)
+			{
+			  if constexpr (HasDecimalValueMember<decltype(DecimalHalf)>)
+				  DecimalHalf.Value = val;
+				else
+				  DecimalHalf = val;
+			}
+
+      inline void SetValue(IntHalfValueT intPart, DecimalHalfValueT decPart)
+			{
+			  SetIntHalfMag(xval);
+				SetDecHalfMag(yval);
+			}
 
       //Checking if DecimalHalf is supported type before using table
       static constexpr DecimalHalfT DecimalOverflow = []{
@@ -463,7 +587,7 @@ namespace AltNum {
           return static_cast<DecimalHalfT>(
             VariableConversionFunctions::PowerOfTens64Bit[Policy::DecimalHalfDigits + 1]
           );
-        } else if constexpr (CheckMemberOrMethodExistance::HasValueMember<DecimalHalfT>::value) {
+        } else if constexpr (HasDecimalValueMember<DecimalHalfValueT>::value) {
           if constexpr (std::is_integral_v<DecimalHalfValueT>) {
             return static_cast<DecimalHalfValueT>(VariableConversionFunctions::PowerOfTens64Bit[Policy::DecimalHalfDigits + 1]);
           }
@@ -484,6 +608,11 @@ namespace AltNum {
       }();
     
       static constexpr DecimalHalfT DecimalMax = DecimalOverflow - 1;
+			
+      inline ValueT Value()
+			{
+			  return GetIntHalf()*DecimalOverflow+GetDecimalHalf();
+			}
 
     protected:
 
@@ -527,9 +656,6 @@ namespace AltNum {
       SplitFields<Policy>, RawBlob<Policy>>;
         
       using Tail = std::conditional_t<Tail::HasTail, TailFields<Policy>, NoTail>;
-
-      //Prevent drift of policy later(and enable debugging of linked policy constants later--other policies are stored to constexpr earlier)
-      static inline constexpr bool DisableBitwiseMaskMode = Policy::DisableBitwiseMaskMode;
 
     protected:
       static inline constexpr StoreT ZeroRaw = []() constexpr {
@@ -620,13 +746,12 @@ namespace AltNum {
   std::conditional_t<Policy::EnableExtraRep, ExtraRepFields<Policy>,NoExtraRep>
   {
       using Core      = CoreStorage<Policy>;
-      using ExtraPart = std::conditional_t<Policy::EnableExtraRep,ExtraRepFields<Policy>,NoExtraRep>;
+      using ExtraPart = std::conditional_t<Policy::EnableExtraRep&&Policy::EnableMaskedExtraRep==false,ExtraRepFields<Core>,NoExtraRep>;
   
       MDStorage() noexcept : Core(), ExtraPart() {}
   };
 
   template<class VariantClass, typename Policy:FixedDecDefaultPolicy>
-  requires FixedDecPolicyVariant<Policy>
   class MediumDecV3Base : protected MDStorage<VariantClass>
   {
   public:
