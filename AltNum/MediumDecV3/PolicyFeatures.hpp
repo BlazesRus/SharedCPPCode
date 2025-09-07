@@ -36,7 +36,7 @@ namespace BlazesRusCode
 	struct ClassicMediumDecFeatures {
     static constexpr bool PositiveSign = true;//Not Actually handled by masks but by MirroredInt but defining for debug purposes
     static constexpr bool UnsignedMode = false;
-    static constexpr bool DisableBitwiseMaskMode = true;
+    static constexpr bool SplitFieldsMode = true;
     //Defines default type for IntHalf portion
     using IntHalfT      = MirroredInt;
     using IntHalfValueT      = u32;
