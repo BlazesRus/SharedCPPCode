@@ -28,6 +28,25 @@ using VariableConversionFunctions = BlazesRusCode::VariableConversionFunctions;
 
 namespace BlazesFloatingCode
 {
+  //Adjusted floating version based on MediumDec version which is based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
+	template<typename FP, typename IntType>
+	constexpr FP UIntPowFP(FP base, IntType exp) noexcept {
+			FP result = FP(1);
+			while (exp > 0) {
+					if (exp & 1) result *= base;
+					exp >>= 1;
+					base *= base;
+			}
+			return result;
+	}
+
+  //Adjusted floating version based on MediumDec version
+	template<typename FP, typename IntType>
+	constexpr FP IntPowFP(FP base, IntType exp) noexcept {
+			if (exp < 0) return FP(1) / UIntPowFP(base, -exp);
+			return UIntPowFP(base, exp);
+	}
+
   /// <summary>
   /// Get the (n)th Root
   /// Code from https://rosettacode.org/wiki/Nth_root#C.23 (Derived from C version)
@@ -39,11 +58,12 @@ namespace BlazesFloatingCode
   static double NthRootV1(double value, int n)//, double precision = 0.0000000000001)
   {
     double d, r = 1.0;
+		n -= 1;
     //if (n < 1 || (value < 0.0 && !(n & 1))) {
     //  return;//0.0 / 0.0; /* NaN */
     //}
     do {
-      d = (value / pow(r, n - 1) - r) / n;
+      d = (value / pow(r, n) - r) / n;
       r += d;
     } while (d >= DBL_EPSILON * 10 || d <= -DBL_EPSILON * 10);//precision check condition
     return r;
@@ -62,10 +82,11 @@ namespace BlazesFloatingCode
     double x;
     double dx;
     x = value * 0.5;
-    dx = (value / pow(x, n - 1) - x) / n;
+    dx = (value / IntPowFP(x, n - 1) - x) / n;
+		n -= 1;
     while (dx >= precision || dx <= -precision) {
       x = x + dx;
-      dx = (value / pow(x, n - 1) - x) / n;
+      dx = (value / IntPowFP(x, n) - x) / n;
     }
     return x;
   }
@@ -93,7 +114,7 @@ namespace BlazesFloatingCode
     do
     {//  calculating current value from previous value by newton's method
       xK = (nMinus1 * xPre +
-        value / pow(xPre, nMinus1)) / n;
+        value / IntPowFP(xPre, nMinus1)) / n;
       delX = abs(xK - xPre);
       xPre = xK;
     } while (delX > precision);
@@ -129,9 +150,10 @@ namespace BlazesFloatingCode
   }
 
   //Calculate value to a fractional power based on https://study.com/academy/lesson/how-to-convert-roots-to-fractional-exponents.html
+	template<typename FP>
   static double FractionalPow(double value, int expNum, int expDenom)
   {
-    double CalcVal = NthRootV3(pow(value, expNum), expDenom);
+    double CalcVal = NthRootV3(IntPowFP(value, expNum), expDenom);
     return CalcVal;
   }
 
