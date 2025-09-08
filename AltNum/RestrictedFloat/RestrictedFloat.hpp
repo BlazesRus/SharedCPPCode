@@ -1,3 +1,12 @@
+// IMPORTANT REPRESENTATION NOTE:
+// RestrictedFloat encodes values as:
+//     value = 2^-(exp + signif / MaxDenom)
+// This is a FIXED-POINT EXPONENT format:
+// - 'exp' is the integer exponent component.
+// - 'signif' is the fractional exponent component, in ticks of 1/MaxDenom.
+// - MaxDenom = 1 << SIG_BITS.
+// This is NOT a normalized mantissa+exponent float, and NOT just an inverted IEEE float.
+// All arithmetic must be done in exponent-tick space, not by shifting a mantissa.
 // ***********************************************************************
 // Code Created by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
@@ -10,10 +19,11 @@
 #include "../PartialDec/PartialUDec.hpp"//For when need 0-4294967295.999999999 range plus ExtraRep divisor
 #include "../FloatingOperations.hpp"
 #include "../OtherFunctions/VariableConversionFunctions.h"//For integer to String conversion
-#include "../BlazesRusIntegerCode.hpp"//BlazesRusIntegerCode::IntPow(value,exp)
+#include "../BlazesRusIntegerCode.hpp"//BlazesRusIntegerCode::IntPow(value,exp) and BlazesRusIntegerCode::UIntPow(value,exp)
 #include <bit>      // std::bit_width
 #include <cstdint>  // uint32_t, uint64_t
 #include <utility>  // std::pair
+#include "../FloatingOperations.hpp"//For floating power of code
 
 namespace BlazesRusCode {
 
@@ -47,7 +57,7 @@ protected:
   concept Has_EXP_BITS   = requires { { Policy::EXP_BITS }   -> std::convertible_to<unsigned>; };
   concept Has_SIG_BITS   = requires { { Policy::SIG_BITS }   -> std::convertible_to<unsigned>; };
   concept Has_NScaleFactor   = requires { { Policy::NScaleFactor }   -> std::convertible_to<unsigned>; };
-  concept Has_AllowOne   = requires { { Policy::AllowOne }   -> std::convertible_to<unsigned>; };
+  concept Has_StandaloneMode   = requires { { Policy::StandaloneMode }   -> std::convertible_to<unsigned>; };
   concept Has_ZeroSignifRep   = requires { { Policy::Has_ZeroSignifRep }   -> std::convertible_to<unsigned>; };
   // Optional: allow policy to override the exponent part of zero
   concept Has_ZeroExpRep = requires { { Policy::ZeroExpRep } -> std::convertible_to<unsigned>; };
@@ -72,7 +82,8 @@ public:
 	
 	//If true then enables existance of 1.0 representation to be stored (Designed for standalone mode for sin ranges)
 	//If enabled than zero is defined as some other number instead
-  static inline constexpr bool AllowOne = Has_AllowOne ? Policy::AllowOne : false;
+  //Also allows standalone version featues such as toggling on the existance of Integer lane(allowing signed exponent flag)
+  static inline constexpr bool StandaloneMode = Has_StandaloneMode ? Policy::StandaloneMode : false;
 
   // Derived limits
   static inline constexpr unsigned MaxDenom  = (SIG_BITS == 0 ? 1u : (1u << SIG_BITS));
@@ -80,13 +91,13 @@ public:
   static inline constexpr unsigned EXP_MAX   = (EXP_BITS == 0 ? 0u : ((1u << EXP_BITS) - 1));
 
 	static inline constexpr unsigned ZeroExpRep =
-			AllowOne
-					? (Has_ZeroExpRep ? Policy::ZeroExpRep : EXP_MAX) // default: peg exp at max in AllowOne mode
+			StandaloneMode
+					? (Has_ZeroExpRep ? Policy::ZeroExpRep : EXP_MAX) // default: peg exp at max in StandaloneMode mode
 					: 0u;                                             // default: exp==0 in normal mode
 
 	// Significand part of zero
 	static inline constexpr unsigned ZeroSignifRep =
-			AllowOne
+			StandaloneMode
 					? (Has_ZeroSignifRep ? Policy::ZeroSignifRep : SIG_MAX)
 					: 0u;
 
@@ -132,12 +143,12 @@ public:
   // extractors
   constexpr unsigned exp() const noexcept   { return raw >> SIG_BITS; }
   constexpr unsigned signif() const noexcept{ return raw & SIG_MAX; }
-  constexpr bool   isZero() const noexcept { return raw_ == ZeroRaw; }
+  constexpr bool   isZero() const noexcept { return raw == ZeroRaw; }
 
 	// Smallest non-zero magnitude encoding
 	static inline constexpr unsigned AlmostZeroSignif =
-			AllowOne
-					? (SIG_MAX - 1u) // leave SIG_MAX for ZeroRaw in AllowOne mode
+			StandaloneMode
+					? (SIG_MAX - 1u) // leave SIG_MAX for ZeroRaw in StandaloneMode mode
 					: SIG_MAX;
 
 	static inline constexpr unsigned AlmostZeroExp = EXP_MAX;
@@ -277,13 +288,15 @@ public:
 
   #pragma region Floating Conversion
 
-  // Policy-aware limits
-  static constexpr double MaxValue = AllowOne ? 1.0
-   : std::pow(2.0, -(0.0 + 1.0 / static_cast<double>(MaxDenom)));
+  // Policy-aware limits using BlazesFloatingCode helpers
+  static constexpr double MaxValue =
+      StandaloneMode
+          ? 1.0
+          : 1.0 / BlazesFloatingCode::NthRootV3(2.0, MaxDenom);
   
   static constexpr double MinValue =
-      std::pow(2.0, -(static_cast<double>(MaxExp) +
-      (static_cast<double>(MaxDenom) - 1.0) / static_cast<double>(MaxDenom)));
+      (1.0 / BlazesFloatingCode::UIntPowFP(2.0, MaxExp)) /
+      BlazesFloatingCode::NthRootV3(2.0, MaxDenom / (MaxDenom - 1));
   
   constexpr float ToFloat(const RTable<SIG_BITS>& rt) const noexcept {
       uq64 fracQ = rt.pow2_neg_frac(signif);
@@ -533,26 +546,40 @@ public:
   // 
   #pragma region MixedDec Operator Helpers
 
-	template<UnsignedIntegerType IntType=unsigned int>
-	constexpr std::pair<unsigned, unsigned>
-	IntToPowerFields(IntType val) noexcept {
-			// Integer exponent = index of top bit
-			unsigned exp = std::bit_width(val) - 1;
+  // Converts an unsigned integer magnitude into (integer exponent, fractional exponent ticks)
+  // for the RestrictedFloat fixed-point exponent model:
+  //   value = 2^(E + S/MaxDenom)
+  // where:
+  //   E = integer exponent (floor(log2(val)))
+  //   S = fractional exponent in ticks [0, MaxDenom)
+  // This is NOT a mantissa; both E and S are parts of the exponent itself.
+  template<UnsignedIntegerType IntType = unsigned int>
+  constexpr std::pair<unsigned, unsigned>
+  IntToExpTicks(IntType val) noexcept {
+      // Integer exponent = floor(log2(val))
+      unsigned exp = std::bit_width(val) - 1;
+  
+      // Remainder after removing the top bit
+      IntType remainder = val - (IntType(1) << exp);
+  
+      // Fractional exponent in ticks (scaled to SIG_BITS)
+      unsigned fracTicks = unsigned((remainder << SIG_BITS) >> exp);
+  
+      // Carry into integer exponent if fractional part overflows
+      if (fracTicks == (1u << SIG_BITS)) {
+          fracTicks = 0;
+          ++exp;
+      }
+  
+      return {exp, fracTicks};
+  }
 
-			// Remainder after removing top bit
-			IntType remainder = val - (IntType(1) << exp);
-
-			// Fractional exponent numerator scaled to SignifBits
-			unsigned signif = unsigned((remainder << SIG_BITS) >> exp);
-
-			// Normalise if fractional part overflows
-			if (signif == (1u << SIG_BITS)) {
-					signif = 0;
-					++exp;
-			}
-			//Result will be in Positive exponent range but fine for temporary conversion for unsigned division and multiplication
-			return {exp, signif};
-	}
+// MULT/DIV REMINDER:
+// Multiplication/division is just integer addition/subtraction of exponent ticks:
+//   ticks = exp * MaxDenom + signif
+//   mul: ticks += rhs_ticks
+//   div: ticks -= rhs_ticks
+// No mantissa multiply is needed — the significand is part of the exponent.
 
 	//Treating as 1/2^(this->exp()+this->signif()/MaxDenom) * 1/(2^tempExp+tempSignif/MaxDenom)
   template<UnsignedIntegerType IntType=unsigned int, typename OverflowT=IntType>
@@ -568,30 +595,139 @@ public:
 		//No danger of overflow with integer division
   }
 
+  inline constexpr uint32_t pack_U(unsigned E, unsigned S) { return E*MaxDenom + S; }
+  inline constexpr void unpack_U(uint32_t U, unsigned& E, unsigned& S) {
+    E = U / MaxDenom; S = U % MaxDenom;
+  }
 
-	// After your IntToPowerFields(rhs) gives (rhsExp, rhsSignif), do:
-	// tempExp/tempFrac are in inverted form
-	inline void normalize_signed(signed& e, signed& f) {
-			if constexpr (SIG_BITS != 0) {
-					if (f < 0) { f += signed(MaxDenom); --e; }
-					else if (f >= signed(MaxDenom)) { f -= signed(MaxDenom); ++e; }
-			} else {
-					f = 0;
-			}
-	}
+  // Convert exponent ticks Δ → MediumDec ratio r = k + f/MaxDenom
+  inline MediumUDec delta_ticks_to_ratio(unsigned deltaTicks,
+                                        unsigned MaxDenom) {
+      unsigned k = deltaTicks / MaxDenom;
+      unsigned f = deltaTicks % MaxDenom;
+      // r = k + f/MaxDenom
+      MediumUDec r_k(k, 0); // k
+      MediumUDec frac_u(f, MaxDenom); // f/MaxDenom as unsigned
+      return r_k + r_f;
+  }
 
-	// Convert inverted (tempExp,tempFrac) to normal-space Q-fixed using r-table
-	template<unsigned SIG_BITS>
-	inline uq64 inverted_to_Q(signed tempExp, unsigned tempFrac, const RTable<SIG_BITS>& tbl) {
-			uq_t val = tbl.pow2_neg_frac(tempFrac); // 2^(-tempFrac/Den) in Q
-			if (tempExp >= 0) {
-					unsigned s = static_cast<unsigned>(tempExp);
-					return (s >= 127 ? 0 : static_cast<uq64>(val >> std::min(127u, s)));
-			} else {
-					unsigned s = static_cast<unsigned>(-tempExp);
-					return (s >= 63 ? 0 : static_cast<uq64>(val << std::min(63u, s)));
-			}
-	}
+  inline MediumDec pow2_neg(const MediumDec& r) {
+      // 2^(-r) = Exp(-Ln(2) * r)
+      static const MediumDec ln2 = MediumDec::Ln(MediumDec::Two);
+      return MediumDec::Exp( (ln2 * MediumDec::NegativeOne).MultipliedBy(r) );
+  }
+
+  inline unsigned ticks_from_log2(const MediumDec& x, unsigned MaxDenom) {
+      // log2(x) = Ln(x) / Ln(2)
+      static const MediumDec ln2 = MediumDec::Ln(MediumDec::Two);
+      MediumDec lg2 = MediumDec::Ln(x) / ln2;
+      // Round to nearest integer tick
+      // MaxDenom fits in uint32, result fits in uint32 table cell
+      MediumDec scaled = lg2 * MediumDec(MaxDenom, 0);
+      // Convert to nearest uint32
+      // Use MediumDec rounding you prefer; here: floor(scaled + 0.5)
+      MediumDec rounded = scaled + MediumDec::PointFive;
+      return static_cast<unsigned>(rounded.toUInt()); // or a safer convert
+  }
+  
+  // Sizes based on your boundaries
+  inline std::vector<uint32_t> UPlusTier1;
+  inline std::vector<uint32_t> UMinusTier1;
+  
+  inline void build_u_tables_tier1(unsigned MaxDenom,
+                                   unsigned PartialIndexStart /* Δ start for Tier 2 */)
+  {
+      UPlusTier1.resize(PartialIndexStart, 0);
+      UMinusTier1.resize(PartialIndexStart, 0);
+  
+      // Δ = 0..PartialIndexStart-1
+      for (unsigned d = 0; d < PartialIndexStart; ++d) {
+          if (d == 0) {
+              // 1 + 1 = 2 → u+ = MaxDenom * log2(2) = MaxDenom
+              UPlusTier1[d]  = MaxDenom;
+              UMinusTier1[d] = 0; // not used (exact cancel handled at runtime)
+              continue;
+          }
+          MediumDec r = delta_ticks_to_ratio(d, MaxDenom);
+          MediumDec p = pow2_neg(r);                 // 2^-Δ
+          MediumDec plus = MediumDec::One + p;       // 1 + 2^-Δ
+          MediumDec minu = MediumDec::One - p;       // 1 - 2^-Δ
+  
+          UPlusTier1[d]  = ticks_from_log2(plus, MaxDenom);
+          UMinusTier1[d] = ticks_from_log2(minu, MaxDenom);
+      }
+  }
+  
+  inline std::vector<MediumUDec> UPlusTier2, UMinusTier2;
+  
+  inline void build_u_tables_tier2(unsigned MaxDenom,
+                                   unsigned startDelta,
+                                   unsigned count)
+  {
+      UPlusTier2.resize(count);
+      UMinusTier2.resize(count);
+      for (unsigned i = 0; i < count; ++i) {
+          unsigned d = startDelta + i;
+          MediumDec r = delta_ticks_to_ratio(d, MaxDenom);
+          MediumDec p = pow2_neg(r);
+  
+          MediumDec plus = MediumDec::One + p;
+          MediumDec minu = MediumDec::One - p;
+  
+          unsigned up = ticks_from_log2(plus, MaxDenom);
+          unsigned um = ticks_from_log2(minu, MaxDenom);
+  
+          UPlusTier2[i].SetValue(MediumUDec(up, PartialInt::Zero));  // store integer ticks
+          UMinusTier2[i].SetValue(MediumUDec(um, PartialInt::Zero));
+      }
+  }
+
+  inline uint32_t uplus_from_gap_ticks(uint32_t deltaU) {
+      if (deltaU < PartialIndexStart)    return UPlusTier1[deltaU];
+      if (deltaU < ExtremeIndexStart)    return UPlusTier2[deltaU - PartialIndexStart].toUInt();
+      // Tier 3
+      if constexpr (VariantName::HasTinyUDec) {
+          return UPlusTier3Tiny[deltaU - ExtremeIndexStart].toUInt();
+      } else {
+          return UPlusTier3Partial[deltaU - ExtremeIndexStart].toUInt();
+      }
+  }
+  
+  inline uint32_t uminus_from_gap_ticks(uint32_t deltaU) {
+      if (deltaU == 0) return 0; // caller handles exact cancel
+      if (deltaU < PartialIndexStart)    return UMinusTier1[deltaU];
+      if (deltaU < ExtremeIndexStart)    return UMinusTier2[deltaU - PartialIndexStart].toUInt();
+      // Tier 3
+      if constexpr (VariantName::HasTinyUDec) {
+          return UMinusTier3Tiny[deltaU - ExtremeIndexStart].toUInt();
+      } else {
+          return UMinusTier3Partial[deltaU - ExtremeIndexStart].toUInt();
+      }
+  }
+
+  // Converts a fixed-point exponent (E, S) into a Q-format unsigned integer magnitude.
+  // In RestrictedFloat, value = 2^-(E + S/MaxDenom).
+  // Parameters:
+  //   intExp   = integer exponent E (signed)
+  //   fracTicks = fractional exponent S in ticks [0, MaxDenom)
+  //   tbl      = RTable providing pow2_neg_frac(S) in Q-format
+  // Returns:
+  //   uq64 Q-format value representing 2^-(E + S/MaxDenom).
+  template<unsigned SIG_BITS>
+  inline uq64 expTicks_to_Q(signed intExp, unsigned fracTicks, const RTable<SIG_BITS>& tbl) {
+      // Q-format value for 2^(-S/MaxDenom)
+      uq_t val = tbl.pow2_neg_frac(fracTicks);
+  
+      if (intExp >= 0) {
+          unsigned shift = static_cast<unsigned>(intExp);
+          // Positive exponent → smaller magnitude → right shift
+          return (shift >= 127 ? 0 : static_cast<uq64>(val >> std::min(127u, shift)));
+      } else {
+          unsigned shift = static_cast<unsigned>(-intExp);
+          // Negative exponent → larger magnitude → left shift
+          return (shift >= 63 ? 0 : static_cast<uq64>(val << std::min(63u, shift)));
+      }
+  }
 
 	//Treating as 1/2^(this->exp()+this->signif()/MaxDenom) * (2^tempExp+tempSignif/MaxDenom)
   template<UnsignedIntegerType IntType=unsigned int, typename OverflowT=IntType>
@@ -753,17 +889,38 @@ public:
 
 			SetExpSignif(uint32_t(expPart), signifPart);
   }
-  
+
+// ADD/SUB REMINDER:
+// Because this is a fixed-point exponent representation, addition/subtraction
+// must adjust the exponent term by log2(1 ± 2^-Δ) where Δ is the exponent-tick gap.
+// Do NOT attempt to align mantissas — there is no mantissa.
+// Early-out threshold for lossless add/sub is ~log2(1 + 1/MaxDenom) ≈ 1 tick.
+// For MaxDenom = 2^25, Δ >= 26 ticks means the smaller term cannot change the result.
+
   // Returns: 0 = no coarse change, 1 = promote +1 coarse unit, 2 = borrow -1 coarse unit
   template<typename ValueT, typename TickT=StoreT>
-  inline uint8_t TailAddSubInPlace(const RestrictedFloat& rhsTail,
+  inline uint8_t TailAddSubInPlace(const RestrictedFloat& rhs,
   bool leftIsPositive=true,bool rightIsPositive=true)
   {
+    const bool sameSign = leftIsPositive==rightIsPositive;
+    if (isZero()) {
+      // 0 + rhs → just rhs magnitude
+      if(sameSign) {*this = rhs; return 0; }
+      // 0 - 0 → zero
+      else if(rhs.isZero()) return 0;
+      // Inverting fractional lane across integer boundary: 0 - rhs
+      uint32_t uRHS = rhs.exp() * MaxDenom + rhs.signif();
+      uint32_t u     = u_minus_mag_from_gap_ticks(uRHS);
+      unsigned E     = u / MaxDenom;
+      unsigned S     = u % MaxDenom;
+      SetExpSignif(E, S);
+      return 2;
+    }
+    if (rhs.isZero()) { return 0; }
     auto lExp = this-> exp();
-    auto rExp = rhsTail.exp();
     auto lSignif = this->signif();
-    auto rSignif = rhsTail.signif();
-    bool sameSign = leftIsPositive==rightIsPositive;
+    auto rExp = rhs.exp();
+    auto rSignif = rhs.signif();
     // Align smaller-exp side to larger-exp side
     if (lSignif == 0 && rSignif == 0) {
       //Shift numerator to same denom such as 1/2 + 1/4 becomes 2/4 + 1/4
@@ -772,14 +929,14 @@ public:
       //Shift numerator to same denom such as 1/8 - 1/2 becomes 1/8 - 4/8 = -3/8
       if (lExp < rExp) {
         auto shift = rExp - lExp;
-        StoreT numResult = sameSign ? (1 << shift) + 1: (1 << shift) - 1:
+        StoreT numResult = sameSign ? (1 << shift) + 1: (1 << shift) - 1;
         ConvertPureExpPair(numResult, rExp);
-        if(sameSign||rightIsPositive) return 0;//1/2 - 1/4 becomes 2/4 - 1/4
+        if(sameSign||rightIsPositive) return 0;//1/2 + 1/4 becomes 2/4 - 1/4 = 1/4 ; 1/2 - 1/4 becomes 2/4 - 1/4 = 1/4
         else
           return 2;
       } else if (rExp < lExp) {
         auto shift = lExp - rExp;
-        StoreT numResult = sameSign ? (1 << shift) - 1: (1 << shift) + 1:
+        StoreT numResult = sameSign ? (1 << shift) - 1: (1 << shift) + 1;
         ConvertPureExpPair(numResult, lExp);
         if(sameSign) return 0;
         else if(rightIsPositive)//-1/8 + 1/2 becomes -1/8 + 4/8 = 3/8
@@ -797,77 +954,35 @@ public:
           SetExp(lExp-1);
           return 0;
         } else {//canceling tail
-          SetAsZero();
+          SetAsZero();//0.5 - 0.5 
           return 0;
         }
       }
     } else {
-        // Fractional-exponent band: at least one signif > 0
-        // We'll align the smaller mixed exponent to the larger one.
-
-        constexpr TickT OV = MaxDenom; // fractional ticks per whole exponent step
-
-        auto lessMixed = [&](uint32_t e1, uint32_t s1, uint32_t e2, uint32_t s2) noexcept {
-            return (e1 < e2) || (e1 == e2 && s1 < s2);
-        };
-
-        auto mixedDiff = [&](uint32_t eA, uint32_t sA,
-                             uint32_t eB, uint32_t sB,
-                             uint32_t& dE, uint32_t& dF) noexcept {
-            // Borrow from integer exponent if needed
-            if (sA > sB) {
-                dE = (eB - eA) - 1;
-                dF = (sB + OV) - sA;
-            } else {
-                dE = (eB - eA);
-                dF = sB - sA;
-            }
-        };
-
-        TickT lhsNum = 1;
-        TickT rhsNum = 1;
-        uint32_t tgtExp, tgtSig;
-
-        if (lessMixed(lExp, lSignif, rExp, rSignif)) {
-            // LHS has smaller mixed exponent → align to RHS
-            uint32_t dE, dF; mixedDiff(lExp, lSignif, rExp, rSignif, dE, dF);
-            if (dE) lhsNum <<= dE;
-            if (dF) lhsNum = TickT((uStoreT(lhsNum) * dF) / OV);
-            tgtExp = rExp; tgtSig = rSignif;
-        } else if (lessMixed(rExp, rSignif, lExp, lSignif)) {
-            // RHS has smaller mixed exponent → align to LHS
-            uint32_t dE, dF; mixedDiff(rExp, rSignif, lExp, lSignif, dE, dF);
-            if (dE) rhsNum <<= dE;
-            if (dF) rhsNum = TickT((uStoreT(rhsNum) * dF) / OV);
-            tgtExp = lExp; tgtSig = lSignif;
-        } else {
-            // Already same mixed exponent
-            tgtExp = lExp; tgtSig = lSignif;
-        }
-
-        // Add/sub numerators
-        StoreT resultNum = sameSign
-                          ? StoreT(lhsNum) + StoreT(rhsNum)
-                          : StoreT(lhsNum) - StoreT(rhsNum);
-
-        // Detect coarse carry/borrow: in fractional band, one coarse unit = OV ticks
-        uint8_t code = 0;
-        if (resultNum >= StoreT(OV)) {
-            resultNum -= StoreT(OV);
-            code = 1;
-        } else if (resultNum < 0) {
-            resultNum += StoreT(OV);
-            code = 2;
-        }
-
-        if (resultNum == 0) {
-            SetAsZero();
-            return code;
-        }
-
-        // Convert back to (exp, signif)
-        ConvertFracExpPair(TickT(resultNum), OV); // OV is the fractional denominator
-        return code;
+      // Both operands in fractional-exponent band: at least one signif > 0
+      const uint32_t Ul = pack_U(lExp, lSignif);
+      const uint32_t Ur = pack_U(rExp, rSignif);
+      const uint32_t Umin = (Ul <= Ur) ? Ul : Ur;
+      const uint32_t Umax = (Ul <= Ur) ? Ur : Ul;
+      const uint32_t delta = Umax - Umin;
+      
+      // Early-out: Δ >= SIG_BITS+1 → u rounds to 0 at our precision
+      if (delta >= ADD_SUB_EARLY_UNITS) {
+          unsigned E, S; unpack_U(Umin, E, S);
+          SetExpSignif(E, S);
+          return 0;
+      }
+      
+      const uint32_t u = sameSign ? uplus_from_gap_ticks(delta)
+                                  : uminus_from_gap_ticks(delta);
+      
+      uint64_t Ures = uint64_t(Umin) + u;
+      uint8_t code = 0;
+      if (u >= MaxDenom) { Ures -= MaxDenom; code = 1; }
+      
+      unsigned E, S; unpack_U(uint32_t(Ures), E, S);
+      SetExpSignif(E, S);
+      return code;
     }
   }
   

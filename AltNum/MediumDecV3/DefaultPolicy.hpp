@@ -91,8 +91,8 @@ namespace BlazesRusCode
     //If enabled OpMethods return Trailing digits lost during operation for use in MixedDec variant operations
     static constexpr bool EnableMixedMode = false;
     
-    //If DisableBitwiseMaskMode is enabled it will use 
-    static constexpr bool DisableBitwiseMaskMode = false;
+    //If SplitFieldsMode is enabled it will use 
+    static constexpr bool SplitFieldsMode = false;
     //Defines default type for IntHalf portion
     using IntHalfT      = u32;
     using IntHalfValueT      = u32;

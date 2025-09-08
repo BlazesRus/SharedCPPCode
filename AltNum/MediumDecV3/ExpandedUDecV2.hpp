@@ -48,7 +48,7 @@ namespace BlazesRusCode
     // Core
     static constexpr bool UnsignedMode            = true;
     using StoreT                                   = u64;          // unused in split mode but required
-    static constexpr bool DisableBitwiseMaskMode  = true;
+    static constexpr bool SplitFieldsMode  = true;
 
     // Split layout types
     using IntHalfT     = u64;                                     // IntHalf (matches ExpandedUDec)
@@ -88,7 +88,7 @@ namespace BlazesRusCode
   struct ExpandedUDecV2Policy : FixedDecDefaultPolicy {
       // Core identity
       static constexpr bool UnsignedMode           = true;
-      static constexpr bool DisableBitwiseMaskMode = false; // keep packed path
+      static constexpr bool SplitFieldsMode = false; // keep packed path
       static constexpr bool EnableMaskedExtraRep   = true;
 
       using StoreT                    = unsigned __int128; // or custom wide-int

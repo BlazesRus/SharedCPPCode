@@ -12,7 +12,7 @@
    *       • false: two’s-complement–style bitwise encoding for negatives
    *         (negative values sort below positives; high bit = sign).
    *       • true: sign bit is unused and number is always treated as unsigned in storage
-   *   – DisableBitwiseMaskMode
+   *   – SplitFieldsMode
    *       • false: all sub-fields are masked out of a single raw_ bitstream.
    *       • true: IntHalf/DecimalHalf occupy their full integer widths.
    *   – EnableExtraRep
@@ -22,7 +22,7 @@
    *   - Check the Policy.hpp file for reference for other Policy flag information
    *
    *
-   * Storage layout (bitwise-mode unless DisableBitwiseMaskMode):
+   * Storage layout (bitwise-mode unless SplitFieldsMode):
    *
    *   raw (uint64_t by default; uint96_t in ExpandedUDec setup)
    *     • underlying bit container for all masked sub-fields.
