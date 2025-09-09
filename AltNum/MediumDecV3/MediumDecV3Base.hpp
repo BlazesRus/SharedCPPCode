@@ -85,41 +85,108 @@ namespace AltNum {
   template<typename Policy>
   struct MDBaseStorage
   {
+    // Concepts for presence detection (C++20)
+    template<typename Policy>
+    concept Has_PositiveSign =
+        requires {
+            { Policy::PositiveSign } -> std::integral;
+        } &&
+        ((Policy::PositiveSign == 0) || (Policy::PositiveSign == 1));
+    
+    template<typename Policy>
+    concept Has_NegativeSign =
+        requires {
+            { Policy::NegativeSign } -> std::integral;
+        } &&
+        ((Policy::NegativeSign == 0) || (Policy::NegativeSign == 1));
+    
+    concept Has_EnablePi   = requires { { Policy::EnablePi }   -> std::convertible_to<bool>; };
+    concept Has_EnableE    = requires { { Policy::EnableE }    -> std::convertible_to<bool>; };
+    concept Has_EnablePiE  = requires { { Policy::EnablePiE }  -> std::convertible_to<bool>; };
+    concept Has_EnableI    = requires { { Policy::EnableI }    -> std::convertible_to<bool>; };
+    
+    concept Has_EnableInfinity        = requires { { Policy::EnableInfinity }        -> std::convertible_to<bool>; };
+    concept Has_EnableApproaching     = requires { { Policy::EnableApproaching }     -> std::convertible_to<bool>; };
+    concept Has_DisableApproachingTop = requires { { Policy::DisableApproachingTop } -> std::convertible_to<bool>; };
+    concept Has_EnableNaN             = requires { { Policy::EnableNaN }             -> std::convertible_to<bool>; };
+    concept Has_EnableApproachingDivided = requires { { Policy::EnableApproachingDivided } -> std::convertible_to<bool>; };
+    concept Has_EnableIndeterminateForms = requires { { Policy::EnableIndeterminateForms } -> std::convertible_to<bool>; };
+    
+    concept Has_UnsignedMode = requires { { Policy::UnsignedMode } -> std::convertible_to<bool>; };
+    concept Has_SignedMode   = requires { { Policy::SignedMode   } -> std::convertible_to<bool>; };
+    
+    concept Has_SplitFieldsMode = requires { { Policy::SplitFieldsMode } -> std::convertible_to<bool>; };
+    concept Has_BitwiseMaskMode = requires { { Policy::BitwiseMaskMode } -> std::convertible_to<bool>; };
+    
+    concept Has_EnableExtraRep         = requires { { Policy::EnableExtraRep }         -> std::convertible_to<bool>; };
+    concept Has_EnableMaskedExtraRep   = requires { { Policy::EnableMaskedExtraRep }   -> std::convertible_to<bool>; };
+    concept Has_EnableMixedFrac        = requires { { Policy::EnableMixedFrac }        -> std::convertible_to<bool>; };
+    concept Has_EnablePowerOf          = requires { { Policy::EnablePowerOf }          -> std::convertible_to<bool>; };
+    concept Has_EnableWithinMinMaxRange    = requires { { Policy::EnableWithinMinMaxRange } -> std::convertible_to<bool>; };
+    concept Has_EnableNotWithinMinMaxRange = requires { { Policy::EnableNotWithinMinMaxRange } -> std::convertible_to<bool>; };
+    
+    concept Has_MaxIntHalfMag   = requires { { Policy::MaxIntHalfMag }   -> std::convertible_to<unsigned>; };
+    concept Has_IntValue_BITS   = requires { { Policy::IntValue_BITS }   -> std::convertible_to<unsigned>; };
+    concept Has_DecimalHalf_BITS= requires { { Policy::DecimalHalf_BITS }-> std::convertible_to<unsigned>; };
+    concept Has_FlagState_BITS  = requires { { Policy::FlagState_BITS }  -> std::convertible_to<unsigned>; };
+    concept Has_MaskedExtra_BITS= requires { { Policy::MaskedExtra_BITS }-> std::convertible_to<unsigned>; };
+    concept Has_ExtraFlag_BITS  = requires { { Policy::ExtraFlag_BITS }  -> std::convertible_to<unsigned>; };
+    concept Has_MixedFracDivisorLimit = requires { { Policy::MixedFracDivisorLimit } -> std::convertible_to<unsigned>; };
+    
+    concept Has_BinaryFractionMode      = requires { { Policy::BinaryFractionMode }      -> std::convertible_to<bool>; };
+    concept Has_EnableOverflowProtection= requires { { Policy::EnableOverflowProtection }-> std::convertible_to<bool>; };
+
+    concept Has_SkipSafeCheck = requires { { Policy::Has_SkipSafeCheck }-> std::convertible_to<bool>; };
+
     //Both bitwise and RawBlobe share features here
 		//Generate global policy based static const here
     struct GlobalStorage {
     protected:
-      //If true than Positive sign is defined by Sign of 1
-      static inline constexpr bool PositiveSign   = Policy::PositiveSign ? Policy::PositiveSign : true;
+      // PositiveSign and NegativeSign are logical convention constants (1/0 or true/false).
+      // They define whether a sign bit value of 1 means "positive" (this is inverted from the usual two's-complement convention).
+      // The "sign bit" here refers to the logical sign indicator for this type, not necessarily a literal bit in all modes.
+      // Defaults: PositiveSign = 1, NegativeSign = 0 if neither is provided in the policy.
+      // Exactly one may be defined in the policy; the other is derived to be its opposite.
+      // In signed mode, negative values do NOT have their magnitude bits flipped — only the sign indicator changes.
+      // This avoids magnitude inversion overhead and enhances multiplication/division speed for negative values.
+      static inline constexpr u32 PositiveSign   = Has_PositiveSign ? Policy::PositiveSign : (Has_NegativeSign?0:1);
+      static inline constexpr u32 NegativeSign   = Has_PositiveSign ? 0 : (Has_NegativeSign?1:0);
 
-      static inline constexpr bool EnablePi = Policy::EnablePi ? Policy::EnablePi  : false;
-      static inline constexpr bool EnableE = Policy::EnableE ? Policy::EnableE  : false;
-      static inline constexpr bool EnablePiE = Policy::EnablePiE&&EnablePi&&EnableE ? Policy::EnablePiE  : false;
-      static inline constexpr bool EnableI = Policy::EnableI&&EnablePiE==false ? Policy::EnableI  : false;
+      if constexpr (Has_PositiveSign)
+          static_assert(Policy::PositiveSign == 0 || Policy::PositiveSign == 1,
+                        "PositiveSign must be 0 or 1");
+      if constexpr (Has_NegativeSign)
+          static_assert(Policy::NegativeSign == 0 || Policy::NegativeSign == 1,
+                        "NegativeSign must be 0 or 1");
+
+      static inline constexpr bool EnablePi = Has_EnablePi ? Policy::EnablePi  : false;
+      static inline constexpr bool EnableE = Has_EnableE ? Policy::EnableE  : false;
+      static inline constexpr bool EnablePiE = Has_EnablePiE&&EnablePi&&EnableE ? Policy::EnablePiE  : false;
+      static inline constexpr bool EnableI = Has_EnableI&&EnablePiE==false ? Policy::EnableI  : false;
       
-      static inline constexpr bool EnableInfinity = Policy::EnableInfinity ? Policy::EnableInfinity  : false;
-      static inline constexpr bool EnableApproaching = Policy::EnableApproaching ? Policy::EnableApproaching  : false;
+      static inline constexpr bool EnableInfinity = Has_EnableInfinity ? Policy::EnableInfinity  : false;
+      static inline constexpr bool EnableApproaching = Has_EnableApproaching ? Policy::EnableApproaching  : false;
       static inline constexpr bool DisableApproachingTop = 
-      Policy::DisableApproachingTop ? Policy::DisableApproachingTop  : false;
+      Has_DisableApproachingTop ? Policy::DisableApproachingTop  : false;
 
-      static inline constexpr bool EnableNaN = Policy::EnableNaN ? Policy::EnableNaN  : false;
+      static inline constexpr bool EnableNaN = Has_EnableNaN ? Policy::EnableNaN  : false;
+
       static inline constexpr bool EnableApproachingDivided = 
-      Policy::EnableWithinMinMaxRange ? Policy::EnableWithinMinMaxRange  : false;
+      Has_EnableApproachingDivided ? Policy::EnableApproachingDivided  : false;
 
       static inline constexpr bool EnableIndeterminateForms = 
-      Policy::EnableIndeterminateForms ? Policy::EnableIndeterminateForms  : false; 
+      Has_EnableIndeterminateForms ? Policy::EnableIndeterminateForms  : false; 
 
       //If enabled OpMethods return Trailing digits lost during operation for use in MixedDec variant operations
       static constexpr bool EnableMixedMode = false;
 
       static inline constexpr bool EnableStateFlags   =
-      EnablePi || Policy::EnableE || Policy::EnableI;
+      EnablePi || EnableE || EnableI;
 
 			using IntHalfT = std::conditional_t<
 					requires { typename Policy::IntHalfT; },
 					typename Policy::IntHalfT,
-					u32
-			>;
+					u32>;
 
 			using DecimalHalfT = std::conditional_t<requires { typename Policy::DecimalHalfT; },
 					typename Policy::DecimalHalfT,u32>;
@@ -145,32 +212,53 @@ namespace AltNum {
 							{ t.Value } -> std::convertible_to<DecimalHalfValueT>;
 					};
 
-      //Both Unsigned and SignedMode flags to make boolean checks easier
-      static inline constexpr bool UnsignedMode     = Policy::UnsignedMode ? Policy::UnsignedMode : (Policy::SignedMode?false:true);
-      static inline constexpr bool SignedMode     = Policy::SignedMode ? Policy::SignedMode : (Policy::UnsignedMode?false:true);
+      // Opposite Modes to make constexpr checks easier.
+      // SignedMode is always the logical inverse of UnsignedMode.
+      // BitwiseMaskMode is always the logical inverse of SplitFieldsMode.
+      // Exactly one of each pair may be defined in the policy; the other is derived.
+      // Defaults: UnsignedMode = false (SignedMode = true), 
+      // SplitFieldsMode = false (BitwiseMaskMode = true) if neither is defined.
+      static_assert(!(Has_UnsignedMode && Has_SignedMode),
+      "Policy cannot define both UnsignedMode and SignedMode");
 			
-      static inline constexpr bool DisableBitwiseMaskMode = Policy::DisableBitwiseMaskMode ? Policy::DisableBitwiseMaskMode : false;
-      static inline constexpr bool EnableExtraRep = Policy::EnableExtraRep ? Policy::EnableExtraRep||Policy::EnableMaskedExtraRep : false;
+      static inline constexpr bool UnsignedMode =
+      Has_UnsignedMode ? !!Policy::UnsignedMode : (Has_SignedMode ? !Policy::SignedMode : false);
+
+      static inline constexpr bool SignedMode = !UnsignedMode;
+
+      static_assert(!(Has_SplitFieldsMode && Has_BitwiseMaskMode),
+      "Policy cannot define both SplitFieldsMode and BitwiseMaskMode");
+
+      static inline constexpr bool SplitFieldsMode =
+      Has_SplitFieldsMode ? !!Policy::SplitFieldsMode : (Has_BitwiseMaskMode ? !Policy::BitwiseMaskMode : false);
+
+      static inline constexpr bool BitwiseMaskMode = !SplitFieldsMode;
+
+      //If true skip safe zero check
+      static inline constexpr bool SkipSafeCheck = Has_SkipSafeCheck ? Policy::SkipSafeCheck : true;
+
+      static inline constexpr bool EnableExtraRep = Has_EnableExtraRep ? Policy::EnableExtraRep||Has_EnableMaskedExtraRep : false;
 		  using ExtraRepT = Policy::EnableExtraRep ? (Policy::ExtraRepT ? typename ExtraRepT: typename u32) : void;
 			
-      static inline constexpr bool EnableMixedFrac     = Policy::EnableMixedFrac&&EnableExtraRep ? Policy::EnableMixedFrac : false;
-      static inline constexpr bool EnablePowerOf     = Policy::EnablePowerOf&&EnableExtraRep ? Policy::EnablePowerOf : false;
-		  static inline constexpr bool EnableExtraRepFlags = Policy::EnablePowerOf || Policy::EnableMixedFrac;
+      static inline constexpr bool EnableMixedFrac     = Has_EnableMixedFrac&&EnableExtraRep ? Policy::EnableMixedFrac : false;
+      static inline constexpr bool EnablePowerOf     = Has_EnablePowerOf&&EnableExtraRep ? Policy::EnablePowerOf : false;
+		  static inline constexpr bool EnableExtraRepFlags = EnablePowerOf || EnableMixedFrac;
 			
-      static inline constexpr unsigned FractionalMaximum = Policy::FractionalMaximum ? Policy::FractionalMaximum : 
+      static inline constexpr unsigned FractionalMaximum = Has_FractionalMaximum ? Policy::FractionalMaximum : 
       (EnableExtraRep?2147483647:0);
 
       //Defined when ExtraRep is equal to 0, Represents a number 
       //within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
       static inline constexpr bool EnableWithinMinMaxRange = 
-      Policy::EnableWithinMinMaxRange&&EnableExtraRep ? Policy::EnableWithinMinMaxRange  : false;
+      Has_EnableWithinMinMaxRange&&EnableExtraRep ? Policy::EnableWithinMinMaxRange  : false;
+
       //Defined when ExtraRep is equal to ??????????, Represents a number 
       //not within bounds of (Sign*IntHalf.Value) to (ExtraRep.IsAltRep?-1:1)*(DecimalHalf.Value)
       static inline constexpr bool EnableNotWithinMinMaxRange = 
-      Policy::EnableNotWithinMinMaxRange&&EnableExtraRep ? Policy::EnableNotWithinMinMaxRange  : false;
+      Has_EnableNotWithinMinMaxRange&&EnableExtraRep ? Policy::EnableNotWithinMinMaxRange  : false;
 
       //Max IntHalf magnitude
-      static constexpr unsigned MaxIntHalfMag = Policy::MaxIntHalfMag? Policy::MaxIntHalfMag:
+      static constexpr unsigned MaxIntHalfMag = Has_MaxIntHalfMag? Policy::MaxIntHalfMag:
       (UnsignedMode? 4294967295:2147483647); 
 
       //ExtraRep only exists as variable if EnableExtraRep is enabled
@@ -178,12 +266,21 @@ namespace AltNum {
 
       //Unsigned value type that is big enough to hold both IntHalf*DecimalOverflow+DecimalHalf 
       using ValueT = std::conditional_t<requires { typename Policy::ValueT; }, typename Policy::ValueT, u64>;
+    
+      //Experimental Binary fractional mode(DecimalHalf as powers of 2 instead of 10)
+      static inline constexpr bool BinaryFractionMode =
+      Has_BinaryFractionMode ? Policy::BinaryFractionMode : false;
+
+      static constexpr bool EnableOverflowProtection =
+      Has_EnableOverflowProtection ? Policy::EnableOverflowProtection : true;
+
     };
     // when bitwise mode:
     struct RawBlob : public GlobalStorage {
     //IntValue is magnitude of Integer Half even when negative
     protected:
-      using StoreT  = typename Policy::StoreT;
+			using StoreT = std::conditional_t<requires { typename Policy::StoreT; },
+					typename Policy::StoreT,u64>;
 
       //Checking if DecimalHalf is supported type before using table
       static constexpr DecimalHalfT DecimalOverflow = []{
@@ -209,9 +306,6 @@ namespace AltNum {
            : (StoreT(1) << bits) - StoreT(1);
       }
 
-    protected:
-      using StoreT  = typename Policy::StoreT;
-
       //Checking if DecimalHalf is supported type before using table
       static constexpr DecimalHalfT DecimalOverflow = []{
         if constexpr (has_overflow_limit<Policy>::value) {
@@ -226,37 +320,38 @@ namespace AltNum {
         }
       }();
 
-      //Bitlayout:Sign(SIGN_BITS Bits)->Value(IntHalf(INT_BITS Bits)+DecimalHalf(DECIMAL_BITS Bits))
-      //->Flag State(FLAG_BITS Bits)->Masked ExtraRep(EXTRA_BITS Bits)->AltRepFlag(s)(ALTREP_BITS Bits)
+      //Bitlayout(from low bits to high bits):
+      //Sign(SIGN_BITS Bits)->ScaleValue(IntHalf(INT_BITS Bits)+DecimalHalf(DECIMAL_BITS Bits))
+      //->Flag State(FLAG_BITS Bits)->Masked ExtraRep(EXTRA_BITS Bits)->AltRepFlag(s)(EXTRAFLAG_BITS Bits)
 
       // --- Effective flags ---
       static inline constexpr bool EnableMaskedExtraRep =
-        Policy::EnableMaskedExtraRep ? Policy::EnableMaskedExtraRep&&EXTRA_BITS > 0 : false;
+        Has_EnableMaskedExtraRep ? Policy::EnableMaskedExtraRep&&EXTRA_BITS > 0 : false;
 
-		  static constexpr unsigned MixedFracDivisorLimit = Policy::MixedFracDivisorLimit ? Policy::MixedFracDivisorLimit : 
-			(EnableMixedFrac?(EnableMaskedExtraRep?(1u << EXTRA_BITS) - 1u):1073741804):0);
-		
-
+      static constexpr unsigned MixedFracDivisorLimit = Has_MixedFracDivisorLimit ? Policy::MixedFracDivisorLimit :
+          (EnableMixedFrac ? (EnableMaskedExtraRep ? ((1u << EXTRA_BITS) - 1u) : 1073741804u) : 0u);
 
       // --- Widths ---
       static inline constexpr unsigned SIGN_BITS  = UnsignedMode ? 0u : 1u;
-      static inline constexpr unsigned INT_BITS   = Policy::IntValue_BITS;
-      static inline constexpr unsigned DECIMAL_BITS = Policy::DecimalHalf_BITS;
+      static inline constexpr unsigned INT_BITS   = Has_IntValue_BITS ? Policy::IntValue_BITS : (UnsignedMode?32:31);
+      static inline constexpr unsigned DECIMAL_BITS = Has_DecimalHalf_BITS? Policy::DecimalHalf_BITS : 30;
       static inline constexpr unsigned VALUE_BITS   = INT_BITS + DECIMAL_BITS;
-      static inline constexpr unsigned FLAG_BITS  = EnableStateFlags ? Policy::FlagState_BITS : 0u;
-      static inline constexpr unsigned EXTRA_BITS   = EnableMaskedExtraRep ? Policy::MaskedExtra_BITS : 0u;
+      static inline constexpr unsigned FLAG_BITS  = EnableStateFlags ? (Has_FlagState_BITS?Policy::FlagState_BITS:2) : 0u;
+      static inline constexpr unsigned EXTRA_BITS   = EnableMaskedExtraRep&&Has_MaskedExtra_BITS ? Policy::MaskedExtra_BITS: 0u;
+      static inline constexpr unsigned EXTRAFLAG_BITS   = EnableMaskedExtraRep&&Has_ExtraFlag_BITS ? Policy::ExtraFlag_BITS : 0u;
     
       // --- Shifts (Sign on top) ---
-      static inline constexpr unsigned SHIFT_SIGN  = INT_BITS + DECIMAL_BITS + FLAG_BITS + EXTRA_BITS;
-      static inline constexpr unsigned SHIFT_INT   = DECIMAL_BITS + FLAG_BITS + EXTRA_BITS;
-      static inline constexpr unsigned SHIFT_DECIMAL = FLAG_BITS + EXTRA_BITS;
+      static inline constexpr unsigned SHIFT_SIGN  = INT_BITS + DECIMAL_BITS + FLAG_BITS + EXTRA_BITS + EXTRAFLAG_BITS;
+      static inline constexpr unsigned SHIFT_INT   = DECIMAL_BITS + FLAG_BITS + EXTRA_BITS + EXTRAFLAG_BITS;
+      static inline constexpr unsigned SHIFT_DECIMAL = FLAG_BITS + EXTRA_BITS + EXTRAFLAG_BITS;
       static inline constexpr unsigned SHIFT_VALUE  = SHIFT_DECIMAL; // low end starts at DecimalHalf
-      static inline constexpr unsigned SHIFT_FLAG  = EXTRA_BITS;
-      static inline constexpr unsigned SHIFT_EXTRA   = 0u;
+      static inline constexpr unsigned SHIFT_FLAG  = EXTRA_BITS + EXTRAFLAG_BITS;
+      static inline constexpr unsigned SHIFT_EXTRA   = EXTRAFLAG_BITS;
+      static inline constexpr unsigned SHIFT_EXTRAFLAG   = 0u;
 
       //Static storage-width check
       static_assert(
-      (SIGN_BITS + INT_BITS + DecimalHalf_BITS + FlagState_BITS + EXTRA_BITS) <= (sizeof(StoreT)*CHAR_BIT),
+      (SIGN_BITS + INT_BITS + DecimalHalf_BITS + FlagState_BITS + EXTRA_BITS + EXTRAFLAG_BITS) <= (sizeof(StoreT)*CHAR_BIT),
       "Policy::StoreT too narrow for configured bit-fields"
       );
 
@@ -267,14 +362,16 @@ namespace AltNum {
       static inline constexpr StoreT PURE_VALUE_MASK = ones(VALUE_BITS);
       static inline constexpr StoreT PURE_FLAG_MASK  = ones(FLAG_BITS);
       static inline constexpr StoreT PURE_EXTRA_MASK = ones(EXTRA_BITS);
+      static inline constexpr StoreT PURE_EXTRAFLAG_MASK = ones(PURE_EXTRAFLAG_MASK);
 
       // --- Shifted masks ---
       static inline constexpr StoreT Sign_MASK  = PURE_SIGN_MASK  << SHIFT_SIGN;
       static inline constexpr StoreT Int_MASK   = PURE_INT_MASK   << SHIFT_INT;
       static inline constexpr StoreT Dec_MASK   = PURE_DEC_MASK   << SHIFT_DECIMAL;
-      static inline constexpr StoreT Value_MASK    = PURE_VALUE_MASK << SHIFT_VALUE;
+      static inline constexpr StoreT Value_MASK = PURE_VALUE_MASK << SHIFT_VALUE;
       static inline constexpr StoreT Flag_MASK  = PURE_FLAG_MASK  << SHIFT_FLAG;
-      static inline constexpr StoreT Extra_MASK   = PURE_EXTRA_MASK << SHIFT_EXTRA;
+      static inline constexpr StoreT Extra_MASK = PURE_EXTRA_MASK << SHIFT_EXTRA;
+      static inline constexpr StoreT ExtraFlag_MASK = PURE_EXTRAFLAG_MASK << SHIFT_EXTRA;
 
       // --- Clamp helpers ---
       static constexpr unsigned clampSign(unsigned v)  noexcept { return unsigned(v & unsigned(PURE_SIGN_MASK)); }
@@ -283,6 +380,26 @@ namespace AltNum {
       static constexpr unsigned clampValue(unsigned v) noexcept { return unsigned(v & unsigned(PURE_VALUE_MASK)); }
       static constexpr unsigned clampFlags(unsigned v) noexcept { return unsigned(v & unsigned(PURE_FLAG_MASK)); }
       static constexpr unsigned clampExtra(unsigned v) noexcept { return unsigned(v & unsigned(PURE_EXTRA_MASK)); }
+      static constexpr unsigned clampExtraFlags(unsigned v) noexcept { return unsigned(v & unsigned(PURE_EXTRAFLAG_MASK)); }
+
+      /*Shortcut bitwise math variables*/
+      // Packed representation of exactly 1 integer
+      static constexpr ValueT OneDecimalPacked = ValueT(1) << DECIMAL_BITS;
+      
+      // Borrow‑and‑normalize: +1 integer, −DecimalOverflow fractional
+      static constexpr ValueT OneIntPackedMinusDecimalOverflow =
+          OneDecimalPacked - DecimalOverflow;
+      
+      // Carry‑and‑normalize: +1 integer, +DecimalOverflow fractional
+      static constexpr ValueT OneIntPackedPlusDecimalOverflow =
+          OneDecimalPacked + DecimalOverflow;
+
+      // Maximum packed magnitude: max integer half with max fractional half
+      static constexpr ValueT MaxPackedValue =
+          (ValueT(MaxIntHalf) << DECIMAL_BITS) | (DecimalOverflow - 1);
+      
+      // Minimum packed magnitude in unsigned mode
+      static constexpr ValueT MinPackedValue = 0;
 
       // 0/1 raw sign bit as stored (ignores PositiveSign semantics)
       constexpr unsigned RawSignBit() const noexcept {
@@ -350,6 +467,7 @@ namespace AltNum {
       static constexpr StoreT packValue(unsigned v) noexcept { return (StoreT(clampValue(v))  << SHIFT_VALUE) & Value_MASK; }
       static constexpr StoreT packFlag(unsigned v)  noexcept { return (StoreT(clampFlags(v))<< SHIFT_FLAG) & Flag_MASK; }
       static constexpr StoreT packExtra(unsigned v) noexcept { return (StoreT(clampExtra(v))<< SHIFT_EXTRA) & Extra_MASK; }
+      static constexpr StoreT packExtraFlag(unsigned v) noexcept { return (StoreT(clampExtra(v))<< SHIFT_EXTRAFLAG) & ExtraFlag_MASK; }
 
       static constexpr unsigned splitIntPart(StoreT value) noexcept {
         return unsigned((value >> DECIMAL_BITS) & PURE_INT_MASK);
@@ -358,18 +476,60 @@ namespace AltNum {
         return unsigned(value & PURE_DEC_MASK);
       }
       
-			//Sets IntHalf and DecimalHalf field at same time without modifying other parts
-      static constexpr StoreT SetValue(unsigned intPart, unsigned decPart) noexcept {
+      static constexpr StoreT GenerateWithValue(unsigned intPart, unsigned decPart) noexcept {
         return ((StoreT(intPart) & PURE_INT_MASK) << DECIMAL_BITS) |
            (StoreT(decPart) & PURE_DEC_MASK);
       }
 
-      static constexpr StoreT assemble(unsigned sign, unsigned i, unsigned d, unsigned f, unsigned e=0) noexcept {
-        return packSign(sign) | packInt(i) | packDec(d) | packFlag(f) | packExtra(e);
+      // Overwrite int+dec halves, preserve sign, flags, extra
+      constexpr void SetValue(unsigned intPart, unsigned decPart) noexcept {
+          raw &= ~(Int_MASK | Dec_MASK);
+          raw |= packInt(intPart) | packDec(decPart);
       }
 
-      static constexpr StoreT assembleValue(unsigned i, unsigned d, unsigned e=0) noexcept {
-        return packInt(i) | packDec(d) | packExtra(e);
+      // Overwrite sign + int + dec halves in `raw`, preserving flags and ExtraRep
+      constexpr void SetSignedValue(unsigned intPart, unsigned decPart = 0, bool isPositive = true) noexcept
+      {
+          // Clear only the lanes we’re replacing
+          StoreT cleared = raw & ~(Sign_MASK | Int_MASK | Dec_MASK);
+      
+          if constexpr (UnsignedMode || SIGN_BITS == 0u) {
+              raw = cleared | packInt(intPart) | packDec(decPart);
+          } else {
+              const unsigned signLane =
+                  isPositive ? (PositiveSign ? 1u : 0u)
+                             : (PositiveSign ? 0u : 1u);
+      
+              raw = cleared | packSign(signLane)
+                             | packInt(intPart)
+                             | packDec(decPart);
+          }
+      }
+
+      // Overwrite IntHalf + DecimalHalf lane, preserve sign, flags, extra
+      constexpr void SetRawValue(StoreT packedValue) noexcept {
+          raw = (raw & ~Value_MASK) | ((packedValue << SHIFT_VALUE) & Value_MASK);
+      }
+      
+      // Overwrite sign + IntHalf + DecimalHalf, preserve flags, extra
+      constexpr void SetRawSignedValue(StoreT packedValue, bool isPositive = true) noexcept {
+          // Clear sign + value lane
+          raw &= ~(Sign_MASK | Value_MASK);
+      
+          if constexpr (UnsignedMode || SIGN_BITS == 0u) {
+              raw |= (packedValue << SHIFT_VALUE) & Value_MASK;
+          } else {
+              const unsigned signLane =
+                  isPositive ? (PositiveSign ? 1u : 0u)
+                             : (PositiveSign ? 0u : 1u);
+      
+              raw |= packSign(signLane)
+                   | ((packedValue << SHIFT_VALUE) & Value_MASK);
+          }
+      }
+
+      static constexpr StoreT assemble(unsigned sign, unsigned i, unsigned d, unsigned f, unsigned e=0) noexcept {
+        return packSign(sign) | packInt(i) | packDec(d) | packFlag(f) | packExtra(e) | packExtraFlag(e);
       }
     
       constexpr void set(unsigned sign, unsigned i, unsigned d, unsigned f, unsigned e=0) noexcept {
@@ -400,9 +560,15 @@ namespace AltNum {
         return unsigned((raw & Dec_MASK) >> SHIFT_DECIMAL);
       }
 
-      constexpr unsigned Value() const noexcept {
+      //Combined IntHslf+DecimalHalf lanes
+      constexpr unsigned RawValue() const noexcept {
         return unsigned((raw & Value_MASK) >> SHIFT_VALUE);
       }
+
+      inline constexpr ValueT ScaledValue()
+			{
+			  return GetIntHalf()*DecimalOverflow+GetDecimalHalf();
+			}
 
       //Get Integer half of value magnitude
       constexpr IntHalfValueT GetIntHalf() const noexcept
@@ -416,7 +582,8 @@ namespace AltNum {
 			  return unsigned((raw & Dec_MASK) >> SHIFT_DECIMAL);
 			}
 			
-      inline void SetIntHalfMag(IntHalfValueT val)
+      //Set IntHalf Magnitude
+      inline void SetIntHalf(IntHalfValueT val)
 			{
 			  if constexpr (HasValueMember<decltype(IntHalf)>)
 				  IntHalf.Value = val;
@@ -424,7 +591,8 @@ namespace AltNum {
 				  IntHalf = val;
 			}
 
-      inline void SetDecHalfMag(DecimalHalfValueT val)
+      //Set DecHalf Magnitude
+      inline void SetDecHalf(DecimalHalfValueT val)
 			{
 			  if constexpr (HasDecimalValueMember<decltype(DecimalHalf)>)
 				  DecimalHalf.Value = val;
@@ -445,85 +613,31 @@ namespace AltNum {
       // --- Accessors ---
       // PositiveSign means "1 = positive" (inverse of the usual meaning)
       constexpr bool IsPositive() const noexcept {
-        if constexpr ((UnsignedMode)) return true;
-        if constexpr (PositiveSign==1) return (raw & Sign_MASK) == 1;
-        else return (raw & Sign_MASK) == 0;
+        if constexpr (UnsignedMode) return true;
+        else return (raw & Sign_MASK) == PositiveSign;
       }
       
       constexpr bool IsNegative() const noexcept {
-        if constexpr ((UnsignedMode)) return false;
-        if constexpr (PositiveSign==1) return (raw & Sign_MASK) == 0;
-        else return (raw & Sign_MASK) == 1;
+        if constexpr (UnsignedMode) return false;
+        else return (raw & Sign_MASK) == NegativeSign;
       }
 
-      void magSubOrFlip(const ValueT& rhs) noexcept {
-          if (rhs > Value()) {
-              Value() = rhs - Value();
-              FlipSign();
-          } else {
-              Value() -= rhs;
-          }
-      }
+      //MaxIntHalf and MinIntHalf likely will be rarely used for raw since representing as mask
+      //Used for Maximum and Minimum Value fields
+      static constexpr unsigned MaxIntHalf = Has_MaxIntHalf ? Policy::MaxIntHalf : 4294967295; 
+      static constexpr unsigned MinIntHalf = Has_MaxIntHalf ? Policy::MinIntHalf : 0;
 
-      void Bitwise_UnsignedAddOp(const ValueT& r) const noexcept {
-        if constexpr ((UnsignedMode))
-          Value() += r;
-        else {
-          if(IsPositive())
-            Value() += r;
-          else
-            magSubOrFlip(r);
+      static constexpr IntHalfT IntHalfZero = Policy::IntHalfT ? Policy::IntHalfT : 0;
+      static constexpr DecimalHalfT DecimalHalfZero = Policy::IntHalfT ? Policy::IntHalfT : 0;
+
+      static inline constexpr StoreT ZeroRaw = []() constexpr {
+        if constexpr (Base::UnsignedMode) {
+          return StoreT(0);
+        } else {
+          return (StoreT(0) & Value_MASK)
+          | (PositiveSign ? Sign_Mask : StoreT(0));
         }
-      }
-
-      void Bitwise_AddOp(const ValueT& r, const bool rightIsPositive=true) const noexcept {
-        if constexpr (UnsignedMode)
-          Value() += r;
-        else {
-          if(IsPositive()){
-            if(rightIsPositive)
-              Value() += r;
-            else
-              magSubOrFlip(r);
-          } else {
-            if(rightIsPositive)
-              magSubOrFlip(r);
-            else
-              Value() += r;
-          }
-        }
-      }
-
-      void Bitwise_UnsignedSubOp(const ValueT& r) const noexcept {
-        if constexpr ((UnsignedMode))
-          Value() -= r;
-        else {
-          if(IsPositive()){
-            magSubOrFlip(r);
-          }
-          else
-            Value() += r;
-        }
-      }
-
-      void Bitwise_SubOp(const ValueT& r, const bool rightIsPositive=true) const noexcept {
-        if constexpr (UnsignedMode)
-          Value() -= r;
-        else {
-          if(IsPositive()){
-            if(rightIsPositive)
-              magSubOrFlip(r);
-            else
-              Value() += r;
-          } else {
-            if(rightIsPositive)
-              Value() += r;
-            else
-              magSubOrFlip(r);
-          }
-        }
-      }
-
+      }();
     };
 
     // when split mode:
@@ -538,6 +652,11 @@ namespace AltNum {
 		
       IntHalfT   IntHalf;
       DecimalHalfT DecimalHalf;
+
+      static_assert(
+      SignedMode&&!HasValueMember<IntValueT>,
+      "Policy::SignedMode requires Value members for split mode(signed integers not supported)"
+      );
 
       //Get Integer half of value magnitude
       constexpr IntHalfValueT GetIntHalf() const noexcept
@@ -557,7 +676,7 @@ namespace AltNum {
 				  return DecimalHalf;
 			}
 			
-      inline void SetIntHalfMag(IntHalfValueT val)
+      inline void SetIntHalf(IntHalfValueT val)
 			{
 			  if constexpr (HasValueMember<decltype(IntHalf)>)
 				  IntHalf.Value = val;
@@ -565,7 +684,7 @@ namespace AltNum {
 				  IntHalf = val;
 			}
 
-      inline void SetDecHalfMag(DecimalHalfValueT val)
+      inline void SetDecHalf(DecimalHalfValueT val)
 			{
 			  if constexpr (HasDecimalValueMember<decltype(DecimalHalf)>)
 				  DecimalHalf.Value = val;
@@ -575,8 +694,8 @@ namespace AltNum {
 
       inline void SetValue(IntHalfValueT intPart, DecimalHalfValueT decPart)
 			{
-			  SetIntHalfMag(xval);
-				SetDecHalfMag(yval);
+			  SetIntHalf(intPart);
+				SetDecHalf(decPart);
 			}
 
       //Checking if DecimalHalf is supported type before using table
@@ -609,7 +728,7 @@ namespace AltNum {
     
       static constexpr DecimalHalfT DecimalMax = DecimalOverflow - 1;
 			
-      inline ValueT Value()
+      inline constexpr ValueT ScaledValue()
 			{
 			  return GetIntHalf()*DecimalOverflow+GetDecimalHalf();
 			}
@@ -649,33 +768,27 @@ namespace AltNum {
     };
     
     template<typename Policy>
-    struct CoreStorage: public std::conditional_t<Policy::DisableBitwiseMaskMode, SplitFields<Policy>, RawBlob<Policy>>,
+    struct CoreStorage: public std::conditional_t<Policy::SplitFieldsMode, SplitFields<Policy>, RawBlob<Policy>>,
     public std::conditional_t<HasTail, TailFields<Policy>, NoTail>
     {
-      using Base = std::conditional_t<Policy::DisableBitwiseMaskMode,
+      using Base = std::conditional_t<Policy::SplitFieldsMode,
       SplitFields<Policy>, RawBlob<Policy>>;
         
       using Tail = std::conditional_t<Tail::HasTail, TailFields<Policy>, NoTail>;
-
-    protected:
-      static inline constexpr StoreT ZeroRaw = []() constexpr {
-        if constexpr (Policy::UnsignedMode) {
-          return Base::StoreT(0);
-        } else {
-          return (Base::StoreT(0) & Base::Value_MASK)
-          | (Base::PositiveSign ? Base::Sign_Mask : Base::StoreT(0));
-        }
-      }();
 
     public://Any publics from Raw blob and split fields that need IsZero() moved here
     
       // Check if zero
       constexpr bool IsZero() const noexcept {
         const bool headZero = [&]() constexpr {
-          if constexpr (Base::UnsignedMode && Policy::SkipSafeCheck) {
-            return this->raw == ZeroRaw;
-          } else {
-            return (this->raw & Base::Value_MASK) == Base::StoreT(0);
+          if constexpr (VariantName::SplitFieldsMode)
+            return this->IntHalf==0&&this->DecimalHalf==0;
+          else {
+            if constexpr (Base::UnsignedMode && Base::SkipSafeCheck) {
+              return this->raw == ZeroRaw;
+            } else {
+              return (this->raw & Base::Value_MASK) == Base::StoreT(0);
+            }
           }
         }();
 
@@ -692,18 +805,13 @@ namespace AltNum {
           return this->IsZero() ? 0 : 1;
         }
         //Assumes IntHalf exists and has comparison operations against signed int
-        if constexpr (Base::DisableBitwiseMaskMode) {
-          return IsZero() ? 0 : (this->IntHalf<0?-1,1);
+        if constexpr (Base::SplitFieldsMode) {
+          return IsZero() ? 0 : (this->IntHalf.IsNegative()?-1,1);
         }
-        if constexpr (Base::PositiveSign) {//PositiveSign is when Positive sign defined as 1(Bit definition for 1)
-          const int bit = ((this->raw & Base::Sign_MASK) ? 1 : 0);
-          const int s   = (bit << 1) - 1;   // 1->+1, 0->-1
-          return s & -nz;                   // mask to 0 if zero
-        } else {
-          const int bit = ((this->raw & Base::Sign_MASK) == 0 ? 1 : 0);
-          const int s   = (bit << 1) - 1;   // 1->+1, 0->-1
-          return s & -nz;
-        }
+        const int nz  = !this->IsZero(); // or however you compute nz
+        const int bit = (((this->raw & Base::Sign_MASK) != 0) ? 1 : 0) ^ (Base::PositiveSign ^ 1);
+        const int s   = (bit << 1) - 1;  // 1 → +1, 0 → -1
+        return s & -nz;                  // mask to 0 if zero
       }
 
       // Unsigned: API sanity only — no-op and const is fine
@@ -714,7 +822,7 @@ namespace AltNum {
       template<typename U = void, typename = std::enable_if_t<!UnsignedMode, U>>
       inline void FixZeroSign() noexcept {
         if (IsZero()) {
-          if constexpr (Policy::DisableBitwiseMaskMode) {
+          if constexpr (Policy::SplitFieldsMode) {
             //SplitFields: ensure IntHalf/Sign field is canonical positive
             //(fill in according to your IntHalf representation)
             //(MirroredInt already does this maintence)
@@ -760,44 +868,6 @@ namespace AltNum {
     #pragma endregion DigitStorage
 
     #pragma region ValueSetters
-/*
-    inline void SetIntHalf(IntHalfT& v const) noexcept {
-      if constexpr(Policy::DisableBitwiseMaskMode) {
-      } else {
-      }
-    }
-
-    inline void SetIntHalfFromSigned(IntHalfSignedT& v const) noexcept {
-      if constexpr(Policy::DisableBitwiseMaskMode) {
-      } else {
-      }
-    }
-
-    inline void SetDecimalHalf(DecimalHalfT& v const) noexcept {
-      if constexpr(Policy::DisableBitwiseMaskMode) {
-			  DecimalHalf = v; 
-      } else {
-			  DecimalHalf 
-      }
-    }
-
-    inline void SetExtraRep(ExtraRepT& v const) noexcept {
-      if constexpr(Policy::DisableBitwiseMaskMode) {
-      } else {
-      }
-    }
-
-    inline void SetFlags(unsigned& v const) noexcept {
-      if constexpr(Policy::DisableBitwiseMaskMode) {
-      } else {
-      }
-    }
-
-    template<typename = std::enable_if_t<!Policy::DisableBitwiseMaskMode>
-    inline void SetMagnitude(unsigned v) noexcept {
-      Value() = v;
-    }
-*/
     #pragma endregion ValueSetters
   };
 }}

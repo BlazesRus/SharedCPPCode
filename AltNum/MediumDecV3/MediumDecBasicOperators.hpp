@@ -10,12 +10,285 @@ namespace BlazesRusCode
     class MediumDecBasicOperators
     {
 protected:
+      // Right-side unsigned integer add: this + rhsInt
+      template<typename UIntT, typename = std::enable_if_t<!SplitFieldsMode>>
+      void Bitwise_UIntAddOp(const UIntT& rhsInt) noexcept {
+          if constexpr (UnsignedMode) {
+              if constexpr (BinaryFractionMode) {
+                  SetRawValue(RawValue() + (ValueT(rhsInt) << DECIMAL_BITS));
+              } else {
+                  // Decimal: integer-only add; fractional lane unchanged
+                  SetValue(GetIntHalf() + static_cast<IntHalfValueT>(rhsInt), GetDecimalHalf());
+              }
+              return;
+          }
+      
+          const bool signBefore = IsPositive();
+      
+          if constexpr (BinaryFractionMode) {
+              const ValueT rhsRaw = (ValueT(rhsInt) << DECIMAL_BITS);
+              const ValueT lhsRaw = RawValue();
+      
+              if (signBefore) {
+                  SetRawValue(lhsRaw + rhsRaw);
+              } else {
+                  // -mag + rhsInt == rhsRaw - lhsRaw in magnitude space
+                  if (rhsRaw >= lhsRaw) {
+                      SetRawValue(rhsRaw - lhsRaw);
+                      FlipSign(); // becomes positive
+                  } else {
+                      SetRawValue(lhsRaw - rhsRaw);
+                      // stays negative
+                  }
+              }
+          } else {
+              // Decimal mode
+              IntHalfValueT lhsInt = GetIntHalf();
+              DecimalHalfValueT lhsDec = GetDecimalHalf();
+              const IntHalfValueT r = static_cast<IntHalfValueT>(rhsInt);
+      
+              if (signBefore) {
+                  // +mag + r: simple integer add, fractional unchanged
+                  lhsInt += r;
+                  SetValue(lhsInt, lhsDec);
+              } else {
+                  // -mag + r == r - (lhsInt + lhsDec/DO)
+                  if (r > lhsInt || (r == lhsInt && lhsDec > 0)) {
+                      // Flip to positive; mirror fractional over DecimalOverflow when lhsDec>0
+                      const IntHalfValueT newInt = r - lhsInt - (lhsDec > 0 ? 1 : 0);
+                      const DecimalHalfValueT newDec = (lhsDec == 0) ? 0 : (DecimalOverflow - lhsDec);
+                      SetValue(newInt, newDec);
+                      FlipSign();
+                  } else {
+                      // Remain negative; magnitude shrinks by r
+                      lhsInt -= r;
+                      SetValue(lhsInt, lhsDec);
+                  }
+              }
+          }
+      }
+      
+      // Right-side unsigned integer sub: this - rhsInt
+      template<typename UIntT, typename = std::enable_if_t<!SplitFieldsMode>>
+      void Bitwise_UIntSubOp(const UIntT& rhsInt) noexcept {
+          if constexpr (UnsignedMode) {
+              if constexpr (BinaryFractionMode) {
+                  SetRawValue(RawValue() - (ValueT(rhsInt) << DECIMAL_BITS));
+              } else {
+                  // Decimal: subtract integer; if fractional > 0 we borrow
+                  IntHalfValueT lhsInt = GetIntHalf();
+                  DecimalHalfValueT lhsDec = GetDecimalHalf();
+      
+                  if (lhsDec > 0) {
+                      // borrow 1 from integer to keep decimal invariant
+                      if (lhsInt == 0) {
+                          // result goes negative
+                          IntHalfValueT newInt = static_cast<IntHalfValueT>(rhsInt) - 1;
+                          DecimalHalfValueT newDec = DecimalOverflow - lhsDec;
+                          SetValue(newInt, newDec);
+                          // No sign lane in UnsignedMode; if you ever add one, flip here.
+                      } else {
+                          --lhsInt;
+                          lhsDec = DecimalOverflow - lhsDec;
+                          // then subtract rhsInt
+                          if (lhsInt >= rhsInt) {
+                              lhsInt -= static_cast<IntHalfValueT>(rhsInt);
+                              SetValue(lhsInt, lhsDec);
+                          } else {
+                              // underflow to negative magnitude — only possible if you later enable sign lane
+                              SetValue(0, 0);
+                          }
+                      }
+                  } else {
+                      // no borrow needed
+                      if (GetIntHalf() >= rhsInt) {
+                          SetValue(GetIntHalf() - static_cast<IntHalfValueT>(rhsInt), 0);
+                      } else {
+                          // underflow to negative magnitude — only possible if you later enable sign lane
+                          SetValue(0, 0);
+                      }
+                  }
+              }
+              return;
+          }
+      
+          const bool signBefore = IsPositive();
+      
+          if constexpr (BinaryFractionMode) {
+              const ValueT rhsRaw = (ValueT(rhsInt) << DECIMAL_BITS);
+              const ValueT lhsRaw = RawValue();
+      
+              // this - rhsRaw in magnitude space with explicit sign management
+              if (signBefore) {
+                  if (lhsRaw >= rhsRaw) {
+                      SetRawValue(lhsRaw - rhsRaw);  // stays positive
+                  } else {
+                      SetRawValue(rhsRaw - lhsRaw);  // flips to negative
+                      FlipSign();
+                  }
+              } else {
+                  // negative - positive == -(mag + rhs)
+                  SetRawValue(lhsRaw + rhsRaw); // magnitude grows, sign stays negative
+              }
+          } else {
+              // Decimal mode
+              IntHalfValueT lhsInt = GetIntHalf();
+              DecimalHalfValueT lhsDec = GetDecimalHalf();
+              const IntHalfValueT r = static_cast<IntHalfValueT>(rhsInt);
+      
+              if (signBefore) {
+                  // +mag - r
+                  if (r > lhsInt || (r == lhsInt && lhsDec > 0)) {
+                      // Flip to negative; mirror fractional over DecimalOverflow if lhsDec>0
+                      IntHalfValueT newInt = r - lhsInt - (lhsDec > 0 ? 1 : 0);
+                      DecimalHalfValueT newDec = (lhsDec == 0) ? 0 : (DecimalOverflow - lhsDec);
+                      SetValue(newInt, newDec);
+                      FlipSign();
+                  } else {
+                      // Stay positive; borrow only if fractional present
+                      if (lhsDec > 0) {
+                          --lhsInt;
+                          lhsDec = DecimalOverflow - lhsDec;
+                      }
+                      lhsInt -= r;
+                      SetValue(lhsInt, lhsDec);
+                  }
+              } else {
+                  // -mag - r == -(mag + r), magnitude increases; fractional unchanged
+                  lhsInt += r;
+                  SetValue(lhsInt, lhsDec);
+                  // sign remains negative
+              }
+          }
+
+
+      template<UnsignedIntegerType IntType=unsigned int, typename = std::enable_if_t<!SplitFieldsMode>>
+      void Bitwise_UIntAddOp(const IntType& r) const noexcept {
+        if (constexpr(UnsignedMode)){
+
+        } else if constexpr (BinaryFractionMode) {
+        } else {
+          if(IsPositive()){
+            Value() += r;
+          } else
+            magSubOrFlip(r, false);
+        }
+      }
+
+      template<UnsignedIntegerType IntType=unsigned int, typename = std::enable_if_t<!SplitFieldsMode>>
+      void Bitwise_UIntSubOp(const IntType& r) const noexcept {
+        if (constexpr(UnsignedMode)){
+          Value() -= r;
+        } else if constexpr (BinaryFractionMode) {
+        } else {
+          if(IsPositive()){
+            Value() += r;
+          } else
+            magSubOrFlip(r, false);
+        }
+      }
+
+      //If signBeforeOp = true, then sign was positive before operation
+      template<typename = std::enable_if_t<!SplitFieldsMode>
+      void magSubOrFlip(const VariantName& rhs, bool signBeforeOp) noexcept {
+          if constexpr (BinaryFractionMode) {
+              // Binary fixed-point: packed RawValue is true magnitude
+              auto lhsRaw = RawValue();
+              auto rhsRaw = rhs.RawValue();
+              if (rhsRaw > lhsRaw) {
+                  SetRawValue(rhsRaw - lhsRaw);
+                  FlipSign();
+              } else {
+                  SetRawValue(lhsRaw - rhsRaw);
+              }
+          } else {
+              // Decimal mode
+              if (rhs.GetDecimalHalf() == 0) {
+                  // Right integer-only fast path
+                  magIntSubOrFlip(rhs.GetIntHalf(), signBeforeOp);
+                  return;
+              }
+      
+              auto lhsInt = GetIntHalf();
+              auto lhsDec = GetDecimalHalf();
+              auto rhsInt = rhs.GetIntHalf();
+              auto rhsDec = rhs.GetDecimalHalf();
+      
+              bool flip = false;
+              if (rhsInt > lhsInt || (rhsInt == lhsInt && rhsDec > lhsDec)) {
+                  std::swap(lhsInt, rhsInt);
+                  std::swap(lhsDec, rhsDec);
+                  flip = true;
+              }
+              if (lhsDec < rhsDec) {
+                  lhsDec += DecimalOverflow;
+                  --lhsInt;
+              }
+              lhsDec -= rhsDec;
+              lhsInt -= rhsInt;
+      
+              SetValue(lhsInt, lhsDec);
+              if (flip) FlipSign();
+          }
+      }
+      
+      // Unsigned subtract
+      void Bitwise_UnsignedSubOp(const VariantName& rhs){
+          if constexpr (BinaryFractionMode) {
+              auto lhsRaw = RawValue();
+              auto rhsRaw = rhs.RawValue();
+              if constexpr (UnsignedMode) {
+                if constexpr (EnableOverflowProtection) {
+                  if (rhsRaw > lhsRaw) {
+                   throw std::underflow_error("Unsigned underflow");
+                  }
+                }
+                SetRawValue(lhsRaw - rhsRaw);
+              } else
+                //Code needs rewritten to account for signs
+ 
+              }
+          else if constexpr (UnsignedMode) {
+            auto lhsRaw = RawValue();
+            auto rhsRaw = rhs.RawValue();
+            if constexpr (EnableOverflowProtection) {
+              if (rhsRaw > lhsRaw) {
+                throw std::underflow_error("Unsigned underflow");
+              }
+            }
+            ValueT result = lhsRaw - rhsRaw;
+            DecimalHalfValueT decPart = splitDecPart(result);
+            if(decPart>DecimalOverflow){
+              result += OneIntPackedMinusDecimalOverflow;
+            }
+            SetRawValue(result);
+          } else {
+              if (rhs.GetDecimalHalf() == 0) {
+                  UIntSubOp(rhs.GetIntHalf()); // integer fast path
+              } else {
+                  magSubOrFlip(rhs, true);
+              }
+          }
+      }
+      
+      // Signed subtract
+      void Bitwise_SubOp(const VariantName& rhs){
+          if constexpr (UnsignedMode) {
+              Bitwise_UnsignedSubOp(rhs);
+          } else {
+            rightIsPositive = rhs.IsPositive();
+            if (IsPositive())
+              rightIsPositive ? Bitwise_UnsignedSubOp(rhs): Bitwise_UnsignedAddOp(rhs);
+            else
+              rightIsPositive ? Bitwise_UnsignedAddOp(rhs): Bitwise_UnsignedSubOp(rhs);
+          }
+      }
     #pragma region NormalRep Integer Division Operations
 
         template<IntegerType IntType=unsigned int>
         void PartialUIntDivOp(const IntType& rValue)
         {//Avoid using with special status representations such as approaching zero or result will be incorrect
-          if constexpr (VariantName::DisableBitwiseMaskMode) {
+          if constexpr (VariantName::SplitFieldsMode) {
             unsigned _int64 SelfRes;
             unsigned _int64 Res;
             unsigned _int64 IntHalfRes;
@@ -89,15 +362,15 @@ protected:
         /// <param name="rValue.">The right side value</param>
         bool UnsignedPartialDivOp(const VariantName& rValue)
         {
-					ValueT SelfRes = Value();
-					ValueT ValueRes = rValue.Value();
+          ValueT SelfRes = Value();
+          ValueT ValueRes = rValue.Value();
 
-					ValueT IntHalfRes = SelfRes / ValueRes;
-					ValueT DecimalRes = SelfRes - ValueRes * IntHalfRes;
-					SetValue(IntHalfRes, DecimalRes);
-					if(IntHalfRes==0&&DecimalRes==0)
-						  return true;
-					return false;
+          ValueT IntHalfRes = SelfRes / ValueRes;
+          ValueT DecimalRes = SelfRes - ValueRes * IntHalfRes;
+          SetValue(IntHalfRes, DecimalRes);
+          if(IntHalfRes==0&&DecimalRes==0)
+              return true;
+          return false;
         }
 
         /// <summary>
@@ -471,6 +744,7 @@ protected:
         template<IntegerType IntType=unsigned int>
         void UIntAddOpV1(const IntType& rValue)
         {
+				  if constexpr (Policy::SplitFieldsMode) {
             if(DecimalHalf.Value==0)
                 IntHalf.NRepSkippingUIntAddOp(rValue);
             else {
@@ -479,6 +753,8 @@ protected:
                 if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
                     DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
             }
+					} else {
+					}
         }
 
         /// <summary>
@@ -490,6 +766,7 @@ protected:
         template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
+	        if constexpr (Policy::SplitFieldsMode) {
             if(DecimalHalf.Value==0)
                 IntHalf.NRepSkippingIntegerAddOp(rValue);
             else {
@@ -498,6 +775,8 @@ protected:
                 if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
                     DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
             }
+					} else
+					}
         }
 
 public:
@@ -516,14 +795,21 @@ protected:
         template<IntegerType IntType=unsigned int>
         void UIntSubOp(const IntType& rValue)
         {
-            if(DecimalHalf.Value==0)
-                IntHalf.NRepSkippingUIntSubOp(rValue);
-            else {
-                int signBeforeOp = IntHalf.Sign;
-                IntHalf.UIntSubOp(rValue);
-                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+          if constexpr (VariantName::SplitFieldsMode) {
+            if constexpr(VariantName::UnsignedMode) {
+            } else {
+              if(DecimalHalf.Value==0)
+                  IntHalf.NRepSkippingUIntSubOp(rValue);
+              else {
+                  int signBeforeOp = IntHalf.Sign;
+                  IntHalf.UIntSubOp(rValue);
+                  if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                      DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+              }
             }
+          } else if constexpr(VariantName::UnsignedMode) {
+          } else {
+          }
         }
 
         /// <summary>
@@ -535,14 +821,21 @@ protected:
         template<IntegerType IntType=signed int>
         void IntSubOp(const IntType& rValue)
         {
-            if(DecimalHalf.Value==0)
-                IntHalf.NRepSkippingIntegerSubOp(rValue);
-            else {
-                unsigned int signBeforeOp = IntHalf.Sign;
-                IntHalf -= rValue;
-                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+          if constexpr (VariantName::SplitFieldsMode) {
+            if constexpr(VariantName::UnsignedMode) {
+            } else {
+              if(DecimalHalf.Value==0)
+                  IntHalf.NRepSkippingIntegerSubOp(rValue);
+              else {
+                  unsigned int signBeforeOp = IntHalf.Sign;
+                  IntHalf -= rValue;
+                  if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                      DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+              }
             }
+          } else if constexpr(VariantName::UnsignedMode) {
+          } else {
+          }
         }
 
 public:
@@ -559,6 +852,7 @@ protected:
         /// <param name="rValue.">The right side rValue</param>
         void UnsignedAddOpV1(const VariantName& rValue)
         {
+          if constexpr (Policy::SplitFieldsMode) {
             if(rValue.DecimalHalf==0)
                 UnsignedMirroredAddOp(rValue.IntHalf);
             else
@@ -602,6 +896,32 @@ protected:
                         DecimalHalf.Value = decResult;
                 }
             }
+          } else
+            if constexpr (BinaryFractionMode) {
+              if constexpr (UnsignedMode) {
+                SetRawValue(RawValue() + rhs.RawValue());
+              } else {
+                if(IsPositive())
+                  SetRawValue(RawValue() + rhs.RawValue());
+                else {
+                  //Update code
+                }
+              }
+            } else {
+                if (rhs.GetDecimalHalf() == 0) {
+                    UIntAddOp(rhs.GetIntHalf()); // integer fast path
+                } else {
+                    auto sum = RawValue() + rhs.RawValue();
+                    auto intHalf = sum >> DECIMAL_BITS;
+                    auto decHalf = sum & ((ValueT(1) << DECIMAL_BITS) - 1);
+                    if (decHalf >= DecimalOverflow) {
+                        decHalf -= DecimalOverflow;
+                        ++intHalf;
+                    }
+                    SetValue(intHalf, decHalf);
+                }
+            }
+          }
         }
 
         /// <summary>
@@ -611,6 +931,7 @@ protected:
         /// <param name="rValue.">The right side rValue</param>
         void AddOpV1(const VariantName& rValue)
         {
+          if constexpr (Policy::SplitFieldsMode) {
             if (rValue.DecimalHalf == 0)
                 MirroredAddOp(rValue.IntHalf);
             else {
@@ -681,6 +1002,18 @@ protected:
                     }
                 }
             }
+          } else {
+            if constexpr (UnsignedMode) {
+                Bitwise_UnsignedAddOp(rhs);
+            } else {
+              rightIsPositive = rhs.IsPositive();
+              if (IsPositive())
+                rightIsPositive ? Bitwise_UnsignedAddOp(rhs):magSubOrFlip(rhs, true);
+              else
+                rightIsPositive ? magSubOrFlip(rhs, false)
+                                : Bitwise_UnsignedAddOp(rhs);
+            }
+          }
         }
 
         /// <summary>
@@ -690,6 +1023,7 @@ protected:
         /// <param name="rValue.">The right side rValue</param>
         void BasicUnsignedSubOp(const VariantName& rValue)
         {
+          if constexpr (Policy::SplitFieldsMode) {
             if (rValue.DecimalHalf == 0)
                 UnsignedMirroredSubOp(rValue.IntHalf);
             else {
@@ -726,6 +1060,8 @@ protected:
                         DecimalHalf.Value -= rValue.DecimalHalf.Value;
                 }
             }
+          } else {
+          }
         }
 
         /// <summary>
@@ -735,6 +1071,7 @@ protected:
         /// <param name="rValue.">The right side rValue</param>
         void BasicSubOp(const VariantName& rValue)
         {
+          if constexpr (Policy::SplitFieldsMode) {
             if(rValue.DecimalHalf==0)
                 MirroredSubOp(rValue.IntHalf);
             else
@@ -808,6 +1145,9 @@ protected:
                     }
                 }
             }
+          } else {
+
+          }
         }
 
     #pragma endregion NormalRep AltNum Addition/Subtraction Operations

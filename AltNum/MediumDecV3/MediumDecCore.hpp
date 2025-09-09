@@ -252,7 +252,7 @@ public:
 				if (rhs == 0) return *this;
 
 				uint64_t combined = 0;
-				if constexpr (DisableBitwiseMaskMode) {
+				if constexpr (SplitFieldsMode) {
 						if constexpr (UsingIntHalfValue) {
 								combined = static_cast<uint64_t>(IntHalf.Value) * DecimalOverflow + DecimalHalf.Value;
 						} else {
@@ -274,7 +274,7 @@ public:
 
 				if (combined == 0) {
 						SetAsZero();
-				} else if constexpr (DisableBitwiseMaskMode) {
+				} else if constexpr (SplitFieldsMode) {
 						if constexpr (UsingIntHalfValue) {
 								IntHalf.Value     = static_cast<IntHalfValueT>(combined / DecimalOverflow);
 								DecimalHalf.Value = static_cast<DecimalHalfValueT>(combined % DecimalOverflow);

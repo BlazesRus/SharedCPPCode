@@ -99,7 +99,7 @@ public:
     /// </summary>
     void  SetValueToPiNum()
     {//Closest RestrictedFloat value to match 10th+ digits of pi (0, 39 580 354)
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 3; DecimalHalf = 141592654;
       }
       else
@@ -111,7 +111,7 @@ public:
     //100,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToHundredMilPiNum()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 314159265; DecimalHalf = 358979324;
       }
       else
@@ -123,7 +123,7 @@ public:
     //10,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToTenMilPiNum()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 31415926; DecimalHalf = 535897932;
       }
       else
@@ -135,7 +135,7 @@ public:
     //1,000,000xPi(Rounded to 9th decimal digit)
     void  SetValueToOneMilPiNum()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 3141592; DecimalHalf = 653589793;
       }
       else
@@ -146,7 +146,7 @@ public:
 
     //10xPi(Rounded to 9th decimal digit)
     void  SetValueToTenPiNum(){
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 31; DecimalHalf = 415926536;
       }
       else
@@ -162,7 +162,7 @@ public:
     /// (about 2.71828182845904523536028747135266249775724709369995)
     /// </summary>
     void  SetValueToENum(){
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 2; DecimalHalf = 718281828;
       }
       else
@@ -173,7 +173,7 @@ public:
 
     //Sets value to value at 0.5
     void  SetValueToPoint5(){
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 500000000;
       }
       else
@@ -184,7 +184,7 @@ public:
 
     void  SetValueToJustAboveZero()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 1;
       }
       else
@@ -197,7 +197,7 @@ public:
     /// </summary>
     void  SetValueToOneMillionth()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 1000;
       }
       else
@@ -212,7 +212,7 @@ public:
     /// <returns>MediumDecV3Variant</returns>
     void  SetValueToFiveThousandth()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 5000000;
       }
       else
@@ -226,7 +226,7 @@ public:
     /// </summary>
     void  SetValueToFiveMillionth()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 5000;
       }
       else
@@ -238,7 +238,7 @@ public:
     //0e-7
     void  SetValueToTenMillionth()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 100;
       }
       else
@@ -252,7 +252,7 @@ public:
     /// </summary>
     void  SetValueToOneHundredMillionth()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 10;
       }
       else
@@ -267,7 +267,7 @@ public:
     /// </summary>
     void  SetValueToLN10()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 2; DecimalHalf = 302585093;
       }
       else
@@ -281,7 +281,7 @@ public:
     /// </summary>
     void  SetValueToLN10Div()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 434294482;
       }
       else
@@ -295,7 +295,7 @@ public:
     /// </summary>
     void  SetValueToTwiceLN10Div()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 868588964;
       }
       else
@@ -306,7 +306,7 @@ public:
 
     void SetValueToPointOne()
     {
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         IntHalf = 0; DecimalHalf = 100000000;
       }
       else
@@ -464,7 +464,7 @@ public:
 
     bool operator==(const int& that) const
     {
-      if constexpr (Base::DisableBitwiseMaskMode) {
+      if constexpr (Base::SplitFieldsMode) {
         if (IntHalf!=that)
           return false;
         if (DecimalHalf!=0)
@@ -476,7 +476,7 @@ public:
 
     bool operator==(const MediumDec& that) const
     {
-      if constexpr (Base::DisableBitwiseMaskMode) {
+      if constexpr (Base::SplitFieldsMode) {
         #if defined(AltNum_EnableUndefinedButInRange)
           if(DecimalHalf==UndefinedInRangeMinMaxRep)
             return false;
@@ -507,7 +507,7 @@ public:
 
     bool operator==(const MediumDecV2& that) const
     {
-      if constexpr (Base::DisableBitwiseMaskMode) {
+      if constexpr (Base::SplitFieldsMode) {
     #if defined(AltNum_EnableUndefinedButInRange)
       if(DecimalHalf==UndefinedInRangeMinMaxRep)
         return false;
@@ -542,7 +542,7 @@ public:
 
     bool operator==(const VariantName& that) const
     {
-      if constexpr (Base::DisableBitwiseMaskMode) {
+      if constexpr (Base::SplitFieldsMode) {
         #if defined(AltNum_EnableUndefinedButInRange)
           if(DecimalHalf==UndefinedInRangeMinMaxRep)
             return false;
@@ -650,7 +650,7 @@ public:
 
     //Reverses DecimalHalf over DecimalOverflow limit(moving to another section later)
     inline void FlipDecimalHalf(){
-      if constexpr (DisableBitwiseMaskMode) {
+      if constexpr (SplitFieldsMode) {
         DecimalHalf = DecimalOverflow - DecimalHalf;
       else
         DecimalHalf() = DecimalOverflow - DecimalHalf();
@@ -664,7 +664,7 @@ public:
     MediumDecV3Variant& operator ++()
     {
       //Convert to normal type if needed before operation decrease
-      if constexpr (DisableBitwiseMaskMode) {
+      if constexpr (SplitFieldsMode) {
         if (constexpr (UnsignedMode))
           ++IntHalf;
         else {
@@ -699,7 +699,7 @@ public:
     VariantName& operator --()
     {
       //Convert to normal type if needed before operation decrease
-      if constexpr (Policy::DisableBitwiseMaskMode) {
+      if constexpr (Policy::SplitFieldsMode) {
         if (constexpr (UnsignedMode))
           --IntHalf;
         else {
