@@ -91,7 +91,7 @@ void BlazesRusCode::MediumDec::SetValueToPointOne()
 #pragma endregion ValueSetters
 
 #pragma region ValueDefines
-
+/*
 MediumDec BlazesRusCode::MediumDec::AlmostOneValue()
 {
 	return MediumDec(0, 999999999);
@@ -221,12 +221,13 @@ MediumDec BlazesRusCode::MediumDec::PointOneValue()
 {
 	return MediumDec(0, 100000000);
 }
-
+*/
 #pragma endregion ValueDefines
 
 #pragma region ValueDefine Source
 const MirroredInt MediumDec::NegativeRep = MirroredInt::NegativeZero;
 
+/*
 const MediumDec MediumDec::AlmostOne = MediumDec::AlmostOneValue();
 const MediumDec MediumDec::Pi = MediumDec::PiNumValue();
 const MediumDec MediumDec::One = MediumDec::OneValue();
@@ -252,6 +253,7 @@ const MediumDec MediumDec::PiNum = MediumDec::PiNumValue();
 const MediumDec MediumDec::ENum = MediumDec::ENumValue();
 const MediumDec MediumDec::NegativePointFive = MediumDec::NegativePointFiveValue();
 const MediumDec MediumDec::PointOne = MediumDec::PointOneValue();
+*/
 #pragma endregion ValueDefine Source
 
 #pragma region Negative_Status

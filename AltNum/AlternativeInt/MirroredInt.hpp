@@ -12,121 +12,177 @@
 
 namespace BlazesRusCode
 {
-    class MirroredInt;
+  class MirroredInt;
 
     /// <summary>
     /// Integer alternative with magnitude and sign field
 	/// </summary>
-	class DLL_API MirroredInt
-    {
+	class DLL_API MirroredInt{
 	public:
-    #pragma region DigitStorage
+  #pragma region DigitStorage
 
-    #if defined(AltNum_UseInvertedSign)
-        static const unsigned int NegativeSign = 0;
-        static const unsigned int PositiveSign = 1;
-    #else
-        static const unsigned int NegativeSign = 1;
-        static const unsigned int PositiveSign = 0;
-    #endif
+  #if defined(AltNum_UseInvertedSign)
+    inline static constexpr NegativeSign = 0;
+    inline static constexpr PositiveSign = 1;
+  #else
+    inline static constexpr NegativeSign = 1;
+    inline static constexpr PositiveSign = 0;
+  #endif
 
 		//If(Sign==NegativeSign), then the sign is negative.
-        //Otherwise, the sign is positive
+    //Otherwise, the sign is positive
 		unsigned int Sign:1;
 
 		//Stores non-signed part of value
 		unsigned int Value:31;
 
-    #pragma endregion DigitStorage
+  #pragma endregion DigitStorage
 
-    #pragma region class_constructors
+	#pragma region class_constructors
 
-		MirroredInt(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+	/// <summary>
+	/// Initializes a new instance from unsigned value and sign.
+	/// </summary>
+	constexpr MirroredInt(const unsigned int& value = 0,
+							const unsigned int& sign = PositiveSign)
+		: Value(value), Sign(sign) {}
 
-		MirroredInt(const signed int& value);
+	/// <summary>
+	/// Initializes a new instance from signed value.
+	/// </summary>
+	constexpr MirroredInt(const signed int& value)
+		: Value(value < 0 ? static_cast<unsigned int>(-value)
+							: static_cast<unsigned int>(value)),
+			Sign(value < 0 ? PositiveSign : NegativeSign) {}
 
-		MirroredInt(const MirroredInt& rvalue);
+	/// <summary>
+	/// Copy constructor.
+	/// </summary>
+	constexpr MirroredInt(const MirroredInt& rvalue)
+		: Value(rvalue.Value), Sign(rvalue.Sign) {}
 
-        MirroredInt& operator=(const MirroredInt& rhs)
-        {
-            // Check for self-assignment
-            if (this == &rhs)      // Same object?
-                return *this;        // Yes, so skip assignment, and just return *this.
-            Value = rhs.Value; Sign = rhs.Sign;
-            return *this;
-        }
+	/// <summary>
+	/// Copy assignment.
+	/// </summary>
+	constexpr MirroredInt& operator=(const MirroredInt& rhs)
+	{
+		if (this != &rhs)
+		{
+			Value = rhs.Value;
+			Sign = rhs.Sign;
+		}
+		return *this;
+	}
 
-        MirroredInt& operator=(const unsigned int& rhs)
-        {
-		    Value = rhs;
-            Sign = PositiveSign;
-            return *this;
-        }
+	/// <summary>
+	/// Assignment from unsigned int.
+	/// </summary>
+	constexpr MirroredInt& operator=(const unsigned int& rhs)
+	{
+		Value = rhs;
+		Sign = PositiveSign;
+		return *this;
+	}
 
-        MirroredInt& operator=(const signed int& rhs)
-        {
-	        if (rhs<0) {
-		        Sign = PositiveSign;
-		        Value = -rhs;
-	        }
-	        else {
-		        Sign = NegativeSign;
-		        Value = rhs;
-	        }
-            return *this;
-        }
+	/// <summary>
+	/// Assignment from signed int.
+	/// </summary>
+	constexpr MirroredInt& operator=(const signed int& rhs)
+	{
+		if (rhs < 0)
+		{
+			Sign = PositiveSign;
+			Value = static_cast<unsigned int>(-rhs);
+		}
+		else
+		{
+			Sign = NegativeSign;
+			Value = static_cast<unsigned int>(rhs);
+		}
+		return *this;
+	}
 
-        //Fix for C2678 error on assignment
-        void SetValueV2(const MirroredInt& rValue);
+	/// <summary>
+	/// Sets the value from another MirroredInt.
+	/// </summary>
+	constexpr void SetValueV2(const MirroredInt& rValue)
+	{
+		Value = rValue.Value;
+		Sign = rValue.Sign;
+	}
 
-        void SetValue(const unsigned int& value=0, const unsigned int& sign=PositiveSign);
+	/// <summary>
+	/// Sets the value from unsigned int and sign.
+	/// </summary>
+	constexpr void SetValue(const unsigned int& value = 0,
+							const unsigned int& sign = PositiveSign)
+	{
+		Value = value;
+		Sign = sign;
+	}
 
-        void SetSignedValue(const signed int& val=0);
+	/// <summary>
+	/// Sets the value from signed int.
+	/// </summary>
+	constexpr void SetSignedValue(const signed int& val = 0)
+	{
+		if (val < 0)
+		{
+			Sign = PositiveSign;
+			Value = static_cast<unsigned int>(-val);
+		}
+		else
+		{
+			Sign = NegativeSign;
+			Value = static_cast<unsigned int>(val);
+		}
+	}
 
-    #pragma endregion class_constructors
+	#pragma endregion class_constructors
 
-    #pragma region Negative_Status
+
+  #pragma region Negative_Status
 
 		bool IsNegative() const;
 
 		bool IsPositive() const;
 
-        void SetAsPositive();
+    void SetAsPositive();
 
-        void SetAsNegative();
+    void SetAsNegative();
 
-        /// <summary>
-        /// Swaps the negative status.
-        /// </summary>
-        void SwapNegativeStatus();
+    /// <summary>
+    /// Swaps the negative status.
+    /// </summary>
+    void SwapNegativeStatus();
 
-        MirroredInt operator-() const
-        { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
+    MirroredInt operator-() const
+    { MirroredInt self = *this; self.SwapNegativeStatus(); return self; }
 
-    #pragma endregion Negative_Status
+  #pragma endregion Negative_Status
 
-    #pragma region Check_if_value
+  #pragma region Check_if_value
 
-        //Set as zero without changing sign(including negative zero)
-        void SetAsZeroVal();
+    //Set as zero without changing sign(including negative zero)
+    void SetAsZeroVal();
 
-        //Return value as real number(negative zero counts as zero)
-        int GetValue() const;
+    //Return value as real number(negative zero counts as zero)
+    int GetValue() const;
 
-        void SetAsZero();
+    void SetAsZero();
 
-        void SetAsNegativeZero();
+    void SetAsNegativeZero();
 
-        //Is at either zero or negative zero
+    //Is at either zero or negative zero
 		bool IsAtZeroInt() const;
 
-        //Is at neither zero or negative zero
+    //Is at neither zero or negative zero
 		bool IsNotAtZeroInt() const;
 
-        //Is at either zero or negative one
+    //Is at either zero or negative one
 		bool IsAtOneInt() const;
 
-        //Is at neither zero or negative one
+    //Is at neither zero or negative one
 		bool IsNotAtOneInt() const;
 
 		bool IsEven() const;
@@ -135,166 +191,132 @@ namespace BlazesRusCode
 
 		bool IsZero() const;
 
-        //Returns copy of value as Absolute value
-        MirroredInt Abs() const;
+    //Returns copy of value as Absolute value
+    MirroredInt Abs() const;
 
-        void ApplyAbs();
+    void ApplyAbs();
 
-    #pragma endregion Check_if_value
+  #pragma endregion Check_if_value
 
 	#pragma region StringOperations
 
 		void ReadString(const std::string& value);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
-        /// </summary>
-        /// <param name="strVal">The value.</param>
-        MirroredInt(const char* strVal);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
+    /// </summary>
+    /// <param name="strVal">The value.</param>
+    MirroredInt(const char* strVal);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MirroredInt"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MirroredInt(const std::string& Value);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MirroredInt"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MirroredInt(const std::string& Value);
 
-        std::string ToString() const;
+    std::string ToString() const;
 
 		/// <summary>
-        /// MirroredInt to int explicit conversion
-        /// </summary>
-        explicit operator std::string() { return ToString(); }
+    /// MirroredInt to int explicit conversion
+    /// </summary>
+    explicit operator std::string() { return ToString(); }
 
 	#pragma endregion StringOperations
 
-    #pragma region Comparison Operators
+	#pragma region Comparison Operators
 
-		std::strong_ordering SignComparison(const MirroredInt& that) const
-		{
-			//Comparing if number is negative vs positive
-    #if defined(AltNum_UseInvertedSign)
+	/// Compare only the sign bits
+	constexpr std::strong_ordering SignComparison(const MirroredInt& that) const
+	{
+			// Comparing if number is negative vs positive
+	#if defined(AltNum_UseInvertedSign)
 			auto SignCmp = Sign <=> that.Sign;
-    #else   //(inverted comparison so sign of zero==positive)
-            auto SignCmp = that.Sign <=> Sign;
-    #endif
-            return SignCmp;
-        }
-/*
-        //Comparison between left side positive infinity and right side real number
-		std::strong_ordering LeftSidePosInfinityComparison(const MirroredInt& that) const
-		{
+	#else   // (inverted comparison so sign of zero == positive)
+			auto SignCmp = that.Sign <=> Sign;
+	#endif
+			return SignCmp;
+	}
 
-        }
-
-        //Comparison between left side negative infinity and right side real number
-		std::strong_ordering LeftSideNegInfinityComparison(const MirroredInt& that) const
-		{
-
-        }
-
-        //Comparison between left side real number and right side positive infinity
-		std::strong_ordering RightSidePosInfinityComparison(const MirroredInt& that) const
-		{
-
-        }
-
-        //Comparison between left side real number and right side negative infinity
-		std::strong_ordering RightSideNegInfinityComparison(const MirroredInt& that) const
-		{
-
-        }
-*/
-
-		std::strong_ordering operator<=>(const MirroredInt& that) const
-		{
-			//Comparing if number is negative vs positive
-    #if defined(AltNum_UseInvertedSign)
+	constexpr std::strong_ordering operator<=>(const MirroredInt& that) const
+	{
+			// Compare sign first
+	#if defined(AltNum_UseInvertedSign)
 			auto SignCmp = Sign <=> that.Sign;
-    #else   //(inverted comparison so sign of zero==positive)
-            auto SignCmp = that.Sign <=> Sign;
-    #endif
-	        if (SignCmp != 0)
-				return SignCmp;
-			auto ValueCmp = Value <=> that.Value;
-				return ValueCmp;
-		}
+	#else
+			auto SignCmp = that.Sign <=> Sign;
+	#endif
+			if (SignCmp != 0)
+					return SignCmp;
 
-		std::strong_ordering operator<=>(const unsigned int& that) const
-		{
-			//Comparing if number is negative vs positive
-    #if defined(AltNum_UseInvertedSign)
+			// Compare magnitude
+			return Value <=> that.Value;
+	}
+
+	constexpr std::strong_ordering operator<=>(const unsigned int& that) const
+	{
+			// Compare sign first
+	#if defined(AltNum_UseInvertedSign)
 			auto SignCmp = Sign <=> PositiveSign;
-    #else   //(inverted comparison so sign of zero==positive)
-            auto SignCmp = PositiveSign <=> Sign;
-    #endif
-	        if (SignCmp != 0)
-				return SignCmp;
-			auto ValueCmp = Value <=> that;
-				return ValueCmp;
-		}
+	#else
+			auto SignCmp = PositiveSign <=> Sign;
+	#endif
+			if (SignCmp != 0)
+					return SignCmp;
 
-		std::strong_ordering operator<=>(const signed int& that) const
-		{
-            if(that<0){
-    			//Comparing if number is negative vs positive
-        #if defined(AltNum_UseInvertedSign)
-    			auto SignCmp = Sign <=> NegativeSign;
-        #else   //(inverted comparison so sign of zero==positive)
-                auto SignCmp = NegativeSign <=> Sign;
-        #endif
-    	        if (SignCmp != 0)
-    				return SignCmp;
-    			if (auto ValueCmp = Value <=> (unsigned int)that; ValueCmp != 0)
-    				return ValueCmp;
-            } else {
-    			//Comparing if number is negative vs positive
-        #if defined(AltNum_UseInvertedSign)
-    			auto SignCmp = Sign <=> PositiveSign;
-        #else   //(inverted comparison so sign of zero==positive)
-                auto SignCmp = PositiveSign <=> Sign;
-        #endif
-    	        if (SignCmp != 0)
-    				return SignCmp;
-    			auto ValueCmp = Value <=> (unsigned int)(-that);
-    				return ValueCmp;
-            }
-		}
+			// Compare magnitude
+			return Value <=> that;
+	}
 
-		bool operator==(const MirroredInt& that) const
-		{
-			if (Value!=that.Value)
-				return false;
-			if (Sign!=that.Sign)
-				return false;
-			return true;
-		}
+	constexpr std::strong_ordering operator<=>(const signed int& that) const
+	{
+			if (that < 0)
+			{
+					// Compare sign first
+	#if defined(AltNum_UseInvertedSign)
+					auto SignCmp = Sign <=> NegativeSign;
+	#else
+					auto SignCmp = NegativeSign <=> Sign;
+	#endif
+					if (SignCmp != 0)
+							return SignCmp;
 
-        bool operator==(const unsigned int& that) const
-		{
-			if (Value!=that)
-				return false;
-			if (Sign!=PositiveSign)
-				return false;
-			return true;
-		}
+					return Value <=> static_cast<unsigned int>(-that);
+			}
+			else
+			{
+					// Compare sign first
+	#if defined(AltNum_UseInvertedSign)
+					auto SignCmp = Sign <=> PositiveSign;
+	#else
+					auto SignCmp = PositiveSign <=> Sign;
+	#endif
+					if (SignCmp != 0)
+							return SignCmp;
 
-        bool operator==(const signed int& that) const
-		{
-			if(that<0){
-                if(Sign!=NegativeSign)
-                    return false;
-			    if (Value==(unsigned int)-that)
-				    return true;
-            } else {
-                if(Sign!=PositiveSign)
-                    return false;
-			    if (Value==(unsigned int)that)
-				    return true;
-            }
-			return false;
-		}
+					return Value <=> static_cast<unsigned int>(that);
+			}
+	}
 
-    #pragma endregion Comparison Operators
+	constexpr bool operator==(const MirroredInt& that) const
+	{
+			return (Value == that.Value) && (Sign == that.Sign);
+	}
+
+	constexpr bool operator==(const unsigned int& that) const
+	{
+			return (Value == that) && (Sign == PositiveSign);
+	}
+
+	constexpr bool operator==(const signed int& that) const
+	{
+			if (that < 0)
+					return (Sign == NegativeSign) && (Value == static_cast<unsigned int>(-that));
+			else
+					return (Sign == PositiveSign) && (Value == static_cast<unsigned int>(that));
+	}
+
+	#pragma endregion Comparison Operators
+
 
         /// <summary>
         /// to int explicit conversion

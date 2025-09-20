@@ -45,7 +45,7 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Alternative fixed point number representation designed for use with AltFloat
-    /// Represents +- 257.9999
+    /// Represents 0 to 257.9999
     /// (3 bytes worth of Variable Storage inside class for each instance)
 	/// </summary>
     class DLL_API TinyUDec
