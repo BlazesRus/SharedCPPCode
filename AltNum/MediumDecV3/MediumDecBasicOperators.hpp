@@ -766,17 +766,21 @@ protected:
         template<IntegerType IntType=signed int>
         void IntAddOpV1(const IntType& rValue)
         {
-	        if constexpr (Policy::SplitFieldsMode) {
-            if(DecimalHalf.Value==0)
-                IntHalf.NRepSkippingIntegerAddOp(rValue);
-            else {
-                int signBeforeOp = IntHalf.Sign;
-                IntHalf += rValue;
-                if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
-                    DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+          if constexpr (VariantName::SplitFieldsMode) {
+            if constexpr(VariantName::UnsignedMode) {
+            } else {
+              if(DecimalHalf.Value==0)
+                  IntHalf.NRepSkippingIntegerAddOp(rValue);
+              else {
+                  int signBeforeOp = IntHalf.Sign;
+                  IntHalf += rValue;
+                  if(signBeforeOp!=IntHalf.Sign)//Invert the decimal section
+                      DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value;
+              }
             }
-					} else
-					}
+          } else if constexpr(VariantName::UnsignedMode) {
+          } else {
+          }
         }
 
 public:

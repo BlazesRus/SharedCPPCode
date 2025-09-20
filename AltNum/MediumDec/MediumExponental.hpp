@@ -17,7 +17,7 @@ namespace BlazesRusCode
 	class DLL_API MediumDecExponental
 	{
   #pragma region Pow and Sqrt Functions
-protected:
+public:
 
     /// <summary>
     /// Perform square root on this instance.
@@ -164,7 +164,7 @@ protected:
     /// <param name="tValue">The target value to perform power of operation.</param>
     /// <param name="expValue">The exponent value.</param>
     template<typename VariantType, IntegerType IntType=signed int>
-    static VariantType IntPowV1(const VariantType& tValue, const IntType& expValue)
+    static VariantType IntPow(const VariantType& tValue, const IntType& expValue)
     {
       if (expValue < 0)//Negative Pow
       {
@@ -202,7 +202,7 @@ protected:
     }
 
     template<typename VariantType>
-    static VariantType UnsignedNegIntPowerV1(const VariantType& tValue, const unsigned int& expValue)
+    static VariantType UnsignedNegIntPower(const VariantType& tValue, const unsigned int& expValue)
     {
       unsigned int exp = expValue;
       //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
@@ -224,80 +224,13 @@ protected:
       return result;
     }
 
-public:
-
-    /// <summary>
-    /// Applies Power of operation (for unsigned integer exponents)
-    /// </summary>
-    /// <param name="tValue">The target value to perform power of operation.</param>
-    /// <param name="expValue">The exponent value.</param>
-    static MediumDec UIntPow(const MediumDec& tValue, const unsigned int& expValue)
-    { return IntPowV1<MediumDec>(tValue, expValue); }
-    static MediumDec UInt64Pow(const MediumDec& tValue, const unsigned __int64& expValue)
-    { return UIntPowV1<MediumDec>(tValue, expValue); }
-
-    /// <summary>
-    /// Applies Power of operation (for signed integer exponents)
-    /// </summary>
-    /// <param name="tValue">The target value to perform power of operation.</param>
-    /// <param name="expValue">The exponent value.</param>
-    static MediumDec IntPow(const MediumDec& tValue, const signed int& expValue)
-    { return IntPowV1<MediumDec>(tValue, expValue); }
-    static MediumDec Int64Pow(const MediumDec& tValue, const signed __int64& expValue)
-    { return IntPowV1<MediumDec>(tValue, expValue); }
-
-    MediumDec UnsignedNegIntPower(const MediumDec& tValue, const unsigned int& expValue)
-    { return UnsignedNegIntPowerV1<MediumDec>(tValue, expValue); }
-
-
-    /// <summary>
-    /// Applies Power of operation (for unsigned integer exponents)
-    /// </summary>
-    /// <param name="expValue">The exponent value.</param>
-    MediumDec UIntPowOf(const unsigned int& expValue) const
-    { return UIntPow(*this, expValue); }
-    MediumDec UInt64PowOf(const unsigned __int64& expValue) const
-    { return UInt64Pow(*this, expValue); }
-
-    /// <summary>
-    /// Applies Power of operation (for signed integer exponents)
-    /// </summary>
-    /// <param name="expValue">The exponent value.</param>
-    MediumDec IntPowOf(const signed int& expValue) const
-    { return IntPow(*this, expValue); }
-    MediumDec Int64PowOf(const signed __int64& expValue) const
-    { return Int64Pow(*this, expValue); }
-
-protected:
-
-    template<typename VariantType>
-    static VariantType UnsignedMirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-    { return UIntPowV1<VariantType>(tValue, expValue.Value); }
-
-    template<typename VariantType>
-    static VariantType MirroredIntPowV1(const VariantType& tValue, const MirroredInt& expValue)
-    {
-      if (expValue < 0)//Negative Pow
-        return UnsignedNegIntPowerV1<VariantType>(tValue, expValue.Value);
-      else
-        return UIntPowV1<VariantType>(tValue, expValue.Value);
-    }
-
-public:
-
-    static MediumDec UnsignedMirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
-    {   return UnsignedMirroredIntPowV1<MediumDec>(tValue, expValue); }
-
-    static MediumDec MirroredIntPow(const MediumDec& tValue, const MirroredInt& expValue)
-    {   return MirroredIntPowV1<MediumDec>(tValue, expValue); }
-
 protected:
 
     /// <summary>
     /// Finds nTh Root of value based on https://www.geeksforgeeks.org/n-th-root-number/ code
     /// </summary>
     template<typename VariantType>
-    static VariantType UnsignedNthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
+    static VariantType UnsignedNthRoot(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
     {
       VariantType xPre = IntHalf.Value==0 ? tValue / n: ((tValue - 1) / n) + 1;;//Estimating initial guess based on https://math.stackexchange.com/questions/787019/what-initial-guess-is-used-for-finding-n-th-root-using-newton-raphson-method
       int nMinus1 = n - 1;
@@ -331,7 +264,7 @@ protected:
     /// <param name="nValue">The nth root degree value.</param>
     /// <param name="precision">Precision level (smaller = more precise)</param>
     template<typename VariantType>
-    static VariantType NthRootV1(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
+    static VariantType NthRoot(const VariantType& tValue, const unsigned int& n, const VariantType& precision)
     {
       if (tValue.IsNegative())
         throw "Nth root of a negative number requires imaginary number support";
@@ -500,7 +433,7 @@ protected:
     /// <param name="x">The value to apply the exponential function to.</param>
     /// <returns>VariantType</returns>
     template<typename VariantType>
-    static VariantType ExpV1(const VariantType& x)
+    static VariantType Exp(const VariantType& x)
     {
       /*
        * Evaluates f(x) = e^x for any x in the interval [-709, 709].

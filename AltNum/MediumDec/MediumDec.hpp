@@ -350,6 +350,8 @@ public:
 		
 	  //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
     static constexpr MediumDec Ln2 = MediumDec(MirroredInt::Zero, 693'147'181);
+		
+    static constexpr MediumDec NegLn2 = MediumDec(MirroredInt::NegativeZero, 693'147'181);
     #pragma endregion Mathematical constants
 		
     #pragma region Pi Multipliers constants
@@ -373,354 +375,354 @@ public:
 
     #pragma region String Commands
 
-        /// <summary>
-        /// Reads the string.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void ReadString(const std::string& Value);
+    /// <summary>
+    /// Reads the string.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void ReadString(const std::string& Value);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
-        /// </summary>
-        /// <param name="strVal">The value.</param>
-        MediumDec(const char* strVal);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class from string literal
+    /// </summary>
+    /// <param name="strVal">The value.</param>
+    MediumDec(const char* strVal);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumDec(const std::string& Value);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MediumDec(const std::string& Value);
 
 public:
 
-        /// <summary>
-        /// Converts to string.
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToString();
+    /// <summary>
+    /// Converts to string.
+    /// </summary>
+    /// <returns>std.string</returns>
+    std::string ToString();
 
-        /// <summary>
-        /// Converts to string with digits filled in even when empty
-        /// </summary>
-        /// <returns>std.string</returns>
-        std::string ToFullString();
+    /// <summary>
+    /// Converts to string with digits filled in even when empty
+    /// </summary>
+    /// <returns>std.string</returns>
+    std::string ToFullString();
 
-        /// <summary>
-        /// Implements the operator std::string operator.
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator std::string() { return ToString(); }
+    /// <summary>
+    /// Implements the operator std::string operator.
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator std::string() { return ToString(); }
 
     #pragma endregion String Commands
 
     #pragma region ConvertFromOtherTypes
 
-    #if defined(AltNum_EnableFloatingConversion)
+  #if defined(AltNum_EnableFloatingConversion)
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetFloatVal(const float& tValue);
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetFloatVal(const float& tValue);
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetDoubleVal(const double& tValue);
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetDoubleVal(const double& tValue);
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetDecimalVal(const long double& tValue);
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetDecimalVal(const long double& tValue);
 
-    #endif
+  #endif
 
-        /// <summary>
-        /// Sets the value(false equals zero; otherwise is true).
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetBoolVal(const bool& Value);
+    /// <summary>
+    /// Sets the value(false equals zero; otherwise is true).
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetBoolVal(const bool& Value);
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetIntVal(const int& Value);
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetIntVal(const int& Value);
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        void SetUIntVal(const unsigned int& Value);
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    void SetUIntVal(const unsigned int& Value);
 
-    #if defined(AltNum_EnableFloatingConversion)
+  #if defined(AltNum_EnableFloatingConversion)
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumDec(const float& tValue){ this->SetFloatVal(tValue); }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MediumDec(const float& tValue){ this->SetFloatVal(tValue); }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumDec(const double& tValue){ this->SetDoubleVal(tValue); }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MediumDec(const double& tValue){ this->SetDoubleVal(tValue); }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumDec(const long double& tValue){ this->SetDecimalVal(tValue); }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MediumDec(const long double& tValue){ this->SetDecimalVal(tValue); }
 
-    #endif
+  #endif
 
-        MediumDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed __int64& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned char& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed char& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned short& Value){ this->SetUIntVal(Value); }
-        MediumDec(const signed short& Value){ this->SetIntVal(Value); }
-        MediumDec(const unsigned int& Value){ this->SetUIntVal(Value); }
+    MediumDec(const unsigned __int64& Value){ this->SetUIntVal(Value); }
+    MediumDec(const signed __int64& Value){ this->SetIntVal(Value); }
+    MediumDec(const unsigned char& Value){ this->SetUIntVal(Value); }
+    MediumDec(const signed char& Value){ this->SetIntVal(Value); }
+    MediumDec(const unsigned short& Value){ this->SetUIntVal(Value); }
+    MediumDec(const signed short& Value){ this->SetIntVal(Value); }
+    MediumDec(const unsigned int& Value){ this->SetUIntVal(Value); }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediumDec"/> class.
-        /// </summary>
-        /// <param name="tValue">The value.</param>
-        MediumDec(const bool& Value){ this->SetBoolVal(Value); }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class.
+    /// </summary>
+    /// <param name="tValue">The value.</param>
+    MediumDec(const bool& Value){ this->SetBoolVal(Value); }
 
-    #pragma endregion ConvertFromOtherTypes
+  #pragma endregion ConvertFromOtherTypes
 
-    #pragma region ConvertToOtherTypes
+  #pragma region ConvertToOtherTypes
 
-    #if defined(AltNum_EnableFloatingConversion)
+  #if defined(AltNum_EnableFloatingConversion)
 
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        float toFloat() const;
+    /// <summary>
+    /// MediumDec Variant to float explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    float toFloat() const;
 
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        double toDouble() const;
+    /// <summary>
+    /// MediumDec Variant to double explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    double toDouble() const;
 
-        /// <summary>
-        /// MediumDec Variant to long double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        long double toDecimal() const;
+    /// <summary>
+    /// MediumDec Variant to long double explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    long double toDecimal() const;
 
-    #endif
+  #endif
 
-        /// <summary>
-        /// MediumDec Variant to int explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        signed int toInt() const { return IntHalf.GetValue(); }
+    /// <summary>
+    /// MediumDec Variant to int explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    signed int toInt() const { return IntHalf.GetValue(); }
 
-        /// <summary>
-        /// MediumDec Variant to int explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        unsigned int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
+    /// <summary>
+    /// MediumDec Variant to int explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    unsigned int toUInt() const { return IntHalf.IsNegative()?0:IntHalf.Value; }
 
-        bool toBool() const { return IntHalf.IsZero() ? false : true; }
+    bool toBool() const { return IntHalf.IsZero() ? false : true; }
 
-    #if defined(AltNum_EnableFloatingConversion)
+  #if defined(AltNum_EnableFloatingConversion)
 
-        /// <summary>
-        /// MediumDec Variant to float explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator float() { return toFloat(); }
+    /// <summary>
+    /// MediumDec Variant to float explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator float() { return toFloat(); }
 
-        /// <summary>
-        /// MediumDec Variant to double explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator double() { return toDouble(); }
+    /// <summary>
+    /// MediumDec Variant to double explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator double() { return toDouble(); }
 
-        /// <summary>
-        /// MediumDec Variant to decimal explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator long double() { return toDecimal(); }
+    /// <summary>
+    /// MediumDec Variant to decimal explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator long double() { return toDecimal(); }
 
-    #endif
+  #endif
 
-        /// <summary>
-        /// MediumDec Variant to int explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator signed int() { return toInt(); }
+    /// <summary>
+    /// MediumDec Variant to int explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator signed int() { return toInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to uint explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator unsigned int() { return toUInt(); }
+    /// <summary>
+    /// MediumDec Variant to uint explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator unsigned int() { return toUInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to int64 explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator signed __int64() { return toInt(); }
+    /// <summary>
+    /// MediumDec Variant to int64 explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator signed __int64() { return toInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to ubyte explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator unsigned char() { return toUInt(); }
+    /// <summary>
+    /// MediumDec Variant to ubyte explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator unsigned char() { return toUInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to byte explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator signed char() { return toInt(); }
+    /// <summary>
+    /// MediumDec Variant to byte explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator signed char() { return toInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to ushort explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator unsigned short() { return toUInt(); }
+    /// <summary>
+    /// MediumDec Variant to ushort explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator unsigned short() { return toUInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to short explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator signed short() { return toInt(); }
+    /// <summary>
+    /// MediumDec Variant to short explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator signed short() { return toInt(); }
 
-        /// <summary>
-        /// MediumDec Variant to bool explicit conversion
-        /// </summary>
-        /// <returns>The result of the operator.</returns>
-        explicit operator bool() { return toBool(); }
+    /// <summary>
+    /// MediumDec Variant to bool explicit conversion
+    /// </summary>
+    /// <returns>The result of the operator.</returns>
+    explicit operator bool() { return toBool(); }
 
     #pragma endregion ConvertToOtherTypes
 
     #pragma region Comparison Operators
 protected:
-        //Compare only as if in NormalType representation mode
-        template<MediumDecVariant VariantType=MediumDec>
-        std::strong_ordering BasicComparisonV1(const VariantType& that) const
-        {
-            if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-                return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
-        }
+    //Compare only as if in NormalType representation mode
+    template<MediumDecVariant VariantType=MediumDec>
+    std::strong_ordering BasicComparisonV1(const VariantType& that) const
+    {
+      if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+        return IntHalfCmp;
+      //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+      unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+      unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+      if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+        return DecimalHalfCmp;
+    }
 
-        std::strong_ordering BasicComparison(const MediumDec& that) const
-        {
-            return BasicComparisonV1(that);
-        }
+    std::strong_ordering BasicComparison(const MediumDec& that) const
+    {
+      return BasicComparisonV1(that);
+    }
 
-        //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicUIntComparison(const int& that) const
-        {
-            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-                return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
-        }
+    //Compare only as if in NormalType representation mode
+    std::strong_ordering BasicUIntComparison(const int& that) const
+    {
+      if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+        return IntHalfCmp;
+      //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+      unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
+      if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+        return DecimalHalfCmp;
+    }
 
-        //Compare only as if in NormalType representation mode
-        std::strong_ordering BasicIntComparison(const int& that) const
-        {
-            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-                return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
-            if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
-        }
+    //Compare only as if in NormalType representation mode
+    std::strong_ordering BasicIntComparison(const int& that) const
+    {
+      if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+        return IntHalfCmp;
+      //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+      unsigned int lVal = DecimalHalf.Value > 0 ? 1 : 0;
+      if (auto DecimalHalfCmp = lVal <=> 0; DecimalHalfCmp != 0)
+        return DecimalHalfCmp;
+    }
 
 public:
 
-        std::strong_ordering operator<=>(const MediumDec& that) const
-        {//return BasicComparison(that);
-            if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-                return IntHalfCmp;
-            //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
-            unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
-            unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
-            if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
-                return DecimalHalfCmp;
-        }
+    std::strong_ordering operator<=>(const MediumDec& that) const
+    {//return BasicComparison(that);
+      if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+        return IntHalfCmp;
+      //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+      unsigned int lVal = IsNegative()?0-DecimalHalf.Value:DecimalHalf.Value;
+      unsigned int rVal = IsNegative()?0-that.DecimalHalf.Value:that.DecimalHalf.Value;
+      if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+        return DecimalHalfCmp;
+    }
 
-        std::strong_ordering operator<=>(const unsigned int& that) const
-        {
-            return BasicUIntComparison(that);
-        }
+    std::strong_ordering operator<=>(const unsigned int& that) const
+    {
+      return BasicUIntComparison(that);
+    }
 
-        std::strong_ordering operator<=>(const signed int& that) const
-        {
-            return BasicIntComparison(that);
-        }
+    std::strong_ordering operator<=>(const signed int& that) const
+    {
+      return BasicIntComparison(that);
+    }
 
-        bool operator==(const MediumDec& that) const
-        {
-            if (IntHalf!=that.IntHalf)
-                return false;
-            if (DecimalHalf!=that.DecimalHalf)
-                return false;
-            return true;
-        }
+    bool operator==(const MediumDec& that) const
+    {
+      if (IntHalf!=that.IntHalf)
+        return false;
+      if (DecimalHalf!=that.DecimalHalf)
+        return false;
+      return true;
+    }
 
-        bool operator!=(const MediumDec& that) const
-        {
-            if (IntHalf!=that.IntHalf)
-                return true;
-            if (DecimalHalf!=that.DecimalHalf)
-                return true;
-            return false;
-        }
+    bool operator!=(const MediumDec& that) const
+    {
+      if (IntHalf!=that.IntHalf)
+        return true;
+      if (DecimalHalf!=that.DecimalHalf)
+        return true;
+      return false;
+    }
 
-        bool operator==(const unsigned int& that) const
-        {
-            if (IntHalf!=that)
-                return false;
-            if (DecimalHalf!=0)
-                return false;
-            return true;
-        }
+    bool operator==(const unsigned int& that) const
+    {
+      if (IntHalf!=that)
+        return false;
+      if (DecimalHalf!=0)
+        return false;
+      return true;
+    }
 
-        bool operator!=(const unsigned int& that) const
-        {
-            if (IntHalf!=that)
-                return true;
-            if (DecimalHalf!=0)
-                return true;
-            return false;
-        }
+    bool operator!=(const unsigned int& that) const
+    {
+      if (IntHalf!=that)
+        return true;
+      if (DecimalHalf!=0)
+        return true;
+      return false;
+    }
 
-        bool operator==(const signed int& that) const
-        {
-            if (IntHalf!=that)
-                return false;
-            if (DecimalHalf!=0)
-                return false;
-            return true;
-        }
+    bool operator==(const signed int& that) const
+    {
+      if (IntHalf!=that)
+        return false;
+      if (DecimalHalf!=0)
+        return false;
+      return true;
+    }
 
-        bool operator!=(const signed int& that) const
-        {
-            if (IntHalf!=that)
-                return true;
-            if (DecimalHalf!=0)
-                return true;
-            return false;
-        }
+    bool operator!=(const signed int& that) const
+    {
+      if (IntHalf!=that)
+        return true;
+      if (DecimalHalf!=0)
+        return true;
+      return false;
+    }
 
     #pragma endregion Comparison Operators
 
