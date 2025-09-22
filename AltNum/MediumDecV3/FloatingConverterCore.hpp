@@ -102,37 +102,20 @@ public:
   >;
 
   inline static constexpr ExtremeBPType UnderOneExtremeBreakpoints[] = []{
-    if constexpr (VariantName::HasTinyUDec) {
-      return std::array<ExtremeBPType, 12>{
-        ExtremeBPType( 1907,  3'486'328'125),
-        ExtremeBPType(  953,   67'431'640'625),
-        ExtremeBPType(  476,  837'158'203'125),
-        ExtremeBPType(  238, 4'185'791'015'625),
-        ExtremeBPType(  119, 20'928'955'078'125),
-        ExtremeBPType(   59, 604'644'775'390'625),
-        ExtremeBPType(   29, 802'322'387'695'3125),
-        ExtremeBPType(   14, 901'161'193'847'65625),
-        ExtremeBPType(    7, 450'580'596'923'828125),
-        ExtremeBPType(    3, 725'290'298'461'9140625),
-        ExtremeBPType(    1, 862'645'149'230'957'03125),
-        ExtremeBPType(    0, 931'322'574'615'478'515625)
-      };
-    } else {
-      return std::array<ExtremeBPType, 12>{
-        ExtremeBPType(1907, 3'486'328'125, 2),
-        ExtremeBPType(1907, 3'486'328'125, 4),
-        ExtremeBPType(1907, 3'486'328'125, 8),
-        ExtremeBPType(1907, 3'486'328'125, 16),
-        ExtremeBPType(1907, 3'486'328'125, 32),
-        ExtremeBPType(1907, 3'486'328'125, 64),
-        ExtremeBPType(1907, 3'486'328'125, 128),
-        ExtremeBPType(1907, 3'486'328'125, 256),
-        ExtremeBPType(1907, 3'486'328'125, 512),
-        ExtremeBPType(1907, 3'486'328'125, 1024),
-        ExtremeBPType(1907, 3'486'328'125, 2048),
-        ExtremeBPType(1907, 3'486'328'125, 4096)
-      };
-    }
+		return std::array<ExtremeBPType, 12>{
+			ExtremeBPType(3'814,697'265'625, 2),
+			ExtremeBPType(3'814,697'265'625, 4),
+			ExtremeBPType(3'814,697'265'625, 8),
+			ExtremeBPType(3'814,697'265'625, 16),
+			ExtremeBPType(3'814,697'265'625, 32),
+			ExtremeBPType(3'814,697'265'625, 64),
+			ExtremeBPType(3'814,697'265'625, 128),
+			ExtremeBPType(3'814,697'265'625, 256),
+			ExtremeBPType(3'814,697'265'625, 512),
+			ExtremeBPType(3'814,697'265'625, 1024),
+			ExtremeBPType(3'814,697'265'625, 2048),
+			ExtremeBPType(3'814,697'265'625, 4096)
+		};
   }();
 
   template<class RF=RestrictedFloat>

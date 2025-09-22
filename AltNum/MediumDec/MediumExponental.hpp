@@ -24,7 +24,7 @@ public:
     /// (Code other than switch statement adjusted from https://www.geeksforgeeks.org/find-square-root-number-upto-given-precision-using-binary-search/)
     /// </summary>
     template<typename VariantType>
-    static VariantType UnsignedSqrtV1(VariantType value, const int& precision=7)
+    static VariantType UnsignedSqrt(VariantType value, const int& precision=7)
     {
       if (value.DecimalHalf == 0)
       {

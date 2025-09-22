@@ -4,7 +4,7 @@
 // This is a FIXED-POINT EXPONENT format:
 // - 'exp' is the integer exponent component.
 // - 'signif' is the fractional exponent component, in ticks of 1/MaxDenom.
-// - MaxDenom = 1 << SIG_BITS.
+// - MaxDenom = 1 << EXPFRAC_BITS.
 // This is NOT a normalized mantissa+exponent float, and NOT just an inverted IEEE float.
 // All arithmetic must be done in exponent-tick space, not by shifting a mantissa.
 // ***********************************************************************
@@ -24,6 +24,7 @@
 #include <cstdint>  // uint32_t, uint64_t
 #include <utility>  // std::pair
 #include "../FloatingOperations.hpp"//For floating power of code
+#include "../PolicyConcepts.hpp"//For Policy template existance checks
 
 namespace BlazesRusCode {
 
@@ -40,27 +41,74 @@ using u64  = std::uint64_t;
 //RFStatus Defined in Base file
 //RFOpResultBase Defined in Base file
 
+struct RestrictedFloat_FalseSelector{};
+
+//PowerOf3,5,7, 15 and mixed radix features custom toggled from here
+struct RestrictedFloatExtraCustomDenomSupport{
+  //if constexpr (Policy::UseCustomDenom) {
+	//}
+};
+
+//Optional Sign mask and Sign constexpr stored here
+template<typename Policy>
+struct RestrictedFloatSignedExtras
+{
+protected:
+	
+	//Optional Sign mask
+};
+
+//Standalone specific features added here such as ExpSign
+template<typename Policy>
+struct RestrictedFloatStandaloneExtras
+{
+protected:
+  static_assert(!(Has_UnsignedMode && Has_SignedMode),
+  "Policy cannot define both UnsignedMode and SignedMode");
+
+  //If not in Standalone mode, then RestrictedFloat itself is assumed to be unsigned because RestrictedFloat is acting as a TrailingDigits tail
+	//Storing SignedMode check even if signed mode is disabled; RestrictedFloatSignedExtras stores the actual signed bit constexpr and signed mask
+  static inline constexpr bool SignedMode = Has_SignedMode ? Policy::SignedMode : false;
+	
+	//Optional ExpSign mask
+};
+
+//This selects whether to include StandaloneMode functionality(for when RestrictedFloat is not used with a base class)
+template<typename Policy>
+struct RestrictedFloatStandaloneSelector
+    : std::conditional_t<Has_SignedMode<Policy>, RestrictedFloatSignedExtras<Policy>, RestrictedFloat_FalseSelector>,
+      std::conditional_t<Has_StandaloneMode<Policy>, RestrictedFloatStandaloneExtras<Policy>, RestrictedFloat_FalseSelector>
+{
+protected:
+    RestrictedFloatStandaloneSelector() noexcept
+        : std::conditional_t<Has_SignedMode<Policy>, RestrictedFloatSignedExtras<Policy>, RestrictedFloat_FalseSelector>{},
+          std::conditional_t<Has_StandaloneMode<Policy>, RestrictedFloatStandaloneExtras<Policy>, RestrictedFloat_FalseSelector>{}
+    {}
+};
+
+template<typename Policy>
+struct RestrictedFloatCustomDenomSelector : std::conditional_t<Has_UseCustomDenom<Policy>, RestrictedFloatExtraCustomDenomSupport<Policy>, RestrictedFloat_FalseSelector>,
+{
+protected:
+  using ExtraPart = std::conditional_t<Has_UseCustomDenom,RestrictedFloatExtraCustomDenomSupport<Policy>, RestrictedFloat_FalseSelector>;
+  
+  RestrictedFloatCustomDenomSelector() noexcept : ExtraPart() {}
+};
+      
+
 /// <summary>
 /// Compact fractional representation used as TrailingDigits in MixedMode configurations of MediumDecV3Variant.
-/// Encodes values in the range (0, ~1) as: 1 / (2^(exp + signif / MaxDenom))
-/// - `exp` and `signif` are encoded fields; `MaxDenom` is a compile-time constant.
+/// Encodes values in the range (0, ~1) as: 1 / (2^(ExpMag + ExpFrac / MaxDenom))
+/// - `ExpMag` and `ExpFrac` are encoded fields; `MaxDenom` is a compile-time constant.
 /// - Template parameters control precision, scaling, and layout.
 /// - Default footprint: 4 bytes.
-/// - zero represented by raw == 0
+/// - zero represented by raw == ZeroRaw (Actual value depends on policy settings)
 /// Primary purpose: extends precision beneath the main MixedDec value, recovering lost fractional detail.
 /// Designed for deterministic, monotonic behavior across platforms.
 /// Ideal for fixed-point math where sub-bit granularity is needed without floating-point drift.
 /// </summary>
 template<class Policy  = RFDefaultPolicy>
-class DLL_API RestrictedFloat : RestrictedFloatBase,  {
-protected:
-  concept Has_EXP_BITS   = requires { { Policy::EXP_BITS }   -> std::convertible_to<unsigned>; };
-  concept Has_SIG_BITS   = requires { { Policy::SIG_BITS }   -> std::convertible_to<unsigned>; };
-  concept Has_NScaleFactor   = requires { { Policy::NScaleFactor }   -> std::convertible_to<unsigned>; };
-  concept Has_StandaloneMode   = requires { { Policy::StandaloneMode }   -> std::convertible_to<unsigned>; };
-  concept Has_ZeroSignifRep   = requires { { Policy::Has_ZeroSignifRep }   -> std::convertible_to<unsigned>; };
-  // Optional: allow policy to override the exponent part of zero
-  concept Has_ZeroExpRep = requires { { Policy::ZeroExpRep } -> std::convertible_to<unsigned>; };
+class DLL_API RestrictedFloat : RestrictedFloatBase, RestrictedFloatStandaloneSelector, RestrictedFloatCustomDenomSelector {
 public:
 
   using StoreT = std::conditional_t<requires { typename Policy::StoreT; },
@@ -76,19 +124,21 @@ public:
                                     typename Policy::DefaultOverflowT, u64>;														
 
   // Defaults: 7/25 split (total 32 bits), exp at top
-  static inline constexpr unsigned EXP_BITS     = Has_EXP_BITS     ? Policy::EXP_BITS     : 7;
-  static inline constexpr unsigned SIG_BITS     = Has_SIG_BITS     ? Policy::SIG_BITS     : 25;
+  static inline constexpr unsigned EXPMAG_BITS     = Has_EXPMAG_BITS     ? Policy::EXPMAG_BITS     : 7;
+  static inline constexpr unsigned EXPFRAC_BITS     = Has_EXPFRAC_BITS     ? Policy::EXPFRAC_BITS     : 25;
   static inline constexpr unsigned NScaleFactor = Has_NScaleFactor ? Policy::NScaleFactor : 1;
 	
+  static constexpr bool UseCustomDenom = Has_UseCustomDenom ? Policy::UseCustomDenom : false;
+	
 	//If true then enables existance of 1.0 representation to be stored (Designed for standalone mode for sin ranges)
-	//If enabled than zero is defined as some other number instead
   //Also allows standalone version featues such as toggling on the existance of Integer lane(allowing signed exponent flag)
+	//Needed to enable sign toggle
   static inline constexpr bool StandaloneMode = Has_StandaloneMode ? Policy::StandaloneMode : false;
 
   // Derived limits
-  static inline constexpr unsigned MaxDenom  = (SIG_BITS == 0 ? 1u : (1u << SIG_BITS));
-  static inline constexpr unsigned SIG_MAX   = MaxDenom - 1;
-  static inline constexpr unsigned EXP_MAX   = (EXP_BITS == 0 ? 0u : ((1u << EXP_BITS) - 1));
+  static inline constexpr unsigned MaxDenom  = (EXPFRAC_BITS == 0 ? 1u : (1u << EXPFRAC_BITS));
+  static inline constexpr unsigned MaxExpFrac   = MaxDenom - 1;
+  static inline constexpr unsigned EXP_MAX   = (EXPMAG_BITS == 0 ? 0u : ((1u << EXPMAG_BITS) - 1));
 
 	static inline constexpr unsigned ZeroExpRep =
 			StandaloneMode
@@ -96,33 +146,33 @@ public:
 					: 0u;                                             // default: exp==0 in normal mode
 
 	// Significand part of zero
-	static inline constexpr unsigned ZeroSignifRep =
+	static inline constexpr unsigned ZeroExpFracRep =
 			StandaloneMode
-					? (Has_ZeroSignifRep ? Policy::ZeroSignifRep : SIG_MAX)
+					? (Has_ZeroExpFracRep ? Policy::ZeroExpFracRep : MaxExpFrac)
 					: 0u;
 
 	// Now build the raw encoding for mathematical zero
 	static inline constexpr StoreT ZeroRaw =
-			(StoreT(ZeroExpRep) << SIG_BITS) | StoreT(ZeroSignifRep);
+			(StoreT(ZeroExpRep) << EXPFRAC_BITS) | StoreT(ZeroExpFracRep);
 
-  // Masks (layout: [exp | signif])
-  static inline constexpr StoreT SIG_MASK = (SIG_BITS == 0)
+  // Masks (layout: [expMag | expFrac])
+  static inline constexpr StoreT EXPFRAC_MASK = (EXPFRAC_BITS == 0)
       ? StoreT{0}
-      : (StoreT{1} << SIG_BITS) - StoreT{1};
+      : (StoreT{1} << EXPFRAC_BITS) - StoreT{1};
 
-  static inline constexpr StoreT EXP_MASK = ~SIG_MASK;
+  static inline constexpr StoreT EXPMAG_MASK = ~EXPFRAC_MASK;
 
   // Static checks
   static_assert(std::is_unsigned_v<StoreT>,
                 "StoreT must be an unsigned integral type");
 
-  static_assert(EXP_BITS + SIG_BITS <= (sizeof(StoreT) * CHAR_BIT),
+  static_assert(EXPMAG_BITS + EXPFRAC_BITS <= (sizeof(StoreT) * CHAR_BIT),
                 "Policy::StoreT too narrow for configured bit-fields");
 
-  static_assert(EXP_BITS + SIG_BITS > 0,
-                "At least one of EXP_BITS or SIG_BITS must be > 0");
+  static_assert(EXPMAG_BITS + EXPFRAC_BITS > 0,
+                "At least one of EXPMAG_BITS or EXPFRAC_BITS must be > 0");
 
-  // raw 32-bit storage
+  // raw 32-bit storage by default
   StoreT raw;
   
   static constexpr unsigned ExpBits  = std::popcount(ExpMask);
@@ -132,30 +182,30 @@ public:
 
   constexpr RestrictedFloat() noexcept : raw(ZeroRaw) {}
   constexpr RestrictedFloat(unsigned exp, unsigned sig) noexcept 
-  : raw((exp << SIG_BITS) | (sig & SIG_MAX)) 
+  : raw((exp << EXPFRAC_BITS) | (sig & MaxExpFrac)) 
   {
   // if somebody passed exp==0 and sig==0, stays zero
-  // if exp>EXP_MAX or sig>SIG_MAX: caller error
+  // if exp>EXP_MAX or sig>MaxExpFrac: caller error
   }
 
   constexpr RestrictedFloat(const StoreT& copy) noexcept : raw(copy) {}
 
   // extractors
-  constexpr unsigned exp() const noexcept   { return raw >> SIG_BITS; }
-  constexpr unsigned signif() const noexcept{ return raw & SIG_MAX; }
+  constexpr unsigned exp() const noexcept   { return raw >> EXPFRAC_BITS; }
+  constexpr unsigned signif() const noexcept{ return raw & MaxExpFrac; }
   constexpr bool   isZero() const noexcept { return raw == ZeroRaw; }
 
 	// Smallest non-zero magnitude encoding
 	static inline constexpr unsigned AlmostZeroSignif =
 			StandaloneMode
-					? (SIG_MAX - 1u) // leave SIG_MAX for ZeroRaw in StandaloneMode mode
-					: SIG_MAX;
+					? (MaxExpFrac - 1u) // leave MaxExpFrac for ZeroRaw in StandaloneMode mode
+					: MaxExpFrac;
 
 	static inline constexpr unsigned AlmostZeroExp = EXP_MAX;
 
 	// Build the raw encoding
 	static inline constexpr StoreT AlmostZeroRaw =
-			(StoreT(AlmostZeroExp) << SIG_BITS) | StoreT(AlmostZeroSignif);
+			(StoreT(AlmostZeroExp) << EXPFRAC_BITS) | StoreT(AlmostZeroSignif);
 
   // ----- partial-dec shuttle -----
   static inline constexpr unsigned QuarterMaxDenom   = MaxDenom/4;
@@ -172,41 +222,41 @@ public:
 			unsigned e = (newExp > EXP_MAX) ? EXP_MAX : newExp;
 			unsigned s = signif(); // current
 
-			raw = (StoreT(e) << SIG_BITS) | StoreT(s & SIG_MAX);
+			raw = (StoreT(e) << EXPFRAC_BITS) | StoreT(s & MaxExpFrac);
 	}
 
 	// Set only signif; exp preserved, but may be clamped by policy at MAX.
-	inline void SetSignif(unsigned newSignif) noexcept {
+	inline void SetExpFrac(unsigned newSignif) noexcept {
 			unsigned e = exp(); // current
-			unsigned s = newSignif & SIG_MAX;
+			unsigned s = newSignif & MaxExpFrac;
 
-			raw = (StoreT(e) << SIG_BITS) | StoreT(s);
+			raw = (StoreT(e) << EXPFRAC_BITS) | StoreT(s);
 	}
 
 	// Set both together in one shot (preferred to avoid transient invalid states).
-	inline void SetExpSignif(unsigned newExp, unsigned newSignif) noexcept {
+	inline void SetMagnitudes(unsigned newExp, unsigned newSignif) noexcept {
 			// Clamp to field widths first
 			if (newExp > EXP_MAX) {
 					raw = AlmostZeroRaw;
 					return;
 			}
-			if (newSignif > SIG_MAX) {
+			if (newSignif > MaxExpFrac) {
 					// If we're already at EXP_MAX, this means smaller than smallest non-zero
 					if (newExp == EXP_MAX) {
 							raw = AlmostZeroRaw;
 							return;
 					}
-					newSignif = SIG_MAX;
+					newSignif = MaxExpFrac;
 			}
 
 			// If exactly mathematical zero, set ZeroRaw
-			if (newExp == ZeroExpRep && newSignif == ZeroSignifRep) {
+			if (newExp == ZeroExpRep && newSignif == ZeroExpFracRep) {
 					raw = ZeroRaw;
 					return;
 			}
 
 			// Normal store
-			raw = (StoreT(newExp) << SIG_BITS) | StoreT(newSignif);
+			raw = (StoreT(newExp) << EXPFRAC_BITS) | StoreT(newSignif);
 	}
 
 
@@ -298,13 +348,13 @@ public:
       (1.0 / BlazesFloatingCode::UIntPowFP(2.0, MaxExp)) /
       BlazesFloatingCode::NthRootV3(2.0, MaxDenom / (MaxDenom - 1));
   
-  constexpr float ToFloat(const RTable<SIG_BITS>& rt) const noexcept {
+  constexpr float ToFloat(const RTable<EXPFRAC_BITS>& rt) const noexcept {
       uq64 fracQ = rt.pow2_neg_frac(signif);
       uq64 valQ  = (exp >= Q) ? (fracQ >> exp) : (fracQ << (Q - exp));
       return static_cast<float>(valQ) / static_cast<float>(Q_ONE);
   }
   
-  static constexpr RestrictedFloat FromFloat(float value, const RTable<SIG_BITS>& rt) {
+  static constexpr RestrictedFloat FromFloat(float value, const RTable<EXPFRAC_BITS>& rt) {
       // Reject non-positive
       if (value <= 0.0f) return {};
   
@@ -319,13 +369,13 @@ public:
       return RestrictedFloat{signif, exp};
   }
   
-  constexpr double ToDouble(const RTable<SIG_BITS>& rt) const noexcept {
+  constexpr double ToDouble(const RTable<EXPFRAC_BITS>& rt) const noexcept {
       uq64 fracQ = rt.pow2_neg_frac(signif);
       uq64 valQ  = (exp >= Q) ? (fracQ >> exp) : (fracQ << (Q - exp));
       return static_cast<double>(valQ) / double(Q_ONE);
   }
   
-  static constexpr RestrictedFloat FromDouble(double value, const RTable<SIG_BITS>& rt) {
+  static constexpr RestrictedFloat FromDouble(double value, const RTable<EXPFRAC_BITS>& rt) {
       // Reject non-positive
       if (value <= 0.0) return {};
   
@@ -470,7 +520,7 @@ protected:
       // Target value x = v / scale in (0,1). Choose band:
       // If x >= 1/2, prefer zero band for best resolution; else general band.
       // Zero band: x = 1 - s/(2D) => s = round( (1 - x) * 2D )
-      const u128 D   = u128{1} << SIG_BITS;
+      const u128 D   = u128{1} << EXPFRAC_BITS;
       const u128 twoD  = D << 1;
 
       auto set_zero_band = [&](u128 numer, u128 denom) {
@@ -479,7 +529,7 @@ protected:
       u128 s128 = (t * twoD + (denom>>1)) / denom; // round half-up
       if (s128 == 0) s128 = 1;           // avoid reserved zero sentinel in zero band
       if (s128 > twoD - 1) s128 = twoD - 1;    // clamp
-      raw = (StoreT(0) << SIG_BITS) | StoreT(s128 & SIG_MASK);
+      raw = (StoreT(0) << EXPFRAC_BITS) | StoreT(s128 & EXPFRAC_MASK);
       };
 
       auto set_general_band = [&](u128 numer, u128 denom) {
@@ -503,7 +553,7 @@ protected:
       // s = 2D - target
       u128 s128 = twoD - target;
       if (s128 > twoD - 1) s128 = twoD - 1; // clamp
-      raw = (StoreT(e) << SIG_BITS) | StoreT( static_cast<StoreT>(s128) & SIG_MASK );
+      raw = (StoreT(e) << EXPFRAC_BITS) | StoreT( static_cast<StoreT>(s128) & EXPFRAC_MASK );
       };
 
       // Compare v/scale with 1/2
@@ -562,11 +612,11 @@ public:
       // Remainder after removing the top bit
       IntType remainder = val - (IntType(1) << exp);
   
-      // Fractional exponent in ticks (scaled to SIG_BITS)
-      unsigned fracTicks = unsigned((remainder << SIG_BITS) >> exp);
+      // Fractional exponent in ticks (scaled to EXPFRAC_BITS)
+      unsigned fracTicks = unsigned((remainder << EXPFRAC_BITS) >> exp);
   
       // Carry into integer exponent if fractional part overflows
-      if (fracTicks == (1u << SIG_BITS)) {
+      if (fracTicks == (1u << EXPFRAC_BITS)) {
           fracTicks = 0;
           ++exp;
       }
@@ -591,7 +641,7 @@ public:
 			tempExp++;
 		}
 		tempExp += exp();
-		SetExpSignif(tempExp, tempSignif);
+		SetMagnitudes(tempExp, tempSignif);
 		//No danger of overflow with integer division
   }
 
@@ -612,9 +662,8 @@ public:
   }
 
   inline MediumDec pow2_neg(const MediumDec& r) {
-      // 2^(-r) = Exp(-Ln(2) * r)
-      static const MediumDec ln2 = MediumDec::Ln(MediumDec::Two);
-      return MediumDec::Exp( (ln2 * MediumDec::NegativeOne).MultipliedBy(r) );
+      // LN2 = 2^(-r) = Exp(-Ln(2) * r)
+      return MediumDecExponental::Exp<MediumDec>( MediumDec::NegLn2.MultipliedBy(r) );
   }
 
   inline unsigned ticks_from_log2(const MediumDec& x, unsigned MaxDenom) {
@@ -713,8 +762,8 @@ public:
   //   tbl      = RTable providing pow2_neg_frac(S) in Q-format
   // Returns:
   //   uq64 Q-format value representing 2^-(E + S/MaxDenom).
-  template<unsigned SIG_BITS>
-  inline uq64 expTicks_to_Q(signed intExp, unsigned fracTicks, const RTable<SIG_BITS>& tbl) {
+  template<unsigned EXPFRAC_BITS>
+  inline uq64 expTicks_to_Q(signed intExp, unsigned fracTicks, const RTable<EXPFRAC_BITS>& tbl) {
       // Q-format value for 2^(-S/MaxDenom)
       uq_t val = tbl.pow2_neg_frac(fracTicks);
   
@@ -759,7 +808,7 @@ public:
         } else {
             // Remaining classic fraction = rem/MaxDenom
             // In inverted form, that's a "gap" of MaxDenom - rem at exp=0
-            SetExpSignif(0, MaxDenom - rem);
+            SetMagnitudes(0, MaxDenom - rem);
         }
 
         return carry;
@@ -772,16 +821,16 @@ public:
         //No Overflow Detected(Values reused for result)
         lhsExp -= rhsExp;// exponent delta
         lhsSignif -= rhsSignif;// fractional delta
-        SetExpSignif(lhsExp, lhsSignif);
+        SetMagnitudes(lhsExp, lhsSignif);
       }
     } else {//No Overflow Detected
       if (lhsSignif >= rhsSignif) {
         // No borrow from exponent
-        SetExpSignif(lhsExp, lhsSignif - rhsSignif);
+        SetMagnitudes(lhsExp, lhsSignif - rhsSignif);
       } else {
         // Borrow 1 from exponent: fractional = MaxDenom - (rhsSignif - lhsSignif)
         const IntType gap = rhsSignif - lhsSignif; // 1..MaxDenom-1
-        SetExpSignif(lhsExp - 1, MaxDenom - gap);
+        SetMagnitudes(lhsExp - 1, MaxDenom - gap);
       }
     }
 		return 0u;
@@ -805,7 +854,7 @@ public:
             carry += mixed / MaxDenom;
             const IntType rem = static_cast<IntType>(mixed % MaxDenom);
             if (rem == 0) SetAsZero();
-            else SetExpSignif(0, MaxDenom - rem);
+            else SetMagnitudes(0, MaxDenom - rem);
             return carry;
         }
         else if (lhsSignif == rhsSignif) {
@@ -816,16 +865,16 @@ public:
         else {
             lhsExp    -= rhsExp;
             rhsSignif -= lhsSignif; // borrow-safe if you normalise
-            SetExpSignif(lhsExp, rhsSignif);
+            SetMagnitudes(lhsExp, rhsSignif);
         }
     } else {
         // no overflow, borrow-safe subtraction
         rhsExp -= lhsExp;
         if (rhsSignif >= lhsSignif) {
-            SetExpSignif(rhsExp, rhsSignif - lhsSignif);
+            SetMagnitudes(rhsExp, rhsSignif - lhsSignif);
         } else {
             const IntType gap = lhsSignif - rhsSignif;
-            SetExpSignif(rhsExp - 1, MaxDenom - gap);
+            SetMagnitudes(rhsExp - 1, MaxDenom - gap);
         }
     }
     return OverflowT(0);
@@ -836,7 +885,7 @@ public:
     auto sumExp    = exp()    + rhs.exp();
     auto sumSignif = signif() + rhs.signif();
     if (sumSignif >= MaxDenom) { sumSignif -= MaxDenom; ++sumExp; }
-    SetExpSignif(sumExp, sumSignif);
+    SetMagnitudes(sumExp, sumSignif);
   }
   
   //Convert from numerator/denom (with PowerOfTwo denominator such as when both signif==0) back to RestrictedFloat
@@ -856,19 +905,19 @@ public:
       TickT numRem   = numerator   >> numExp;
 
       // Fractional ticks: ratio denomRem/numRem is a power-of-two within one coarse step
-      uint32_t signifPart = 0;
+      uint32_t FracPart = 0;
       if (denomRem != numRem) {
           // fracPow = log2(denomRem) - log2(numRem)
           int fracPow = int(std::countr_zero(denomRem)) - int(std::countr_zero(numRem));
-          signifPart  = uint32_t(fracPow)*OV;
+          FracPart  = uint32_t(fracPow)*OV;
       }
 
-			SetExpSignif(uint32_t(expPart), signifPart);
+			SetMagnitudes(uint32_t(expPart), FracPart);
   }
   
   // For the fractional-exponent band: convert from an exact power-of-two ratio
   // numerator/denominator back to (exp, signif) where
-  // value = 1 / 2^(exp + signif / MaxDenom)
+  // value = 1 / 2^(ExpMag + ExpFrac / MaxDenom)
   template<typename TickT = StoreT>
   inline void ConvertFracPair(TickT numerator, TickT denominator)
   {
@@ -881,13 +930,13 @@ public:
       while (ratioNum >= (ratioDen << 1)) { ratioNum >>= 1; ++expPart; }
       while (ratioNum < ratioDen)         { ratioNum <<= 1; --expPart; }
 
-      uint32_t signifPart = 0;
+      uint32_t FracPart = 0;
       if (ratioNum != ratioDen) {
           int fracPow = int(std::countr_zero(ratioNum)) - int(std::countr_zero(ratioDen));
-          signifPart  = uint32_t(fracPow) * OV;
+          FracPart  = uint32_t(fracPow) * OV;
       }
 
-			SetExpSignif(uint32_t(expPart), signifPart);
+			SetMagnitudes(uint32_t(expPart), FracPart);
   }
 
 // ADD/SUB REMINDER:
@@ -913,7 +962,7 @@ public:
       uint32_t u     = u_minus_mag_from_gap_ticks(uRHS);
       unsigned E     = u / MaxDenom;
       unsigned S     = u % MaxDenom;
-      SetExpSignif(E, S);
+      SetMagnitudes(E, S);
       return 2;
     }
     if (rhs.isZero()) { return 0; }
@@ -921,8 +970,30 @@ public:
     auto lSignif = this->signif();
     auto rExp = rhs.exp();
     auto rSignif = rhs.signif();
-    // Align smaller-exp side to larger-exp side
-    if (lSignif == 0 && rSignif == 0) {
+    
+    if (lSignif != 0 && rSignif != 0) {
+      // Both operands in fractional-exponent band: at least one signif > 0
+      if(lExp==rExp){
+        //Both sides in same band
+        if(lSignif!=rSignif){
+          //ToDo:Add code
+        }
+        //Both sides have same value so either double or negate
+        else if(leftIsPositive!=rightIsPositive)//Canceling tail
+          SetAsZero();
+          return 0;
+        } else {//Doubling
+          //ToDo:Add code
+        }
+      } else if(lExp<rExp) {
+        //Left side is bigger than right
+        //ToDo:Add code
+      } else {
+        //Right side is bigger than left
+        //ToDo:Add code
+      }
+    } else {
+      // Align smaller-exp side to larger-exp side
       //Shift numerator to same denom such as 1/2 + 1/4 becomes 2/4 + 1/4
       //Shift numerator to same denom such as 1/2 + 1/8 becomes 4/8 + 1/8
       //Shift numerator to same denom such as 1/2 - 1/4 becomes 2/4 - 1/4
@@ -943,46 +1014,20 @@ public:
           return 1;
         else
           return 2;
-      } else if(leftIsPositive==rightIsPositive)//Doubling
-          //(exp:-1) 0.5 + 0.5 = (exp:0) 1.0
-          //(exp:-2) 0.25 + 0.25 = (exp:-1) 0.5
-          //(exp:-3) 0.0.125 + 0.0.125 = (exp:-1) 0.25
+      } else if(leftIsPositive!=rightIsPositive){//canceling tail
+          SetAsZero();//0.5 - 0.5 
+          return 0;
+      } else {//Doubling
+          //(exp:1) 0.5 + 0.5 = (exp:0) 1.0
+          //(exp:2) 0.25 + 0.25 = (exp:-1) 0.5
+          //(exp:3) 0.0.125 + 0.0.125 = (exp:-1) 0.25
           if(lExp==1){
             SetAsZero();
             return 1;
           }
           SetExp(lExp-1);
           return 0;
-        } else {//canceling tail
-          SetAsZero();//0.5 - 0.5 
-          return 0;
-        }
       }
-    } else {
-      // Both operands in fractional-exponent band: at least one signif > 0
-      const uint32_t Ul = pack_U(lExp, lSignif);
-      const uint32_t Ur = pack_U(rExp, rSignif);
-      const uint32_t Umin = (Ul <= Ur) ? Ul : Ur;
-      const uint32_t Umax = (Ul <= Ur) ? Ur : Ul;
-      const uint32_t delta = Umax - Umin;
-      
-      // Early-out: Δ >= SIG_BITS+1 → u rounds to 0 at our precision
-      if (delta >= ADD_SUB_EARLY_UNITS) {
-          unsigned E, S; unpack_U(Umin, E, S);
-          SetExpSignif(E, S);
-          return 0;
-      }
-      
-      const uint32_t u = sameSign ? uplus_from_gap_ticks(delta)
-                                  : uminus_from_gap_ticks(delta);
-      
-      uint64_t Ures = uint64_t(Umin) + u;
-      uint8_t code = 0;
-      if (u >= MaxDenom) { Ures -= MaxDenom; code = 1; }
-      
-      unsigned E, S; unpack_U(uint32_t(Ures), E, S);
-      SetExpSignif(E, S);
-      return code;
     }
   }
   
