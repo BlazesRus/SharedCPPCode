@@ -21,7 +21,7 @@ namespace BlazesRusCode
   {
     struct EmptyStruct{};
 
-	  template<typename Policy>
+    template<typename Policy>
     concept UseCustomMode   = requires { { Policy::UseCustomMode   } -> std::convertible_to<bool>; };
   }
   
@@ -30,6 +30,9 @@ namespace BlazesRusCode
     /// Stores whole half of number
     /// </summary>
     unsigned int IntHalf;
+
+    static constexpr unsigned int IntHalfMax = 4'294'967'295;
+
   };
 
   class DefaultBinaryDecDecimalStorage{
@@ -48,24 +51,24 @@ namespace BlazesRusCode
     }
     
   #pragma endregion DigitStorage
-	
+  
     /// <summary>
     /// The decimal overflow
     /// </summary>
-		static constexpr unsigned int DecimalOverflow = 1 << 32;
-		
+    static constexpr unsigned int DecimalOverflow = 1 << 32;
+    
     /// <summary>
     /// The decimal overflow in _int64 so don't need to widen
     /// </summary>
-		static constexpr unsigned _int64 DecimalOverflow = 1 << 32;
-		
+    static constexpr unsigned _int64 DecimalOverflow = 1 << 32;
+    
     static constexpr DecimalHalfT DecimalMax = DecimalOverflow - 1;
-	};
+  };
 
   class DefaultBinaryUDecStorage : DefaultBinaryUDecIntHalfStorage, DefaultBinaryDecDecimalStorage{
-	};
+  };
 
-	template<typename Policy>
+  template<typename Policy>
   CustomBinaryUDecStorage{
   public:
   #pragma region DigitStorage
@@ -74,6 +77,8 @@ namespace BlazesRusCode
     /// Stores whole half of number
     /// </summary>
     unsigned int IntHalf:Policy::INT_BITS;
+
+    static constexpr unsigned int IntHalfMax = (unsigned int)((1 << INT_BITS) - 1);
 
     /// <summary>
     /// Stores decimal section info (mixed binary fraction representation)
@@ -87,33 +92,26 @@ namespace BlazesRusCode
     }
     
   #pragma endregion DigitStorage
-	
+ 
+    using DecimalOverflowT =
+    std::conditional_t<(BITS <= 31), unsigned int, unsigned _int64>;
+
+    using DecimalHalfT =
+    std::conditional_t<(BITS <= 32), unsigned int, unsigned _int64>;
+
     /// <summary>
-    /// The decimal overflow
+    /// The decimal overflow (Every value is used by DecimalMax so need to store in next biggest storage)
     /// </summary>
-		static constexpr unsigned int DecimalOverflow = 1 << DEC_BITS;
-		
+    static constexpr DecimalOverflowT DecimalOverflow = DecimalOverflowT(1) << DEC_BITS;
+    
     /// <summary>
     /// The decimal overflow in _int64 so don't need to widen
     /// </summary>
-		static constexpr unsigned _int64 DecimalOverflow = 1 << DEC_BITS;
-		
-    static constexpr unsigned int DecimalMax = DecimalOverflow - 1;
-	}
+		static constexpr unsigned _int64 DecimalOverflowX = unsigned _int64(DecimalOverflow);
 
-	template<typename Policy>
-  BinaryDecSignedPolicies{
-  protected:
-    // PositiveSign and NegativeSign are logical convention constants (1/0 or true/false).
-    // They define whether a sign bit value of 1 means "positive" (this is inverted from the usual two's-complement convention).
-    // The "sign bit" here refers to the logical sign indicator for this type, not necessarily a literal bit in all modes.
-    // Defaults: PositiveSign = 1, NegativeSign = 0 if neither is provided in the policy.
-    // Exactly one may be defined in the policy; the other is derived to be its opposite.
-    // In signed mode, negative values do NOT have their magnitude bits flipped — only the sign indicator changes.
-    // This avoids magnitude inversion overhead and enhances multiplication/division speed for negative values.
-    static inline constexpr u32 PositiveSign   = Has_PositiveSign ? Policy::PositiveSign : (Has_NegativeSign?0:1);
-    static inline constexpr u32 NegativeSign   = Has_PositiveSign ? 0 : (Has_NegativeSign?1:0);
-	}
+    static constexpr DecimalHalfT DecimalMax = (DecimalHalfT)DecimalOverflow - 1;
+    static constexpr DecimalHalfT HalfOverflow = DecimalMax/2;
+  }
 
   class DefaultBinaryDecIntHalfStorage{
     /// <summary>
@@ -122,25 +120,25 @@ namespace BlazesRusCode
     MirroredInt IntHalf;
   };
 
-  class DefaultBinaryDecStorage : public DefaultBinaryDecIntHalfStorage, public DefaultBinaryDecDecimalStorage, protected BinaryDecSignedPolicies{
-	};
+  class DefaultBinaryDecStorage : public DefaultBinaryDecIntHalfStorage, public DefaultBinaryDecDecimalStorage{
+  };
 
-	template<typename Policy>
-	struct BinaryDecStorageSelector : 
-	std::conditional_t<Has_UseCustomDenom<Policy>, RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>,
-	{
-	protected:
-    static_assert(!(Has_UnsignedMode && Has_SignedMode),
-      "Policy cannot define both UnsignedMode and SignedMode");
-    static inline constexpr bool SignedMode = Has_SignedMode ? Policy::SignedMode : false;
+  template<typename Policy>
+  struct BinaryDecStorageSelector : 
+  std::conditional_t<!UseCustomMode&&!SignedMode,RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>,
 
-		using DefaultPart = std::conditional_t<!UseCustomMode&&!SignedMode,RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>;
-		using CustomPart = std::conditional_t<UseCustomMode&&!SignedMode,RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>;
-		using DefaultSignedPart = std::conditional_t<!UseCustomMode&&SignedMode,RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>;
-		//Use MediumUDecV3Variant later if needed signed BinaryDec with custom widths
-	public:	
-		BinaryDecStorageSelector() noexcept : DefaultPart, CustomPart, DefaultSignedPart, CustomSignedPart() {}
-	};
+  {
+  protected:
+    static inline constexpr bool SignedMode = Has_SignedMode<Policy> ? Policy::SignedMode : false;
+    static inline constexpr bool UseCustomMode = Has_UseCustomMode<Policy> ? Policy::UseCustomMode : false;
+
+    using DefaultPart = std::conditional_t<!UseCustomMode&&!SignedMode,DefaultBinaryUDecStorage, BinaryDecCode::EmptyStruct>;
+    using CustomPart = std::conditional_t<UseCustomMode&&!SignedMode,CustomBinaryUDecStorage<Policy>, BinaryDecCode::EmptyStruct>;
+    using DefaultSignedPart = std::conditional_t<!UseCustomMode&&SignedMode,DefaultBinaryDecStorage, BinaryDecCode::EmptyStruct>;
+    //Use MediumUDecV3Variant later if needed signed BinaryDec with custom widths
+  public:  
+    BinaryDecStorageSelector() noexcept : DefaultPart, CustomPart, DefaultSignedPart, CustomSignedPart() {}
+  };
 
   //Fixed number representation with binary based fractional tail
   template<class VariantClass, typename Policy:BinaryDecCode::EmptyStruct>
@@ -149,32 +147,32 @@ namespace BlazesRusCode
   public:
   #pragma region class_constructors
 
-		/// <summary>
-		/// Initializes a new instance of the unsigned <see cref="BinaryDec"/> class using signed integer.
-		/// </summary>
-		/// <param name="intVal">The whole number based half of the representation</param>
-		/// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
+    /// <summary>
+    /// Initializes a new instance of the unsigned <see cref="BinaryDec"/> class using unsigned integer.
+    /// </summary>
+    /// <param name="intVal">The whole number based half of the representation</param>
+    /// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
     template<typename = std::enable_if_t<!SignedMode>>
-		constexpr BinaryDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0)
-		: IntHalf(intVal), DecimalHalf(decVal) {}
+    constexpr BinaryDec(const unsigned int& intVal = 0, const unsigned int& decVal = 0)
+    : IntHalf(intVal), DecimalHalf(decVal) {}
 
-		/// <summary>
-		/// Initializes a new instance of the signed <see cref="BinaryDec"/> class using IntHalf's type field.
-		/// </summary>
-		/// <param name="intVal">The whole number based half of the representation</param>
-		/// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
+    /// <summary>
+    /// Initializes a new instance of the signed <see cref="BinaryDec"/> class using IntHalf's type field.
+    /// </summary>
+    /// <param name="intVal">The whole number based half of the representation</param>
+    /// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
     template<typename = std::enable_if_t<SignedMode>>
-		constexpr BinaryDec(const MirroredInt& intVal, const unsigned int& decVal = 0)
-		: IntHalf(intVal), DecimalHalf(decVal) {}
+    constexpr BinaryDec(const MirroredInt& intVal, const unsigned int& decVal = 0)
+    : IntHalf(intVal), DecimalHalf(decVal) {}
 
-		/// <summary>
-		/// Initializes a new instance of the signed <see cref="BinaryDec"/> class using signed integer.
-		/// </summary>
-		/// <param name="intVal">The whole number based half of the representation</param>
-		/// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
+    /// <summary>
+    /// Initializes a new instance of the signed <see cref="BinaryDec"/> class using signed integer.
+    /// </summary>
+    /// <param name="intVal">The whole number based half of the representation</param>
+    /// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
     template<typename = std::enable_if_t<SignedMode>>
-		constexpr BinaryDec(const signed int& intVal = 0, const unsigned int& decVal = 0)
-		: IntHalf(intVal), DecimalHalf(decVal) {}
+    constexpr BinaryDec(const signed int& intVal = 0, const unsigned int& decVal = 0)
+    : IntHalf(intVal), DecimalHalf(decVal) {}
 
     BinaryDec& operator=(const BinaryDec& rhs)
     {
@@ -185,6 +183,14 @@ namespace BlazesRusCode
       return *this;
     }
 
+    template<typename = std::enable_if_t<!SignedMode>>
+    BinaryDec& operator=(const unsigned int& rhs)
+    {
+      IntHalf = rhs; DecimalHalf = 0;
+      return *this;
+    }
+
+    template<typename = std::enable_if_t<SignedMode>>
     BinaryDec& operator=(const signed int& rhs)
     {
       IntHalf = rhs; DecimalHalf = 0;
@@ -194,43 +200,113 @@ namespace BlazesRusCode
     /// <summary>
     /// Sets the value.
     /// </summary>
-    /// <param name="Value">The value.</param>
-    void SetValue(const BinaryDec& rValue)
+    constexpr void SetValue(const BinaryDec& rValue)
     {
       IntHalf = rValue.IntHalf;
-      DecimalHalf.SetValueV2(rValue.DecimalHalf);
+      DecimalHalf = rValue.DecimalHalf;
     }
 
   #pragma endregion class_constructors
 
+  #pragma region Negative_Status
+
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsPositive() const noexempt
+    { return IntHalf.IsPositive(); }
+
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsNegative() const
+    { return IntHalf.IsNegative(); }
+
+    /// <summary>
+    /// Swaps the negative status.
+    /// </summary>
+    template<typename = std::enable_if_t<SignedMode>>
+    void SwapNegativeStatus()
+    { IntHalf.Sign ^= 1; }
+
+    /// <summary>
+    /// Negative Unary Operator(Flips negative status)
+    /// </summary>
+    /// <param name="self">The self.</param>
+    /// <returns>MediumDec</returns>
+    template<typename = std::enable_if_t<SignedMode>>
+    VariantClass operator-() const
+    { VariantClass self = *this; self.SwapNegativeStatus(); return self; }
+
+  #pragma endregion Negative_Status
+
   #pragma region Check_if_value
 
     //Set value as exactly zero
-    void SetAsZero();
+    void SetAsZero()
+    {
+      IntHalf = constexpr (Policy::SignedMode)?MirroredInt::Zero:0;
+      DecimalHalf = 0; }
 
     //Set value as exactly one
-    void SetAsOne();
+    void SetAsOne()
+    { 
+      IntHalf = constexpr (Policy::SignedMode)?MirroredInt::One:1;
+      DecimalHalf = 0; }
 
     //Set as +-1 while keeping current sign
-    void SetAsOneVal();
+    template<typename = std::enable_if_t<SignedMode>>
+    void SetAsOneVal()
+    { IntHalf.Value = 1; DecimalHalf = 0; }
 
-    void SetAsValues(const unsigned int& intVal = 0, const unsigned int& decVal = unsigned int::Zero);
+    template<typename = std::enable_if_t<!SignedMode>>
+    void SetAsValues(const unsigned int& intVal = 0, const unsigned int& decVal = unsigned int::Zero)
+    {
+    	IntHalf = intVal; DecimalHalf = decVal;
+    }
+
+    template<typename = std::enable_if_t<SignedMode>>
+    void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const unsigned int& decVal = 0)
+    {
+    	IntHalf = intVal; DecimalHalf = decVal;
+    }
 
     //Is at either zero or negative zero IntHalf of AltNum
-    bool IsAtZeroInt() const;
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsAtZeroInt() const noexcept
+    {
+    	return IntHalf.Value == 0;
+    }
 
-    bool IsNotAtZeroInt() const;
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsNotAtZeroInt() const noexcept
+    {
+    	return IntHalf.Value != 0;
+    }
 
-    bool IsAtOneInt() const;
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsAtOneInt() const noexcept
+    {
+    	return IntHalf.Value == 1;
+    }
 
-    bool IsNotAtOneInt() const;
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsNotAtOneInt() const noexcept
+    {
+    	return IntHalf.Value != 1;
+    }
 
-    //Detect if at exactly zero(only overridden with MixedDec)
-    bool IsZero() const;
+    bool IsZero() const noexcept
+    {
+	    return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)? MirroredInt::Zero:0;
+    }
 
-    bool IsOne() const;
+    bool IsOne() const noexcept
+    {
+	    return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)?MirroredInt::One:1;
+    }
 
-    bool IsOneVal() const;
+    template<typename = std::enable_if_t<SignedMode>>
+    bool IsOneVal() const noexcept
+    {
+	    return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+    }
 
   #pragma endregion Check_if_value
 
@@ -239,290 +315,91 @@ namespace BlazesRusCode
     /// <summary>
     /// Sets value to the highest non-infinite/Special Decimal State tValue that it store
     /// </summary>
-    void SetAsMaximum();
+    void SetAsMaximum()
+    {
+	    IntHalf = IntHalfMax;
+      DecimalHalf = DecimalMax;
+    }
 
     /// <summary>
-    /// Sets value to the lowest non-infinite/Special Decimal State tValue that it store
+    /// Sets value to the lowest value
     /// </summary>
-    void SetAsMinimum();
+    void SetAsMinimum()
+    {
+	    IntHalf = constexpr (Policy::SignedMode)?MirroredInt::Minimum : 0; DecimalHalf = DecimalMax;
+    }
 
   #pragma endregion RangeLimits
 
   #pragma region ValueSetters
-protected://Work around for not allowing to use incomplete class statics during forming of class
-    static const unsigned int LN10Div_DecSection = 434294482;
-    static const unsigned int TwiceLN10Div_DecSection = 868588964;
-
-public:
-
-    /// <summary>
-    /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
-    /// (Stored as 3.141592654)
-    /// </summary>
-    void  SetValueToPiNum();
-
-    //100,000,000xPi(Rounded to 9th decimal digit)
-    void  SetValueToHundredMilPiNum();
-
-    //10,000,000xPi(Rounded to 9th decimal digit)
-    void  SetValueToTenMilPiNum();
-
-    //1,000,000xPi(Rounded to 9th decimal digit)
-    void  SetValueToOneMilPiNum();
-
-    //10xPi(Rounded to 9th decimal digit)
-    void  SetValueToTenPiNum();
-
-    /// <summary>
-    /// Euler's number rounded to 9th digit(2.718281828)
-    /// Irrational number equal to about (1 + 1/n)^n
-    /// (about 2.71828182845904523536028747135266249775724709369995)
-    /// </summary>
-    void  SetValueToENum();
-
-    //Sets value to value at 0.5
-    void  SetValueToPoint5();
-
-    void  SetValueToJustAboveZero();
-
-    /// <summary>
-    /// Sets the value at .000001000
-    /// </summary>
-    void  SetValueToOneMillionth();
-
-    /// <summary>
-    /// Sets the value at "0.005"
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    void  SetValueToFiveThousandth();
-
-    /// <summary>
-    /// Sets the value at "0.000005"
-    /// </summary>
-    void  SetValueToFiveMillionth();
-
-    //0e-7
-    void  SetValueToTenMillionth();
-
-    /// <summary>
-    /// Sets the value to .000000010
-    /// </summary>
-    void  SetValueToOneHundredMillionth();
-
-    /// <summary>
-    /// 2.3025850929940456840179914546844
-    /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-    /// </summary>
-    void  SetValueToLN10();
-
-    /// <summary>
-    /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-    /// </summary>
-    void  SetValueToLN10Div();
-
-    /// <summary>
-    /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-    /// </summary>
-    void  SetValueToTwiceLN10Div();
-
-    void SetValueToPointOne();
-
   #pragma endregion ValueSetters
 
   #pragma region ValueDefines
 public:
+    #pragma region Integer constants
+    static constexpr VariantClass Zero = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Zero:0);
+    static constexpr VariantClass One = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::One:1);
+    static constexpr VariantClass Two = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Two:2);
+		template<typename = std::enable_if_t<SignedMode>>
+    static constexpr VariantClass NegativeOne = VariantClass(MirroredInt::NegativeZero);
+    #pragma endregion Integer constants
 
-    static BinaryDec AlmostOneValue();
+    #pragma region Core fractional constants
+    //-0.5
+    static constexpr VariantClass NegativePointFive = VariantClass(MirroredInt::NegativeZero, HalfOverflow);
+    //Almost one defined as nearest representable real number
+    static constexpr VariantClass AlmostOne = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Zero:0, DecimalMax);
+    static constexpr VariantClass PointFive = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Zero:0, HalfOverflow);
+    static constexpr VariantClass JustAboveZero = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Zero:0, 1);
+    #pragma endregion Core fractional constants
 
-    /// <summary>
-    /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up
-    /// (Stored as 3.141592654)
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static BinaryDec PiNumValue();
-
-    //100,000,000xPi(Rounded to 9th decimal digit)
-    static BinaryDec HundredMilPiNumValue();
-
-    //10,000,000xPi(Rounded to 9th decimal digit)
-    static BinaryDec TenMilPiNumValue();
-
-    //1,000,000xPi(Rounded to 9th decimal digit)
-    static BinaryDec OneMilPiNumValue();
-
-    //10xPi(Rounded to 9th decimal digit)
-    static BinaryDec TenPiNumValue();
-
-    static BinaryDec ENumValue();
-
-    static BinaryDec ZeroValue();
-
-    /// <summary>
-    /// Returns the value at one
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static BinaryDec OneValue();
-
-    /// <summary>
-    /// Returns the value at one
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static BinaryDec TwoValue();
-
-    /// <summary>
-    /// Returns the value at 0.5
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static BinaryDec Point5Value();
-
-    static BinaryDec JustAboveZeroValue();
-
-    static BinaryDec OneMillionthValue();
-
-    static BinaryDec FiveThousandthValue();
-
-    static BinaryDec FiveMillionthValue();
-
-    static BinaryDec TenMillionthValue();
-
-    static BinaryDec OneHundredMillionthValue();
-
-    static BinaryDec FiveBillionthValue();
-
-    static BinaryDec LN10Value();
-
-    static BinaryDec LN10DivValue();
-
-    static BinaryDec TwiceLN10DivValue();
-
-    static BinaryDec MinimumValue();
-
-    static BinaryDec MaximumValue();
-
-    static BinaryDec PointOneValue();
-
-    static const BinaryDec AlmostOne;
-
-    /// <summary>
-    /// Returns Pi(3.1415926535897932384626433) with tenth digit rounded up to 3.141592654
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec PiNum;
-
-    /// <summary>
-    /// Euler's number (Non-Alternative Representation)
-    /// Irrational number equal to about (1 + 1/n)^n
-    /// (about 2.71828182845904523536028747135266249775724709369995)
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec ENum;
-
-    /// <summary>
-    /// Returns Pi(3.1415926535897932384626433) Representation
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec Pi;
-
-    /// <summary>
-    /// Euler's number (Non-Alternative Representation)
-    /// Irrational number equal to about (1 + 1/n)^n
-    /// (about 2.71828182845904523536028747135266249775724709369995)
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec E;
-
-    /// <summary>
-    /// Returns the value at zero
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec Zero;
-
-    /// <summary>
-    /// Returns the value at one
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec One;
-
-    /// <summary>
-    /// Returns the value at two
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec Two;
-
-    /// <summary>
-    /// Returns the value at 0.5
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec PointFive;
-
-    /// <summary>
-    /// Returns the value at digit one more than zero (0.000000001)
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec JustAboveZero;
-
-    /// <summary>
-    /// Returns the value at .000000005
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec FiveBillionth;
-
-    /// <summary>
-    /// Returns the value at .000001000
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec OneMillionth;
-
-    /// <summary>
-    /// Returns the value at "0.005"
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec FiveThousandth;
-
-    /// <summary>
-    /// Returns the value at .000000010
-    /// </summary>
-    /// <returns>BinaryDec</returns>
-    static const BinaryDec OneGMillionth;
-
-    //0e-7
-    static const BinaryDec TenMillionth;
-
-    /// <summary>
-    /// Returns the value at "0.000005"
-    /// </summary>
-    static const BinaryDec FiveMillionth;
-
-    /// <summary>
-    /// Returns value of lowest non-infinite/Special Decimal State tValue that can store
-    /// (-2147483647.999999999)
-    /// </summary>
-    static const BinaryDec Minimum;
-
-    /// <summary>
-    /// Returns value of highest non-infinite/Special Decimal State tValue that can store
-    /// (2147483647.999999999)
-    /// </summary>
-    static const BinaryDec Maximum;
-
-    /// <summary>
-    /// 2.3025850929940456840179914546844
-    /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-    /// </summary>
-    static const BinaryDec LN10;
-
-    /// <summary>
-    /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-    /// </summary>
-    static const BinaryDec LN10Div;
-
-    /// <summary>
-    /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-    /// </summary>
-    static const BinaryDec TwiceLN10Div;
-
-    static const BinaryDec PointOne;
-
+    #pragma region Range limit constants
+    static constexpr VariantClass Minimum = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Maximum:IntHalfMax, DecimalMax);
+    static constexpr VariantClass Maximum = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Minimum:0, DecimalMax);
+    #pragma endregion Range limit constants
+		
+		//frac = round( (ValueRepresentation - IntHalfRepresentation) * DecimalMax )
+    #pragma region Mathematical constants
+    // Pi
+    // π = ~ 3.141'592'653'589'793'238'462'643'3
+		template<typename = std::enable_if_t<!UseCustomMode>>
+    static constexpr VariantClass PiNum = VariantClass(3, 605070158u);
+    // Euler's number (Non-Alternative Representation)
+    // Irrational number equal to about (1 + 1/n)^n
+    // e = ~2.71828182845904523536028747135266249775724709369995
+		template<typename = std::enable_if_t<!UseCustomMode>>
+    static constexpr VariantClass ENum = VariantClass(2, 308884356u);
+    // π * e
+    // = ~8.539'734'222'673567065463550869546574495034888535765084881233717265981654348037954472832304065619300439
+		template<typename = std::enable_if_t<!UseCustomMode>>
+    static constexpr VariantClass PiENum = VariantClass(8, 2315469002u);
+		
+    //Pi, and e are different in VariantClassV2 and higher variants(using FlagState multiplier constants)
+    //static constexpr VariantClass Pi = PiNum;
+    //static constexpr VariantClass E = ENum;
+    //PiE constant only defined if PiE FlagState enabled
+		
+		template<typename = std::enable_if_t<!UseCustomMode>>
+    static constexpr VariantClass LN10 = VariantClass(2, 1300902225u);
+		
+		//template<typename = std::enable_if_t<!UseCustomMode>>
+    //static constexpr VariantClass LN10Div = VariantClass(0, ???);
+		//template<typename = std::enable_if_t<!UseCustomMode>>
+    //static constexpr VariantClass TwiceLN10Div = VariantClass(0, ???);
+		
+	  //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
+		template<typename = std::enable_if_t<!UseCustomMode>>
+    static constexpr VariantClass Ln2 = VariantClass(0, 2975105830u);
+		template<typename = std::enable_if_t<SignedMode>>
+    static constexpr VariantClass NegLn2 = VariantClass(MirroredInt::NegativeZero, 2975105830u);
+    #pragma endregion Mathematical constants
+		
+    #pragma region Pi Multipliers constants
+    #pragma endregion Pi Multipliers constants
+		
+    #pragma region Small magnitude constants
+    //Power of 10 magnitudes not perfectly representable in binary based fractions
+    #pragma endregion Small magnitude constants
   #pragma endregion ValueDefines
 
   #pragma region String Commands
@@ -569,28 +446,6 @@ public:
 
   #pragma region ConvertFromOtherTypes
 
-  #if defined(AltNum_EnableFloatingConversion)
-
-    /// <summary>
-    /// Sets the value.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    void SetFloatVal(const float& tValue);
-
-    /// <summary>
-    /// Sets the value.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    void SetDoubleVal(const double& tValue);
-
-    /// <summary>
-    /// Sets the value.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    void SetDecimalVal(const long double& tValue);
-
-  #endif
-
     /// <summary>
     /// Sets the value(false equals zero; otherwise is true).
     /// </summary>
@@ -603,53 +458,9 @@ public:
     /// <param name="Value">The value.</param>
     void SetIntVal(const unsigned int& Value);
 
-  #if defined(AltNum_EnableFloatingConversion)
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BinaryDec"/> class.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    BinaryDec(const float& tValue){ this->SetFloatVal(tValue); }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BinaryDec"/> class.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    BinaryDec(const double& tValue){ this->SetDoubleVal(tValue); }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BinaryDec"/> class.
-    /// </summary>
-    /// <param name="Value">The value.</param>
-    BinaryDec(const long double& tValue){ this->SetDecimalVal(tValue); }
-
-  #endif
-
   #pragma endregion ConvertFromOtherTypes
 
   #pragma region ConvertToOtherTypes
-
-  #if defined(AltNum_EnableFloatingConversion)
-
-    /// <summary>
-    /// BinaryDec Variant to float explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    float toFloat() const;
-
-    /// <summary>
-    /// BinaryDec Variant to double explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    double toDouble() const;
-
-    /// <summary>
-    /// BinaryDec Variant to long double explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    long double toDecimal() const;
-
-  #endif
 
     /// <summary>
     /// BinaryDec Variant to int explicit conversion
@@ -664,28 +475,6 @@ public:
     unsigned int toUInt() const { return IntHalf; }
 
     bool toBool() const { return IntHalf==0 ? false : true; }
-
-  #if defined(AltNum_EnableFloatingConversion)
-
-    /// <summary>
-    /// BinaryDec Variant to float explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    explicit operator float() { return toFloat(); }
-
-    /// <summary>
-    /// BinaryDec Variant to double explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    explicit operator double() { return toDouble(); }
-
-    /// <summary>
-    /// BinaryDec Variant to decimal explicit conversion
-    /// </summary>
-    /// <returns>The result of the operator.</returns>
-    explicit operator long double() { return toDecimal(); }
-
-  #endif
 
     /// <summary>
     /// BinaryDec Variant to int explicit conversion
@@ -2180,7 +1969,7 @@ public:
   /// (8 bytes worth of Variable Storage inside class for each instance)
   /// </summary>
   class DLL_API MediumBinaryUDec : BinaryDec<MediumBinaryUDec>{
-	}
+  }
 
   /// <summary>
   /// Unsigned mixed fraction
@@ -2188,7 +1977,7 @@ public:
   /// (8 bytes worth of Variable Storage inside class for each instance)
   /// </summary>
   class DLL_API MediumBinaryDec : BinaryDec<MediumBinaryUDec>{
-	}
+  }
 }
 
 

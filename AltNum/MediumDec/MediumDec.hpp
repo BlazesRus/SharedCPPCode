@@ -71,86 +71,88 @@ namespace BlazesRusCode
         /// <summary>
         /// The decimal overflow
         /// </summary>
-        static unsigned int const DecimalOverflow = 1000000000;
+        static constexpr unsigned int DecimalOverflow = 1'000'000'000u;
+        
+        static constexpr unsigned int DecimalMax = 999'999'999u;
 
         /// <summary>
-        /// The decimal overflow
+        /// The decimal overflow in _int64 so don't need to widen
         /// </summary>
-        static unsigned _int64 const DecimalOverflowX = 1000000000;
+        static constexpr unsigned _int64 DecimalOverflowX = 1'000'000'000;
 
         /// <summary>
-        /// tValue when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
+        /// Value when IntHalf is at -0.XXXXXXXXXX (when has decimal part)(with Negative Zero the Decimal Half is Zero)
         /// </summary>
-        static MirroredInt const NegativeRep;
+        static constexpr MirroredInt NegativeRep = MirroredInt::NegativeZero;
 
-		#pragma region class_constructors
+    #pragma region class_constructors
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MediumDec"/> class using IntHalf's type field.
-		/// </summary>
-		/// <param name="intVal">The whole number based half of the representation</param>
-		/// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
-		constexpr MediumDec(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
-		: IntHalf(intVal), DecimalHalf(decVal) {}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class using IntHalf's type field.
+    /// </summary>
+    /// <param name="intVal">The whole number based half of the representation</param>
+    /// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
+    constexpr MediumDec(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+    : IntHalf(intVal), DecimalHalf(decVal) {}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MediumDec"/> class using signed integer.
-		/// </summary>
-		/// <param name="intVal">The whole number based half of the representation</param>
-		/// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
-		constexpr MediumDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
-		: IntHalf(intVal), DecimalHalf(decVal) {}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MediumDec"/> class using signed integer.
+    /// </summary>
+    /// <param name="intVal">The whole number based half of the representation</param>
+    /// <param name="decVal">The non-whole based half of the representation (and other special statuses)</param>
+    constexpr MediumDec(const signed int& intVal = 0, const PartialInt& decVal = PartialInt::Zero)
+    : IntHalf(intVal), DecimalHalf(decVal) {}
 
-		/// <summary>
-		/// Copy assignment.
-		/// </summary>
-		constexpr MediumDec& operator=(const MediumDec& rhs)
-		{
-				if (this != &rhs)
-				{
-						IntHalf = rhs.IntHalf;
-						DecimalHalf = rhs.DecimalHalf;
-				}
-				return *this;
-		}
+    /// <summary>
+    /// Copy assignment.
+    /// </summary>
+    constexpr MediumDec& operator=(const MediumDec& rhs)
+    {
+        if (this != &rhs)
+        {
+            IntHalf = rhs.IntHalf;
+            DecimalHalf = rhs.DecimalHalf;
+        }
+        return *this;
+    }
 
-		/// <summary>
-		/// Assignment from int.
-		/// </summary>
-		constexpr MediumDec& operator=(const signed int& rhs)
-		{
-				IntHalf = rhs;
-				DecimalHalf = PartialInt(0);
-				return *this;
-		}
+    /// <summary>
+    /// Assignment from int.
+    /// </summary>
+    constexpr MediumDec& operator=(const signed int& rhs)
+    {
+        IntHalf = rhs;
+        DecimalHalf = PartialInt(0);
+        return *this;
+    }
 
-		/// <summary>
-		/// Creates class from derived class into this class (subscript operator of [])
-		/// </summary>
-		template<MediumDecVariant VariantType>
-		constexpr MediumDec operator[](VariantType variantValue) const
-		{
-				return MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
-		}
+    /// <summary>
+    /// Creates class from derived class into this class (subscript operator of [])
+    /// </summary>
+    template<MediumDecVariant VariantType>
+    constexpr MediumDec operator[](VariantType variantValue) const
+    {
+        return MediumDec(variantValue.IntHalf, variantValue.DecimalHalf);
+    }
 
-		/// <summary>
-		/// Fix for C2440 error during static template class
-		/// </summary>
-		static constexpr MediumDec Initialize(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
-		{
-				return MediumDec(intVal, decVal);
-		}
+    /// <summary>
+    /// Fix for C2440 error during static template class
+    /// </summary>
+    static constexpr MediumDec Initialize(const MirroredInt& intVal, const PartialInt& decVal = PartialInt::Zero)
+    {
+        return MediumDec(intVal, decVal);
+    }
 
-		/// <summary>
-		/// Sets the value.
-		/// </summary>
-		constexpr void SetValue(const MediumDec& rValue)
-		{
-				IntHalf = rValue.IntHalf;
-				DecimalHalf.SetValueV2(rValue.DecimalHalf);
-		}
+    /// <summary>
+    /// Sets the value.
+    /// </summary>
+    constexpr void SetValue(const MediumDec& rValue)
+    {
+        IntHalf = rValue.IntHalf;
+        DecimalHalf.SetValueV2(rValue.DecimalHalf);
+    }
 
-		#pragma endregion class_constructors
+    #pragma endregion class_constructors
 
     #pragma region Negative_Status
 
@@ -176,131 +178,131 @@ namespace BlazesRusCode
 
     #pragma region Check_if_value
 
-        //Set value as exactly zero
-        void SetAsZero();
+    //Set value as exactly zero
+    void SetAsZero();
 
-        //Set value as exactly one
-        void SetAsOne();
+    //Set value as exactly one
+    void SetAsOne();
 
-        //Set as +-1 while keeping current sign
-        void SetAsOneVal();
+    //Set as +-1 while keeping current sign
+    void SetAsOneVal();
 
-        void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
+    void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const PartialInt& decVal = PartialInt::Zero);
 
-        //Is at either zero or negative zero IntHalf of AltNum
-        bool IsAtZeroInt() const;
+    //Is at either zero or negative zero IntHalf of AltNum
+    bool IsAtZeroInt() const;
 
-        bool IsNotAtZeroInt() const;
+    bool IsNotAtZeroInt() const;
 
-        bool IsAtOneInt() const;
+    bool IsAtOneInt() const;
 
-        bool IsNotAtOneInt() const;
+    bool IsNotAtOneInt() const;
 
-        //Detect if at exactly zero(only overridden with MixedDec)
-        bool IsZero() const;
+    //Detect if at exactly zero(only overridden with MixedDec)
+    bool IsZero() const;
 
-        bool IsOne() const;
+    bool IsOne() const;
 
-        bool IsNegOne() const;
+    bool IsNegOne() const;
 
-        bool IsOneVal() const;
+    bool IsOneVal() const;
 
-        bool IsOneVariantVal() const;
+    bool IsOneVariantVal() const;
 
     #pragma endregion Check_if_value
 
     #pragma region RangeLimits
 
-        /// <summary>
-        /// Sets value to the highest non-infinite/Special Decimal State tValue that it store
-        /// </summary>
-        void SetAsMaximum();
+    /// <summary>
+    /// Sets value to the highest non-infinite/Special Decimal State tValue that it store
+    /// </summary>
+    void SetAsMaximum();
 
-        /// <summary>
-        /// Sets value to the lowest non-infinite/Special Decimal State tValue that it store
-        /// </summary>
-        void SetAsMinimum();
+    /// <summary>
+    /// Sets value to the lowest non-infinite/Special Decimal State tValue that it store
+    /// </summary>
+    void SetAsMinimum();
 
     #pragma endregion RangeLimits
 
     #pragma region ValueSetters
 protected://Work around for not allowing to use incomplete class statics during forming of class
-        static const unsigned int LN10Div_DecSection = 434294482;
-        static const unsigned int TwiceLN10Div_DecSection = 868588964;
+    static const unsigned int LN10Div_DecSection = 434294482;
+    static const unsigned int TwiceLN10Div_DecSection = 868588964;
 
 public:
 
-        /// <summary>
-        /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
-        /// (Stored as 3.141592654)
-        /// </summary>
-        void  SetValueToPiNum();
+    /// <summary>
+    /// Sets value to Pi(3.1415926535897932384626433) with tenth digit rounded up
+    /// (Stored as 3.141592654)
+    /// </summary>
+    void  SetValueToPiNum();
 
-        //100,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToHundredMilPiNum();
+    //100,000,000xPi(Rounded to 9th decimal digit)
+    void  SetValueToHundredMilPiNum();
 
-        //10,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenMilPiNum();
+    //10,000,000xPi(Rounded to 9th decimal digit)
+    void  SetValueToTenMilPiNum();
 
-        //1,000,000xPi(Rounded to 9th decimal digit)
-        void  SetValueToOneMilPiNum();
+    //1,000,000xPi(Rounded to 9th decimal digit)
+    void  SetValueToOneMilPiNum();
 
-        //10xPi(Rounded to 9th decimal digit)
-        void  SetValueToTenPiNum();
+    //10xPi(Rounded to 9th decimal digit)
+    void  SetValueToTenPiNum();
 
-        /// <summary>
-        /// Euler's number rounded to 9th digit(2.718281828)
-        /// Irrational number equal to about (1 + 1/n)^n
-        /// (about 2.71828182845904523536028747135266249775724709369995)
-        /// </summary>
-        void  SetValueToENum();
+    /// <summary>
+    /// Euler's number rounded to 9th digit(2.718281828)
+    /// Irrational number equal to about (1 + 1/n)^n
+    /// (about 2.71828182845904523536028747135266249775724709369995)
+    /// </summary>
+    void  SetValueToENum();
 
-        //Sets value to value at 0.5
-        void  SetValueToPoint5();
+    //Sets value to value at 0.5
+    void  SetValueToPoint5();
 
-        void  SetValueToJustAboveZero();
+    void  SetValueToJustAboveZero();
 
-        /// <summary>
-        /// Sets the value at .000001000
-        /// </summary>
-        void  SetValueToOneMillionth();
+    /// <summary>
+    /// Sets the value at .000001000
+    /// </summary>
+    void  SetValueToOneMillionth();
 
-        /// <summary>
-        /// Sets the value at "0.005"
-        /// </summary>
-        /// <returns>MediumDec</returns>
-        void  SetValueToFiveThousandth();
+    /// <summary>
+    /// Sets the value at "0.005"
+    /// </summary>
+    /// <returns>MediumDec</returns>
+    void  SetValueToFiveThousandth();
 
-        /// <summary>
-        /// Sets the value at "0.000005"
-        /// </summary>
-        void  SetValueToFiveMillionth();
+    /// <summary>
+    /// Sets the value at "0.000005"
+    /// </summary>
+    void  SetValueToFiveMillionth();
 
-        //0e-7
-        void  SetValueToTenMillionth();
+    //0e-7
+    void  SetValueToTenMillionth();
 
-        /// <summary>
-        /// Sets the value to .000000010
-        /// </summary>
-        void  SetValueToOneHundredMillionth();
+    /// <summary>
+    /// Sets the value to .000000010
+    /// </summary>
+    void  SetValueToOneHundredMillionth();
 
-        /// <summary>
-        /// 2.3025850929940456840179914546844
-        /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
-        /// </summary>
-        void  SetValueToLN10();
+    /// <summary>
+    /// 2.3025850929940456840179914546844
+    /// (Based on https://stackoverflow.com/questions/35968963/trying-to-calculate-logarithm-base-10-without-math-h-really-close-just-having)
+    /// </summary>
+    void  SetValueToLN10();
 
-        /// <summary>
-        /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToLN10Div();
+    /// <summary>
+    /// (1 / Ln10) (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+    /// </summary>
+    void  SetValueToLN10Div();
 
-        /// <summary>
-        /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
-        /// </summary>
-        void  SetValueToTwiceLN10Div();
+    /// <summary>
+    /// (1 / Ln10)*2 (Ln10 operation as division as recommended by https://helloacm.com/fast-integer-log10/ for speed optimization)
+    /// </summary>
+    void  SetValueToTwiceLN10Div();
 
-        void SetValueToPointOne();
+    void SetValueToPointOne();
 
     #pragma endregion ValueSetters
 
@@ -326,7 +328,7 @@ public:
     static constexpr MediumDec Minimum = MediumDec(MirroredInt::Maximum, 999999999);
     static constexpr MediumDec Maximum = MediumDec(MirroredInt::Minimum, 999999999);
     #pragma endregion Range limit constants
-		
+    
     #pragma region Mathematical constants
     // Pi
     // π = ~ 3.141'592'653'589'793'238'462'643'3
@@ -338,22 +340,22 @@ public:
     // π * e
     // = ~8.539'734'222'673567065463550869546574495034888535765084881233717265981654348037954472832304065619300439
     static constexpr MediumDec PiENum = MediumDec(8, 539'734'223);
-		
+    
     //Pi, and e are different in MediumDecV2 and higher variants(using FlagState multiplier constants)
     //static constexpr MediumDec Pi = PiNum;
     //static constexpr MediumDec E = ENum;
     //PiE constant only defined if PiE FlagState enabled
-		
+    
     static constexpr MediumDec LN10 = MediumDec(2, 302585093);
     static constexpr MediumDec LN10Div = MediumDec(MirroredInt::Zero, 434294482);
     static constexpr MediumDec TwiceLN10Div = MediumDec(MirroredInt::Zero, 868588964);
-		
-	  //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
+    
+    //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
     static constexpr MediumDec Ln2 = MediumDec(MirroredInt::Zero, 693'147'181);
-		
+    
     static constexpr MediumDec NegLn2 = MediumDec(MirroredInt::NegativeZero, 693'147'181);
     #pragma endregion Mathematical constants
-		
+    
     #pragma region Pi Multipliers constants
     //Commenting Pi multipiers constants out since not needed until MediumDecV2
     //static constexpr MediumDec TenPiNum = MediumDec(31, 415'926'536);
@@ -361,7 +363,7 @@ public:
     //static constexpr MediumDec TenMilPiNum = MediumDec(31'415'926, 535'897'932);
     //static constexpr MediumDec HundredMilPiNum = MediumDec(314'159'265, 358'979'324);
     #pragma endregion Pi Multipliers constants
-		
+    
     #pragma region Small magnitude constants
     static constexpr MediumDec PointOne =       MediumDec(MirroredInt::Zero, 100'000'000);
     static constexpr MediumDec FiveThousandth = MediumDec(MirroredInt::Zero, 005'000'000);
@@ -370,7 +372,7 @@ public:
     static constexpr MediumDec TenMillionth =   MediumDec(MirroredInt::Zero, 000'010'000);
     static constexpr MediumDec FiveBillionth =  MediumDec(MirroredInt::Zero, 000'000'050);
     #pragma endregion Small magnitude constants
-		
+    
     #pragma endregion ValueDefines
 
     #pragma region String Commands

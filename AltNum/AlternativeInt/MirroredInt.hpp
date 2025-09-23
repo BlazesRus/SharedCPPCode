@@ -16,9 +16,9 @@ namespace BlazesRusCode
 
     /// <summary>
     /// Integer alternative with magnitude and sign field
-	/// </summary>
-	class DLL_API MirroredInt{
-	public:
+  /// </summary>
+  class DLL_API MirroredInt{
+  public:
   #pragma region DigitStorage
 
   #if defined(AltNum_UseInvertedSign)
@@ -29,123 +29,123 @@ namespace BlazesRusCode
     inline static constexpr PositiveSign = 0;
   #endif
 
-		//If(Sign==NegativeSign), then the sign is negative.
+    //If(Sign==NegativeSign), then the sign is negative.
     //Otherwise, the sign is positive
-		unsigned int Sign:1;
+    unsigned int Sign:1;
 
-		//Stores non-signed part of value
-		unsigned int Value:31;
+    //Stores non-signed part of value
+    unsigned int Value:31;
 
   #pragma endregion DigitStorage
 
-	#pragma region class_constructors
+  #pragma region class_constructors
 
-	/// <summary>
-	/// Initializes a new instance from unsigned value and sign.
-	/// </summary>
-	constexpr MirroredInt(const unsigned int& value = 0,
-							const unsigned int& sign = PositiveSign)
-		: Value(value), Sign(sign) {}
+  /// <summary>
+  /// Initializes a new instance from unsigned value and sign.
+  /// </summary>
+  constexpr MirroredInt(const unsigned int& value = 0,
+              const unsigned int& sign = PositiveSign)
+    : Value(value), Sign(sign) {}
 
-	/// <summary>
-	/// Initializes a new instance from signed value.
-	/// </summary>
-	constexpr MirroredInt(const signed int& value)
-		: Value(value < 0 ? static_cast<unsigned int>(-value)
-							: static_cast<unsigned int>(value)),
-			Sign(value < 0 ? PositiveSign : NegativeSign) {}
+  /// <summary>
+  /// Initializes a new instance from signed value.
+  /// </summary>
+  constexpr MirroredInt(const signed int& value)
+    : Value(value < 0 ? static_cast<unsigned int>(-value)
+              : static_cast<unsigned int>(value)),
+      Sign(value < 0 ? PositiveSign : NegativeSign) {}
 
-	/// <summary>
-	/// Copy constructor.
-	/// </summary>
-	constexpr MirroredInt(const MirroredInt& rvalue)
-		: Value(rvalue.Value), Sign(rvalue.Sign) {}
+  /// <summary>
+  /// Copy constructor.
+  /// </summary>
+  constexpr MirroredInt(const MirroredInt& rvalue)
+    : Value(rvalue.Value), Sign(rvalue.Sign) {}
 
-	/// <summary>
-	/// Copy assignment.
-	/// </summary>
-	constexpr MirroredInt& operator=(const MirroredInt& rhs)
-	{
-		if (this != &rhs)
-		{
-			Value = rhs.Value;
-			Sign = rhs.Sign;
-		}
-		return *this;
-	}
+  /// <summary>
+  /// Copy assignment.
+  /// </summary>
+  constexpr MirroredInt& operator=(const MirroredInt& rhs)
+  {
+    if (this != &rhs)
+    {
+      Value = rhs.Value;
+      Sign = rhs.Sign;
+    }
+    return *this;
+  }
 
-	/// <summary>
-	/// Assignment from unsigned int.
-	/// </summary>
-	constexpr MirroredInt& operator=(const unsigned int& rhs)
-	{
-		Value = rhs;
-		Sign = PositiveSign;
-		return *this;
-	}
+  /// <summary>
+  /// Assignment from unsigned int.
+  /// </summary>
+  constexpr MirroredInt& operator=(const unsigned int& rhs)
+  {
+    Value = rhs;
+    Sign = PositiveSign;
+    return *this;
+  }
 
-	/// <summary>
-	/// Assignment from signed int.
-	/// </summary>
-	constexpr MirroredInt& operator=(const signed int& rhs)
-	{
-		if (rhs < 0)
-		{
-			Sign = PositiveSign;
-			Value = static_cast<unsigned int>(-rhs);
-		}
-		else
-		{
-			Sign = NegativeSign;
-			Value = static_cast<unsigned int>(rhs);
-		}
-		return *this;
-	}
+  /// <summary>
+  /// Assignment from signed int.
+  /// </summary>
+  constexpr MirroredInt& operator=(const signed int& rhs)
+  {
+    if (rhs < 0)
+    {
+      Sign = PositiveSign;
+      Value = static_cast<unsigned int>(-rhs);
+    }
+    else
+    {
+      Sign = NegativeSign;
+      Value = static_cast<unsigned int>(rhs);
+    }
+    return *this;
+  }
 
-	/// <summary>
-	/// Sets the value from another MirroredInt.
-	/// </summary>
-	constexpr void SetValueV2(const MirroredInt& rValue)
-	{
-		Value = rValue.Value;
-		Sign = rValue.Sign;
-	}
+  /// <summary>
+  /// Sets the value from another MirroredInt.
+  /// </summary>
+  constexpr void SetValueV2(const MirroredInt& rValue)
+  {
+    Value = rValue.Value;
+    Sign = rValue.Sign;
+  }
 
-	/// <summary>
-	/// Sets the value from unsigned int and sign.
-	/// </summary>
-	constexpr void SetValue(const unsigned int& value = 0,
-							const unsigned int& sign = PositiveSign)
-	{
-		Value = value;
-		Sign = sign;
-	}
+  /// <summary>
+  /// Sets the value from unsigned int and sign.
+  /// </summary>
+  constexpr void SetValue(const unsigned int& value = 0,
+              const unsigned int& sign = PositiveSign)
+  {
+    Value = value;
+    Sign = sign;
+  }
 
-	/// <summary>
-	/// Sets the value from signed int.
-	/// </summary>
-	constexpr void SetSignedValue(const signed int& val = 0)
-	{
-		if (val < 0)
-		{
-			Sign = PositiveSign;
-			Value = static_cast<unsigned int>(-val);
-		}
-		else
-		{
-			Sign = NegativeSign;
-			Value = static_cast<unsigned int>(val);
-		}
-	}
+  /// <summary>
+  /// Sets the value from signed int.
+  /// </summary>
+  constexpr void SetSignedValue(const signed int& val = 0)
+  {
+    if (val < 0)
+    {
+      Sign = PositiveSign;
+      Value = static_cast<unsigned int>(-val);
+    }
+    else
+    {
+      Sign = NegativeSign;
+      Value = static_cast<unsigned int>(val);
+    }
+  }
 
-	#pragma endregion class_constructors
+  #pragma endregion class_constructors
 
 
   #pragma region Negative_Status
 
-		bool IsNegative() const;
+    bool IsNegative() const;
 
-		bool IsPositive() const;
+    bool IsPositive() const;
 
     void SetAsPositive();
 
@@ -174,22 +174,22 @@ namespace BlazesRusCode
     void SetAsNegativeZero();
 
     //Is at either zero or negative zero
-		bool IsAtZeroInt() const;
+    bool IsAtZeroInt() const;
 
     //Is at neither zero or negative zero
-		bool IsNotAtZeroInt() const;
+    bool IsNotAtZeroInt() const;
 
     //Is at either zero or negative one
-		bool IsAtOneInt() const;
+    bool IsAtOneInt() const;
 
     //Is at neither zero or negative one
-		bool IsNotAtOneInt() const;
+    bool IsNotAtOneInt() const;
 
-		bool IsEven() const;
+    bool IsEven() const;
 
-		bool IsOdd() const;
+    bool IsOdd() const;
 
-		bool IsZero() const;
+    bool IsZero() const;
 
     //Returns copy of value as Absolute value
     MirroredInt Abs() const;
@@ -198,9 +198,9 @@ namespace BlazesRusCode
 
   #pragma endregion Check_if_value
 
-	#pragma region StringOperations
+  #pragma region StringOperations
 
-		void ReadString(const std::string& value);
+    void ReadString(const std::string& value);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MirroredInt"/> class from string literal
@@ -216,106 +216,106 @@ namespace BlazesRusCode
 
     std::string ToString() const;
 
-		/// <summary>
+    /// <summary>
     /// MirroredInt to int explicit conversion
     /// </summary>
     explicit operator std::string() { return ToString(); }
 
-	#pragma endregion StringOperations
+  #pragma endregion StringOperations
 
-	#pragma region Comparison Operators
+  #pragma region Comparison Operators
 
-	/// Compare only the sign bits
-	constexpr std::strong_ordering SignComparison(const MirroredInt& that) const
-	{
-			// Comparing if number is negative vs positive
-	#if defined(AltNum_UseInvertedSign)
-			auto SignCmp = Sign <=> that.Sign;
-	#else   // (inverted comparison so sign of zero == positive)
-			auto SignCmp = that.Sign <=> Sign;
-	#endif
-			return SignCmp;
-	}
+  /// Compare only the sign bits
+  constexpr std::strong_ordering SignComparison(const MirroredInt& that) const
+  {
+      // Comparing if number is negative vs positive
+  #if defined(AltNum_UseInvertedSign)
+      auto SignCmp = Sign <=> that.Sign;
+  #else   // (inverted comparison so sign of zero == positive)
+      auto SignCmp = that.Sign <=> Sign;
+  #endif
+      return SignCmp;
+  }
 
-	constexpr std::strong_ordering operator<=>(const MirroredInt& that) const
-	{
-			// Compare sign first
-	#if defined(AltNum_UseInvertedSign)
-			auto SignCmp = Sign <=> that.Sign;
-	#else
-			auto SignCmp = that.Sign <=> Sign;
-	#endif
-			if (SignCmp != 0)
-					return SignCmp;
+  constexpr std::strong_ordering operator<=>(const MirroredInt& that) const
+  {
+      // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+      auto SignCmp = Sign <=> that.Sign;
+  #else
+      auto SignCmp = that.Sign <=> Sign;
+  #endif
+      if (SignCmp != 0)
+          return SignCmp;
 
-			// Compare magnitude
-			return Value <=> that.Value;
-	}
+      // Compare magnitude
+      return Value <=> that.Value;
+  }
 
-	constexpr std::strong_ordering operator<=>(const unsigned int& that) const
-	{
-			// Compare sign first
-	#if defined(AltNum_UseInvertedSign)
-			auto SignCmp = Sign <=> PositiveSign;
-	#else
-			auto SignCmp = PositiveSign <=> Sign;
-	#endif
-			if (SignCmp != 0)
-					return SignCmp;
+  constexpr std::strong_ordering operator<=>(const unsigned int& that) const
+  {
+      // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+      auto SignCmp = Sign <=> PositiveSign;
+  #else
+      auto SignCmp = PositiveSign <=> Sign;
+  #endif
+      if (SignCmp != 0)
+          return SignCmp;
 
-			// Compare magnitude
-			return Value <=> that;
-	}
+      // Compare magnitude
+      return Value <=> that;
+  }
 
-	constexpr std::strong_ordering operator<=>(const signed int& that) const
-	{
-			if (that < 0)
-			{
-					// Compare sign first
-	#if defined(AltNum_UseInvertedSign)
-					auto SignCmp = Sign <=> NegativeSign;
-	#else
-					auto SignCmp = NegativeSign <=> Sign;
-	#endif
-					if (SignCmp != 0)
-							return SignCmp;
+  constexpr std::strong_ordering operator<=>(const signed int& that) const
+  {
+      if (that < 0)
+      {
+          // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+          auto SignCmp = Sign <=> NegativeSign;
+  #else
+          auto SignCmp = NegativeSign <=> Sign;
+  #endif
+          if (SignCmp != 0)
+              return SignCmp;
 
-					return Value <=> static_cast<unsigned int>(-that);
-			}
-			else
-			{
-					// Compare sign first
-	#if defined(AltNum_UseInvertedSign)
-					auto SignCmp = Sign <=> PositiveSign;
-	#else
-					auto SignCmp = PositiveSign <=> Sign;
-	#endif
-					if (SignCmp != 0)
-							return SignCmp;
+          return Value <=> static_cast<unsigned int>(-that);
+      }
+      else
+      {
+          // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+          auto SignCmp = Sign <=> PositiveSign;
+  #else
+          auto SignCmp = PositiveSign <=> Sign;
+  #endif
+          if (SignCmp != 0)
+              return SignCmp;
 
-					return Value <=> static_cast<unsigned int>(that);
-			}
-	}
+          return Value <=> static_cast<unsigned int>(that);
+      }
+  }
 
-	constexpr bool operator==(const MirroredInt& that) const
-	{
-			return (Value == that.Value) && (Sign == that.Sign);
-	}
+  constexpr bool operator==(const MirroredInt& that) const
+  {
+      return (Value == that.Value) && (Sign == that.Sign);
+  }
 
-	constexpr bool operator==(const unsigned int& that) const
-	{
-			return (Value == that) && (Sign == PositiveSign);
-	}
+  constexpr bool operator==(const unsigned int& that) const
+  {
+      return (Value == that) && (Sign == PositiveSign);
+  }
 
-	constexpr bool operator==(const signed int& that) const
-	{
-			if (that < 0)
-					return (Sign == NegativeSign) && (Value == static_cast<unsigned int>(-that));
-			else
-					return (Sign == PositiveSign) && (Value == static_cast<unsigned int>(that));
-	}
+  constexpr bool operator==(const signed int& that) const
+  {
+      if (that < 0)
+          return (Sign == NegativeSign) && (Value == static_cast<unsigned int>(-that));
+      else
+          return (Sign == PositiveSign) && (Value == static_cast<unsigned int>(that));
+  }
 
-	#pragma endregion Comparison Operators
+  #pragma endregion Comparison Operators
 
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace BlazesRusCode
         /// </summary>
         explicit operator signed __int64() { return GetValue(); }
 
-	protected:
+  protected:
 
         /// <summary>
         /// Returns maximum stored value(2147483647)
@@ -375,7 +375,7 @@ namespace BlazesRusCode
         /// </summary>
         static MirroredInt ZeroValue();
 
-	public:
+  public:
 
         //Alias:MaxIntHalf
         //Maximum value(2147483647) that can be stored inside IntHalf field
@@ -394,11 +394,11 @@ namespace BlazesRusCode
         //Alias:NegativeZeroRep
         static const MirroredInt NegativeZero;
 
-		static const MirroredInt Zero;
+    static const MirroredInt Zero;
 
-		void UInt64DivOp(const unsigned __int64& rValue);
+    void UInt64DivOp(const unsigned __int64& rValue);
 
-		void UInt64MultOp(const unsigned __int64& rValue);
+    void UInt64MultOp(const unsigned __int64& rValue);
 
         void UIntDivOp(const unsigned int& rValue);
 
@@ -418,335 +418,318 @@ namespace BlazesRusCode
 
 private:
 
-		void Int64DivOp(const signed __int64& rValue);
+    void Int64DivOp(const signed __int64& rValue);
 
-		void Int64MultOp(const signed __int64& rValue);
+    void Int64MultOp(const signed __int64& rValue);
 
-        //Division operation
-        void DivOp(const MirroredInt& rValue);
+    //Division operation
+    void DivOp(const MirroredInt& rValue);
 
-        void IntDivOp(const signed int& rValue);
+    void IntDivOp(const signed int& rValue);
 
-        //Multiplication operation
-        void MultOp(const MirroredInt& rValue);
+    //Multiplication operation
+    void MultOp(const MirroredInt& rValue);
 
-        void IntMultOp(const signed int& rValue);
+    void IntMultOp(const signed int& rValue);
 
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void AddOp(const MirroredInt& rValue);
+    //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+    void AddOp(const MirroredInt& rValue);
 
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void IntAddOp(const signed int& rValue);
+    //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+    void IntAddOp(const signed int& rValue);
 
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void SubOp(const MirroredInt& rValue);
+    //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+    void SubOp(const MirroredInt& rValue);
 
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void IntSubOp(const signed int& rValue);
+    //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+    void IntSubOp(const signed int& rValue);
 
 public:
 
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingUnsignedAddOp(const MirroredInt& rValue);
 
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingUnsignedSubOp(const MirroredInt& rValue);
 
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingAddOp(const MirroredInt& rValue);
-
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingSubOp(const MirroredInt& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUIntAddOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingUIntSubOp(const unsigned int& rValue);
-
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingIntegerAddOp(const signed int& rValue);
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingAddOp(const MirroredInt& rValue);
 
 
-		//Exclude negative zero version(When DecimalHalf.Value==0)
-        void NRepSkippingIntegerSubOp(const signed int& rValue);
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingSubOp(const MirroredInt& rValue);
 
- 		friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
-			lValue.DivOp(rValue); return lValue;
-        }
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingUIntAddOp(const unsigned int& rValue);
 
-		friend MirroredInt& operator/=(MirroredInt& lValue, const signed int& rValue){
-			lValue.IntDivOp(rValue); return lValue;
-        }
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingUIntSubOp(const unsigned int& rValue);
 
-        friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned int& rValue){
-            lValue.Value /= rValue;
-            return lValue;
-        }
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingIntegerAddOp(const signed int& rValue);
 
-		friend MirroredInt operator/(const MirroredInt& lValue, const MirroredInt& rValue){
-            MirroredInt newVal = lValue;
-			newVal.DivOp(rValue); return newVal;
-        }
 
-		friend MirroredInt operator/(const MirroredInt& lValue, const unsigned int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.UIntDivOp(rValue); return newVal;
-        }
+  //Exclude negative zero version(When DecimalHalf.Value==0)
+    void NRepSkippingIntegerSubOp(const signed int& rValue);
 
-		friend MirroredInt operator/(const MirroredInt& lValue, const signed int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.IntDivOp(rValue); return newVal;
-        }
+   friend MirroredInt& operator/=(MirroredInt& lValue, const MirroredInt& rValue){
+    lValue.DivOp(rValue); return lValue;
+    }
 
-        friend MirroredInt& operator/=(MirroredInt& lValue, const signed __int64& rValue) {
-            lValue.Int64DivOp(rValue); return lValue;
-        }
+  friend MirroredInt& operator/=(MirroredInt& lValue, const signed int& rValue){
+    lValue.IntDivOp(rValue); return lValue;
+    }
 
-        friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned __int64& rValue) {
-            lValue.UInt64DivOp(rValue);
-            return lValue;
-        }
+    friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned int& rValue){
+      lValue.Value /= rValue;
+      return lValue;
+    }
 
-        friend MirroredInt operator/(const MirroredInt& lValue, const unsigned __int64& rValue) {
-            MirroredInt newVal = lValue;
-            newVal.UInt64DivOp(rValue); return newVal;
-        }
+  friend MirroredInt operator/(const MirroredInt& lValue, const MirroredInt& rValue){
+      MirroredInt newVal = lValue;
+    newVal.DivOp(rValue); return newVal;
+    }
 
-        friend MirroredInt operator/(const MirroredInt& lValue, const signed __int64& rValue) {
-            MirroredInt newVal = lValue;
-            newVal.Int64DivOp(rValue); return newVal;
-        }
+  friend MirroredInt operator/(const MirroredInt& lValue, const unsigned int& rValue){
+      MirroredInt newVal = lValue;
+    newVal.UIntDivOp(rValue); return newVal;
+    }
 
-        friend MirroredInt& operator*=(MirroredInt& lValue, const MirroredInt& rValue){
-            lValue.DivOp(rValue); return lValue;
-        }
+  friend MirroredInt operator/(const MirroredInt& lValue, const signed int& rValue){
+      MirroredInt newVal = lValue;
+    newVal.IntDivOp(rValue); return newVal;
+    }
 
-        friend MirroredInt& operator*=(MirroredInt& lValue, const signed int& rValue){
-            lValue.IntMultOp(rValue); return lValue;
-        }
+    friend MirroredInt& operator/=(MirroredInt& lValue, const signed __int64& rValue) {
+      lValue.Int64DivOp(rValue); return lValue;
+    }
 
-        friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned int& rValue){
-            lValue.UIntMultOp(rValue); return lValue;
-        }
+    friend MirroredInt& operator/=(MirroredInt& lValue, const unsigned __int64& rValue) {
+      lValue.UInt64DivOp(rValue);
+      return lValue;
+    }
 
-		friend MirroredInt operator*(const MirroredInt& lValue, const MirroredInt& rValue){
-            MirroredInt newVal = lValue;
-			newVal.MultOp(rValue); return newVal;
-        }
+    friend MirroredInt operator/(const MirroredInt& lValue, const unsigned __int64& rValue) {
+      MirroredInt newVal = lValue;
+      newVal.UInt64DivOp(rValue); return newVal;
+    }
 
-		friend MirroredInt operator*(const MirroredInt& lValue, const unsigned int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.UIntMultOp(rValue); return newVal;
-        }
+    friend MirroredInt operator/(const MirroredInt& lValue, const signed __int64& rValue) {
+      MirroredInt newVal = lValue;
+      newVal.Int64DivOp(rValue); return newVal;
+    }
 
-		friend MirroredInt operator*(const MirroredInt& lValue, const signed int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.IntMultOp(rValue); return newVal;
-        }
+    friend MirroredInt& operator*=(MirroredInt& lValue, const MirroredInt& rValue){
+      lValue.DivOp(rValue); return lValue;
+    }
 
-        friend MirroredInt& operator*=(MirroredInt& lValue, const signed __int64& rValue) {
-            lValue.Int64MultOp(rValue); return lValue;
-        }
+    friend MirroredInt& operator*=(MirroredInt& lValue, const signed int& rValue){
+      lValue.IntMultOp(rValue); return lValue;
+    }
 
-        friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned __int64& rValue) {
-            lValue.UInt64MultOp(rValue); return lValue;
-        }
+    friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned int& rValue){
+      lValue.UIntMultOp(rValue); return lValue;
+    }
 
-        friend MirroredInt operator*(const MirroredInt& lValue, const unsigned __int64& rValue) {
-            MirroredInt newVal = lValue;
-            newVal.UInt64MultOp(rValue); return newVal;
-        }
+  friend MirroredInt operator*(const MirroredInt& lValue, const MirroredInt& rValue){
+      MirroredInt newVal = lValue;
+    newVal.MultOp(rValue); return newVal;
+    }
 
-        friend MirroredInt operator*(const MirroredInt& lValue, const signed __int64& rValue) {
-            MirroredInt newVal = lValue;
-            newVal.Int64MultOp(rValue); return newVal;
-        }
+  friend MirroredInt operator*(const MirroredInt& lValue, const unsigned int& rValue){
+      MirroredInt newVal = lValue;
+    newVal.UIntMultOp(rValue); return newVal;
+    }
 
-        //Including negative zero by default use NRepSkippingAddOp when DecimalHalf==0
-		friend MirroredInt& operator+=(MirroredInt& lValue, const MirroredInt& rValue)
-		{ lValue.AddOp(rValue); return lValue;
-        }
+  friend MirroredInt operator*(const MirroredInt& lValue, const signed int& rValue){
+      MirroredInt newVal = lValue;
+    newVal.IntMultOp(rValue); return newVal;
+    }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned int& rValue)
-		{ lValue.UIntAddOp(rValue); return lValue; }
+    friend MirroredInt& operator*=(MirroredInt& lValue, const signed __int64& rValue) {
+      lValue.Int64MultOp(rValue); return lValue;
+    }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const signed int& rValue)
-		{ lValue.IntAddOp(rValue); return lValue; }
+    friend MirroredInt& operator*=(MirroredInt& lValue, const unsigned __int64& rValue) {
+      lValue.UInt64MultOp(rValue); return lValue;
+    }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned __int64& rValue)
-		{ lValue.UIntAddOp(rValue); return lValue; }
+    friend MirroredInt operator*(const MirroredInt& lValue, const unsigned __int64& rValue) {
+      MirroredInt newVal = lValue;
+      newVal.UInt64MultOp(rValue); return newVal;
+    }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const signed __int64& rValue)
-		{ lValue.IntAddOp(rValue); return lValue; }
+    friend MirroredInt operator*(const MirroredInt& lValue, const signed __int64& rValue) {
+      MirroredInt newVal = lValue;
+      newVal.Int64MultOp(rValue); return newVal;
+    }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned char& rValue)
-        {
-            lValue.UIntAddOp(rValue); return lValue;
-        }
+    //Including negative zero by default use NRepSkippingAddOp when DecimalHalf==0
+    friend MirroredInt& operator+=(MirroredInt& lValue, const MirroredInt& rValue)
+    { lValue.AddOp(rValue); return lValue; }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const signed char& rValue)
-		{ lValue.IntAddOp(rValue); return lValue; }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned int& rValue)
+    { lValue.UIntAddOp(rValue); return lValue; }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned short& rValue)
-		{ lValue.UIntAddOp(rValue); return lValue; }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const signed int& rValue)
+    { lValue.IntAddOp(rValue); return lValue; }
 
-		friend MirroredInt& operator+=(MirroredInt& lValue, const signed short& rValue)
-		{ lValue.IntAddOp(rValue); return lValue; }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned __int64& rValue)
+    { lValue.UIntAddOp(rValue); return lValue; }
 
-		friend MirroredInt operator+(const MirroredInt& lValue, const MirroredInt& rValue){
-            MirroredInt newVal = lValue;
-			newVal.AddOp(rValue); return newVal;
-        }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const signed __int64& rValue)
+    { lValue.IntAddOp(rValue); return lValue; }
 
-		friend MirroredInt operator+(const MirroredInt& lValue, const unsigned int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.UIntAddOp(rValue); return newVal;
-        }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned char& rValue)
+    { lValue.UIntAddOp(rValue); return lValue; }
 
-		friend MirroredInt operator+(const MirroredInt& lValue, const signed int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.IntAddOp(rValue); return newVal;
-        }
+    friend MirroredInt& operator+=(MirroredInt& lValue, const signed char& rValue)
+    { lValue.IntAddOp(rValue); return lValue; }
+
+    friend MirroredInt& operator+=(MirroredInt& lValue, const unsigned short& rValue)
+    { lValue.UIntAddOp(rValue); return lValue; }
+
+    friend MirroredInt& operator+=(MirroredInt& lValue, const signed short& rValue)
+    { lValue.IntAddOp(rValue); return lValue; }
+
+    friend MirroredInt operator+(const MirroredInt& lValue, const MirroredInt& rValue){
+      MirroredInt newVal = lValue;
+      newVal.AddOp(rValue); return newVal;
+    }
+
+    friend MirroredInt operator+(const MirroredInt& lValue, const unsigned int& rValue){
+      MirroredInt newVal = lValue;
+      newVal.UIntAddOp(rValue); return newVal;
+    }
+
+    friend MirroredInt operator+(const MirroredInt& lValue, const signed int& rValue){
+      MirroredInt newVal = lValue;
+      newVal.IntAddOp(rValue); return newVal;
+    }
 
         //Including negative zero by default use NRepSkippingSubOp when DecimalHalf==0
-		friend MirroredInt& operator-=(MirroredInt& lValue, const MirroredInt& rValue)
-		{ lValue.SubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const MirroredInt& rValue)
+    { lValue.SubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned int& rValue)
-		{ lValue.UIntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned int& rValue)
+    { lValue.UIntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const signed int& rValue)
-		{ lValue.IntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const signed int& rValue)
+    { lValue.IntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned __int64& rValue)
-		{ lValue.UIntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned __int64& rValue)
+    { lValue.UIntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const signed __int64& rValue)
-		{ lValue.IntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const signed __int64& rValue)
+    { lValue.IntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned char& rValue)
-		{ lValue.UIntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned char& rValue)
+    { lValue.UIntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const signed char& rValue)
-		{ lValue.IntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const signed char& rValue)
+    { lValue.IntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned short& rValue)
-		{ lValue.UIntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const unsigned short& rValue)
+    { lValue.UIntSubOp(rValue); return lValue; }
 
-		friend MirroredInt& operator-=(MirroredInt& lValue, const signed short& rValue)
-		{ lValue.IntSubOp(rValue); return lValue; }
+    friend MirroredInt& operator-=(MirroredInt& lValue, const signed short& rValue)
+    { lValue.IntSubOp(rValue); return lValue; }
 
-		friend MirroredInt operator-(const MirroredInt& lValue, const MirroredInt& rValue){
-            MirroredInt newVal = lValue;
-			newVal.SubOp(rValue); return newVal;
-        }
+    friend MirroredInt operator-(const MirroredInt& lValue, const MirroredInt& rValue){
+      MirroredInt newVal = lValue;
+      newVal.SubOp(rValue); return newVal;
+    }
 
-		friend MirroredInt operator-(const MirroredInt& lValue, const unsigned int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.UIntSubOp(rValue); return newVal;
-        }
+    friend MirroredInt operator-(const MirroredInt& lValue, const unsigned int& rValue){
+      MirroredInt newVal = lValue;
+      newVal.UIntSubOp(rValue); return newVal;
+    }
 
-		friend MirroredInt operator-(const MirroredInt& lValue, const signed int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.IntSubOp(rValue); return newVal;
-        }
+    friend MirroredInt operator-(const MirroredInt& lValue, const signed int& rValue){
+      MirroredInt newVal = lValue;
+      newVal.IntSubOp(rValue); return newVal;
+    }
 
-		friend MirroredInt& operator%=(MirroredInt& lValue, const unsigned int& rValue)
-		{ lValue.Value %= rValue; return lValue; }
+    friend MirroredInt& operator%=(MirroredInt& lValue, const unsigned int& rValue)
+    { lValue.Value %= rValue; return lValue; }
 
-		friend MirroredInt operator%(const MirroredInt& lValue, const unsigned int& rValue){
-            MirroredInt newVal = lValue;
-			newVal.Value %= rValue; return newVal;
-        }
+    friend MirroredInt operator%(const MirroredInt& lValue, const unsigned int& rValue){
+      MirroredInt newVal = lValue;
+      newVal.Value %= rValue; return newVal;
+    }
 
-		friend MirroredInt& operator%=(MirroredInt& lValue, const MirroredInt& rValue)
-		{
-			if(rValue.IsNegative())
-				lValue.SwapNegativeStatus();
-			lValue.Value %= rValue.Value;
-			return lValue;
-		}
+    friend MirroredInt& operator%=(MirroredInt& lValue, const MirroredInt& rValue)
+    {
+      if(rValue.IsNegative())
+        lValue.SwapNegativeStatus();
+      lValue.Value %= rValue.Value;
+      return lValue;
+    }
 
-		friend MirroredInt operator%(const MirroredInt& lValue, const MirroredInt& rValue){
-            MirroredInt newVal = lValue;
-			return newVal%=rValue;
-        }
-
-		//template<IntegerType IntType=signed int>
-		//MirroredInt& UIntDivisionOperation(const IntType& rValue)
-		//{
-		//    std::conditional<sizeof(IntType) > sizeof(int), UInt64DivOp(rValue), UIntDivOp(rValue)>;
-  //          return *this;
-		//}
-
-		//template<IntegerType IntType=signed int>
-	 //   MirroredInt& UIntMultiplicationOperation(const IntType& rValue)
-		//{
-		//	std::conditional<sizeof(IntType) > sizeof(int), UInt64MultOp(rValue), UIntMultOp(rValue)>);
-		//    return *this;
-  //      }
+    friend MirroredInt operator%(const MirroredInt& lValue, const MirroredInt& rValue){
+      MirroredInt newVal = lValue;
+      return newVal%=rValue;
+    }
 
     #pragma region Other Operators
 
-        /// <summary>
-        /// Negative Unary Operator(Flips negative status)
-        /// </summary>
-        /// <param name="self">The self.</param>
-        MirroredInt operator- ()
-        {
-			auto self = *this;
-            self.SwapNegativeStatus(); return self;
-        } const
+    /// <summary>
+    /// Negative Unary Operator(Flips negative status)
+    /// </summary>
+    /// <param name="self">The self.</param>
+    MirroredInt operator- ()
+    {
+    auto self = *this;
+      self.SwapNegativeStatus(); return self;
+    } const
 
-        /// <summary>
-        /// ++MirroredInt Operator
-        /// </summary>
-        MirroredInt& operator ++()
-        {
-            UIntAddOp(1);
-            return *this;
-        }
+    /// <summary>
+    /// ++MirroredInt Operator
+    /// </summary>
+    MirroredInt& operator ++()
+    {
+      UIntAddOp(1);
+      return *this;
+    }
 
-        /// <summary>
-        /// ++MirroredInt Operator
-        /// </summary>
-        MirroredInt& operator --()
-        {
-            UIntSubOp(1);
-            return *this;
-        }
+    /// <summary>
+    /// ++MirroredInt Operator
+    /// </summary>
+    MirroredInt& operator --()
+    {
+      UIntSubOp(1);
+      return *this;
+    }
 
-        /// <summary>
-        /// MirroredInt++ Operator
-        /// </summary>
-        MirroredInt operator ++(int)
-        {
-            MirroredInt tmp(*this);
-            ++* this;
-            return tmp;
-        }
+    /// <summary>
+    /// MirroredInt++ Operator
+    /// </summary>
+    MirroredInt operator ++(int)
+    {
+      MirroredInt tmp(*this);
+      ++* this;
+      return tmp;
+    }
 
-        /// <summary>
-        /// MirroredInt-- Operator
-        /// </summary>
-        MirroredInt operator --(int)
-        {
-            MirroredInt tmp(*this);
-            --* this;
-            return tmp;
-        }
+    /// <summary>
+    /// MirroredInt-- Operator
+    /// </summary>
+    MirroredInt operator --(int)
+    {
+      MirroredInt tmp(*this);
+      --* this;
+      return tmp;
+    }
 
-        /// <summary>
-        /// MirroredInt* Operator
-        /// </summary>
-        MirroredInt& operator *()
-        {
-            return *this;
-        }
+    /// <summary>
+    /// MirroredInt* Operator
+    /// </summary>
+    MirroredInt& operator *()
+    {
+      return *this;
+    }
 
     #pragma endregion Other Operators
 
-	};
+  };
 }

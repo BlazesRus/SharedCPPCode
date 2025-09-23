@@ -189,12 +189,12 @@ bool BlazesRusCode::MediumDec::IsOneVariantVal() const
 
 void BlazesRusCode::MediumDec::SetAsMaximum()
 {
-	IntHalf = MirroredInt::Maximum; DecimalHalf = 999999999;
+	IntHalf = MirroredInt::Maximum; DecimalHalf = DecimalMax;
 }
 
 void BlazesRusCode::MediumDec::SetAsMinimum()
 {
-	IntHalf = MirroredInt::Minimum; DecimalHalf = 999999999;
+	IntHalf = MirroredInt::Minimum; DecimalHalf = DecimalMax;
 }
 
 #pragma endregion RangeLimits
