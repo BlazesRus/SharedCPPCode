@@ -9,6 +9,7 @@
 
 #include <type_traits>
 #include <cstddef>
+#include <bit>//used for C++20 std::bit_cast
 #include <compare>//used for C++20 feature of spaceship operator
 #include "..\PolicyConcepts.hpp"
 
@@ -23,6 +24,45 @@ namespace BlazesRusCode
 
     template<typename Policy>
     concept UseCustomMode   = requires { { Policy::UseCustomMode   } -> std::convertible_to<bool>; };
+    
+    struct SignedModePolicy{
+       static constexpr bool SignedMode = true;
+    }
+
+    template<unsigned TotalBits>
+    using PackedTypeForBits =
+        std::conditional_t<TotalBits <= 32, std::uint32_t,
+        std::conditional_t<TotalBits <= 64, std::uint64_t,
+    #if defined(__SIZEOF_INT128__)
+        std::conditional_t<TotalBits <= 128, unsigned __int128,
+    #else
+        std::conditional_t<TotalBits <= 128, std::array<std::uint64_t, 2>, // fallback if no 128-bit
+    #endif
+        std::array<std::uint64_t, (TotalBits + 63) / 64>>>>;
+
+    template<unsigned TotalBits>
+    using SignedTypeForBits =
+        std::conditional_t<TotalBits <= 32, std::int32_t,
+        std::conditional_t<TotalBits <= 64, std::int64_t,
+    #if defined(__SIZEOF_INT128__)
+        std::conditional_t<TotalBits <= 128, signed __int128,
+    #else
+        std::conditional_t<TotalBits <= 128, void, // fallback if no 128-bit
+    #endif
+        void>>>;
+
+    // Native-word detection (effective only if PackedT is a single integer type)
+    template<typename T>
+    constexpr bool is_native_word_v =
+        std::is_same_v<T, std::uint32_t> ||
+        std::is_same_v<T, std::uint64_t>
+    #if defined(__SIZEOF_INT128__)
+        || std::is_same_v<T, unsigned __int128>
+    #endif
+        ;
+    
+    template<typename T>
+    constexpr unsigned bit_width_of_v = sizeof(T) * 8;
   }
   
   class DefaultBinaryUDecIntHalfStorage{
@@ -70,6 +110,9 @@ namespace BlazesRusCode
 
   template<typename Policy>
   CustomBinaryUDecStorage{
+  protected:
+    using IntHalfT = BinaryDecCode::PackedTypeForBits(Policy::INT_BITS);
+    using SignedIntHalfT = BinaryDecCode::SignedTypeForBits(Policy::INT_BITS); 
   public:
   #pragma region DigitStorage
 
@@ -93,11 +136,8 @@ namespace BlazesRusCode
     
   #pragma endregion DigitStorage
  
-    using DecimalOverflowT =
-    std::conditional_t<(BITS <= 31), unsigned int, unsigned _int64>;
-
-    using DecimalHalfT =
-    std::conditional_t<(BITS <= 32), unsigned int, unsigned _int64>;
+    using DecimalOverflowT = BinaryDecCode::PackedTypeForBits(Policy::DEC_BITS+1);
+    using DecimalHalfT = BinaryDecCode::PackedTypeForBits(Policy::DEC_BITS);
 
     /// <summary>
     /// The decimal overflow (Every value is used by DecimalMax so need to store in next biggest storage)
@@ -107,7 +147,7 @@ namespace BlazesRusCode
     /// <summary>
     /// The decimal overflow in _int64 so don't need to widen
     /// </summary>
-		static constexpr unsigned _int64 DecimalOverflowX = unsigned _int64(DecimalOverflow);
+    static constexpr unsigned _int64 DecimalOverflowX = unsigned _int64(DecimalOverflow);
 
     static constexpr DecimalHalfT DecimalMax = (DecimalHalfT)DecimalOverflow - 1;
     static constexpr DecimalHalfT HalfOverflow = DecimalMax/2;
@@ -125,8 +165,9 @@ namespace BlazesRusCode
 
   template<typename Policy>
   struct BinaryDecStorageSelector : 
-  std::conditional_t<!UseCustomMode&&!SignedMode,RestrictedFloatExtraCustomDenomSupport<Policy>, BinaryDecCode::EmptyStruct>,
-
+  std::conditional_t<!Has_UseCustomMode<Policy>&&!Has_SignedMode<Policy>,DefaultBinaryUDecStorage, BinaryDecCode::EmptyStruct>,
+  std::conditional_t<Has_UseCustomMode<Policy>&&!Has_SignedMode<Policy>,CustomBinaryUDecStorage<Policy>, BinaryDecCode::EmptyStruct>,
+  std::conditional_t<!Has_UseCustomMode<Policy>&&Has_SignedMode<Policy>,DefaultBinaryDecStorage, BinaryDecCode::EmptyStruct>
   {
   protected:
     static inline constexpr bool SignedMode = Has_SignedMode<Policy> ? Policy::SignedMode : false;
@@ -135,12 +176,19 @@ namespace BlazesRusCode
     using DefaultPart = std::conditional_t<!UseCustomMode&&!SignedMode,DefaultBinaryUDecStorage, BinaryDecCode::EmptyStruct>;
     using CustomPart = std::conditional_t<UseCustomMode&&!SignedMode,CustomBinaryUDecStorage<Policy>, BinaryDecCode::EmptyStruct>;
     using DefaultSignedPart = std::conditional_t<!UseCustomMode&&SignedMode,DefaultBinaryDecStorage, BinaryDecCode::EmptyStruct>;
-    //Use MediumUDecV3Variant later if needed signed BinaryDec with custom widths
+    // Signed + custom width storage intentionally omitted.
+    // If required later, implement using MediumUDecV3Variant rather than a BinaryDec variant.
+    // For similar modes already supported in MediumDecV3Variant, prefer BinaryDec or BinaryUDec postfix in classname.
+    // Naming convention optional: BinaryDec/BinaryUDec postfix recommended for clarity,
+    // but other styles acceptable if mode is documented in class comment or policy name.
   public:  
-    BinaryDecStorageSelector() noexcept : DefaultPart, CustomPart, DefaultSignedPart, CustomSignedPart() {}
+    BinaryDecStorageSelector() noexcept : DefaultPart, CustomPart, DefaultSignedPart() {}
   };
 
-  //Fixed number representation with binary based fractional tail
+	// Fixed-point number with binary fractional tail.
+	// Fractional tail stored as DecimalHalf / (1 << DEC_BITS), default DEC_BITS = 32.
+	// Tail is integer-based, not a floating-point mantissa.
+	// CRTP base: VariantClass is the final derived type.
   template<class VariantClass, typename Policy:BinaryDecCode::EmptyStruct>
   class BinaryDec : public BinaryDecStorageSelector<VariantClass, Policy>
   {
@@ -183,8 +231,8 @@ namespace BlazesRusCode
       return *this;
     }
 
-    template<typename = std::enable_if_t<!SignedMode>>
     BinaryDec& operator=(const unsigned int& rhs)
+    requires (!SignedMode)
     {
       IntHalf = rhs; DecimalHalf = 0;
       return *this;
@@ -192,6 +240,7 @@ namespace BlazesRusCode
 
     template<typename = std::enable_if_t<SignedMode>>
     BinaryDec& operator=(const signed int& rhs)
+    requires (SignedMode)
     {
       IntHalf = rhs; DecimalHalf = 0;
       return *this;
@@ -208,21 +257,65 @@ namespace BlazesRusCode
 
   #pragma endregion class_constructors
 
+  #pragma region Value Cast
+    
+    using PackedT = UseCustomMode ? BinaryDecCode::PackedTypeForBits<INT_BITS + DEC_BITS> : std::uint64_t;
+    
+    // Bitfield-safe layout guard
+    static constexpr bool ValueSafe =
+        UseCustomMode
+            ? (std::is_trivially_copyable_v<BinaryDec> &&
+               sizeof(BinaryDec) == sizeof(IntHalf) + sizeof(DecimalHalf) &&
+               (INT_BITS + DEC_BITS) <= bit_width_of_v<PackedT>)
+            : (std::is_trivially_copyable_v<BinaryDec> &&
+               sizeof(BinaryDec) == sizeof(IntHalf) + sizeof(DecimalHalf));
+    
+    static constexpr bool IsValueEffective = ValueSafe ?
+    (UseCustomMode? (BinaryDecCode::is_native_word_v<PackedT> && (INT_BITS + DEC_BITS) <= BinaryDecCode::bit_width_of_v<PackedT>)
+    : true):false;
+    
+    // Default unsigned mode
+    constexpr auto GetValue() const noexcept
+    requires (ValueSafe && !SignedMode && !UseCustomMode)
+    {
+        struct Packed { decltype(IntHalf) intHalf; decltype(DecimalHalf) decHalf; };
+        return std::bit_cast<PackedT>(Packed{IntHalf, DecimalHalf});
+    }
+    
+    // CustomMode (unsigned, bitfields inside)
+    constexpr auto GetValue() const noexcept
+    requires (ValueSafe && !SignedMode && UseCustomMode)
+    {
+        struct Packed { decltype(IntHalf) intHalf; decltype(DecimalHalf) decHalf; };
+        return std::bit_cast<PackedT>(Packed{IntHalf, DecimalHalf});
+    }
+    
+    // Signed mode (magnitude-only: 31-bit Value; sign exists in container)
+    constexpr auto GetValue() const noexcept
+    requires (ValueSafe && SignedMode)
+    {
+        using MagT = std::remove_cv_t<decltype(IntHalf.Value)>;
+        struct Packed { MagT intHalfMag; decltype(DecimalHalf) decHalf; };
+        return std::bit_cast<PackedT>(Packed{IntHalf.Value, DecimalHalf});
+    }
+  
+  #pragma endregion Value Cast
+
   #pragma region Negative_Status
 
-    template<typename = std::enable_if_t<SignedMode>>
     bool IsPositive() const noexempt
+    requires (SignedMode)
     { return IntHalf.IsPositive(); }
 
-    template<typename = std::enable_if_t<SignedMode>>
     bool IsNegative() const
+    requires (SignedMode)
     { return IntHalf.IsNegative(); }
 
     /// <summary>
     /// Swaps the negative status.
     /// </summary>
-    template<typename = std::enable_if_t<SignedMode>>
     void SwapNegativeStatus()
+    requires (SignedMode)
     { IntHalf.Sign ^= 1; }
 
     /// <summary>
@@ -230,8 +323,8 @@ namespace BlazesRusCode
     /// </summary>
     /// <param name="self">The self.</param>
     /// <returns>MediumDec</returns>
-    template<typename = std::enable_if_t<SignedMode>>
     VariantClass operator-() const
+    requires (SignedMode)
     { VariantClass self = *this; self.SwapNegativeStatus(); return self; }
 
   #pragma endregion Negative_Status
@@ -258,54 +351,54 @@ namespace BlazesRusCode
     template<typename = std::enable_if_t<!SignedMode>>
     void SetAsValues(const unsigned int& intVal = 0, const unsigned int& decVal = unsigned int::Zero)
     {
-    	IntHalf = intVal; DecimalHalf = decVal;
+      IntHalf = intVal; DecimalHalf = decVal;
     }
 
     template<typename = std::enable_if_t<SignedMode>>
     void SetAsValues(const MirroredInt& intVal = MirroredInt::Zero, const unsigned int& decVal = 0)
     {
-    	IntHalf = intVal; DecimalHalf = decVal;
+      IntHalf = intVal; DecimalHalf = decVal;
     }
 
     //Is at either zero or negative zero IntHalf of AltNum
     template<typename = std::enable_if_t<SignedMode>>
     bool IsAtZeroInt() const noexcept
     {
-    	return IntHalf.Value == 0;
+      return IntHalf.Value == 0;
     }
 
     template<typename = std::enable_if_t<SignedMode>>
     bool IsNotAtZeroInt() const noexcept
     {
-    	return IntHalf.Value != 0;
+      return IntHalf.Value != 0;
     }
 
     template<typename = std::enable_if_t<SignedMode>>
     bool IsAtOneInt() const noexcept
     {
-    	return IntHalf.Value == 1;
+      return IntHalf.Value == 1;
     }
 
     template<typename = std::enable_if_t<SignedMode>>
     bool IsNotAtOneInt() const noexcept
     {
-    	return IntHalf.Value != 1;
+      return IntHalf.Value != 1;
     }
 
     bool IsZero() const noexcept
     {
-	    return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)? MirroredInt::Zero:0;
+      return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)? MirroredInt::Zero:0;
     }
 
     bool IsOne() const noexcept
     {
-	    return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)?MirroredInt::One:1;
+      return DecimalHalf == 0 && IntHalf == constexpr (Policy::SignedMode)?MirroredInt::One:1;
     }
 
     template<typename = std::enable_if_t<SignedMode>>
     bool IsOneVal() const noexcept
     {
-	    return DecimalHalf == 0 && IntHalf == MirroredInt::One;
+      return DecimalHalf == 0 && IntHalf == MirroredInt::One;
     }
 
   #pragma endregion Check_if_value
@@ -313,20 +406,21 @@ namespace BlazesRusCode
   #pragma region RangeLimits
 
     /// <summary>
-    /// Sets value to the highest non-infinite/Special Decimal State tValue that it store
+    /// Sets value to the highest value that it store
     /// </summary>
-    void SetAsMaximum()
+    inline void SetAsMaximum() noexcept
     {
-	    IntHalf = IntHalfMax;
+      IntHalf = IntHalfMax;
       DecimalHalf = DecimalMax;
     }
 
     /// <summary>
-    /// Sets value to the lowest value
+    /// Sets value to the lowest value that it store
     /// </summary>
-    void SetAsMinimum()
+    inline void SetAsMinimum() noexcept
     {
-	    IntHalf = constexpr (Policy::SignedMode)?MirroredInt::Minimum : 0; DecimalHalf = DecimalMax;
+      IntHalf = constexpr (Policy::SignedMode)?MirroredInt::Minimum : 0;
+      DecimalHalf = DecimalMax;
     }
 
   #pragma endregion RangeLimits
@@ -340,7 +434,7 @@ public:
     static constexpr VariantClass Zero = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Zero:0);
     static constexpr VariantClass One = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::One:1);
     static constexpr VariantClass Two = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Two:2);
-		template<typename = std::enable_if_t<SignedMode>>
+    template<typename = std::enable_if_t<SignedMode>>
     static constexpr VariantClass NegativeOne = VariantClass(MirroredInt::NegativeZero);
     #pragma endregion Integer constants
 
@@ -357,46 +451,46 @@ public:
     static constexpr VariantClass Minimum = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Maximum:IntHalfMax, DecimalMax);
     static constexpr VariantClass Maximum = VariantClass(constexpr (Policy::SignedMode)?MirroredInt::Minimum:0, DecimalMax);
     #pragma endregion Range limit constants
-		
-		//frac = round( (ValueRepresentation - IntHalfRepresentation) * DecimalMax )
+    
+    //frac = round( (ValueRepresentation - IntHalfRepresentation) * DecimalMax )
     #pragma region Mathematical constants
     // Pi
     // π = ~ 3.141'592'653'589'793'238'462'643'3
-		template<typename = std::enable_if_t<!UseCustomMode>>
+    template<typename = std::enable_if_t<!UseCustomMode>>
     static constexpr VariantClass PiNum = VariantClass(3, 605070158u);
     // Euler's number (Non-Alternative Representation)
     // Irrational number equal to about (1 + 1/n)^n
     // e = ~2.71828182845904523536028747135266249775724709369995
-		template<typename = std::enable_if_t<!UseCustomMode>>
+    template<typename = std::enable_if_t<!UseCustomMode>>
     static constexpr VariantClass ENum = VariantClass(2, 308884356u);
     // π * e
     // = ~8.539'734'222'673567065463550869546574495034888535765084881233717265981654348037954472832304065619300439
-		template<typename = std::enable_if_t<!UseCustomMode>>
+    template<typename = std::enable_if_t<!UseCustomMode>>
     static constexpr VariantClass PiENum = VariantClass(8, 2315469002u);
-		
+    
     //Pi, and e are different in VariantClassV2 and higher variants(using FlagState multiplier constants)
     //static constexpr VariantClass Pi = PiNum;
     //static constexpr VariantClass E = ENum;
     //PiE constant only defined if PiE FlagState enabled
-		
-		template<typename = std::enable_if_t<!UseCustomMode>>
+    
+    template<typename = std::enable_if_t<!UseCustomMode>>
     static constexpr VariantClass LN10 = VariantClass(2, 1300902225u);
-		
-		//template<typename = std::enable_if_t<!UseCustomMode>>
+    
+    //template<typename = std::enable_if_t<!UseCustomMode>>
     //static constexpr VariantClass LN10Div = VariantClass(0, ???);
-		//template<typename = std::enable_if_t<!UseCustomMode>>
+    //template<typename = std::enable_if_t<!UseCustomMode>>
     //static constexpr VariantClass TwiceLN10Div = VariantClass(0, ???);
-		
-	  //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
-		template<typename = std::enable_if_t<!UseCustomMode>>
+    
+    //0.693147180559945309417232121458176568075500134360255254120680009493393621969694715605863326996418688
+    template<typename = std::enable_if_t<!UseCustomMode>>
     static constexpr VariantClass Ln2 = VariantClass(0, 2975105830u);
-		template<typename = std::enable_if_t<SignedMode>>
+    template<typename = std::enable_if_t<SignedMode>>
     static constexpr VariantClass NegLn2 = VariantClass(MirroredInt::NegativeZero, 2975105830u);
     #pragma endregion Mathematical constants
-		
+    
     #pragma region Pi Multipliers constants
     #pragma endregion Pi Multipliers constants
-		
+    
     #pragma region Small magnitude constants
     //Power of 10 magnitudes not perfectly representable in binary based fractions
     #pragma endregion Small magnitude constants
@@ -527,65 +621,122 @@ public:
   #pragma endregion ConvertToOtherTypes
 
   #pragma region Comparison Operators
-protected:
-    //Compare only as if in NormalType representation mode
-    template<BinaryDecVariant VariantType=BinaryDec>
-    std::strong_ordering BasicComparisonV1(const VariantType& that) const
-    {
-      if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-        return IntHalfCmp;
-      if (auto DecimalHalfCmp = DecimalHalf.Value <=> that.DecimalHalf.Value; DecimalHalfCmp != 0)
-        return DecimalHalfCmp;
-    }
-
-    std::strong_ordering BasicComparison(const BinaryDec& that) const
-    {
-      return BasicComparisonV1(that);
-    }
-
-    //Compare only as if in NormalType representation mode
-    std::strong_ordering BasicUIntComparison(const unsigned int& that) const
-    {
-      if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
-        return IntHalfCmp;
-      if (auto DecimalHalfCmp = DecimalHalf.Value <=> 0; DecimalHalfCmp != 0)
-        return DecimalHalfCmp;
-    }
-
-    //Compare only as if in NormalType representation mode
-    std::strong_ordering BasicIntComparison(const signed int& that) const
-    {
-      if (that < 0) {
-        auto IntHalfCmp = 0 <=> 1;
-        return IntHalfCmp;
-      }
-      else
-      {
-        if (auto IntHalfCmp = IntHalf <=> (unsigned int)that; IntHalfCmp != 0)
-          return IntHalfCmp;
-        if (auto DecimalHalfCmp = DecimalHalf.Value <=> 0; DecimalHalfCmp != 0)
-          return DecimalHalfCmp;
-      }
-    }
-
 public:
 
     std::strong_ordering operator<=>(const BinaryDec& that) const
-    {//return BasicComparison(that);
-      if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
-        return IntHalfCmp;
-      if (auto DecimalHalfCmp = DecimalHalf.Value <=> that.DecimalHalf.Value; DecimalHalfCmp != 0)
-        return DecimalHalfCmp;
+    {
+      if constexpr (IsValueEffective&&!SignedMode) {
+        if (auto ValueCmp = GetValue() <=> that.GetValue(); ValueCmp != 0)
+          return ValueCmp;
+      } else {
+        if (auto IntHalfCmp = IntHalf <=> that.IntHalf; IntHalfCmp != 0)
+          return IntHalfCmp;
+        if constexpr (!SignedMode) {
+          if (auto DecimalHalfCmp = DecimalHalf <=> that.DecimalHalf; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+        } else {
+          //Counting negative zero as same as zero IntHalf but with negative DecimalHalf
+          unsigned int lVal = IsNegative()?DecimalMax-DecimalHalf:DecimalHalf;
+          unsigned int rVal = that.IsNegative()?DecimalMax-that.DecimalHalf:that.DecimalHalf;
+          if (auto DecimalHalfCmp = lVal <=> rVal; DecimalHalfCmp != 0)
+            return DecimalHalfCmp;
+        }
+      }
+      return std::strong_ordering::equal;
     }
 
     std::strong_ordering operator<=>(const unsigned int& that) const
+    requires (!UseCustomMode)
     {
-      return BasicUIntComparison(that);
+      if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+          return IntHalfCmp;
+      if(DecimalHalf > 0)
+        return std::strong_ordering::greater;
+      return std::strong_ordering::equal;
     }
 
-    std::strong_ordering operator<=>(const signed int& that) const
+    std::strong_ordering operator<=>(const signed int& that) const noexcept
+    requires (!UseCustomMode)
     {
-      return BasicIntComparison(that);
+        if constexpr (!SignedMode) {
+            // Unsigned mode
+            if (that < 0)
+                return std::strong_ordering::greater;
+    
+            if (auto IntHalfCmp = IntHalf <=> that;
+                IntHalfCmp != 0)
+                return IntHalfCmp;
+    
+            return (DecimalHalf > 0)
+                ? std::strong_ordering::greater
+                : std::strong_ordering::equal;
+    
+        } else {
+            // Signed mode
+            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+                return IntHalfCmp;
+    
+            if (IsNegative()) {
+                // e.g. -3.5 < -3
+                return (DecimalHalf > 0)
+                    ? std::strong_ordering::less
+                    : std::strong_ordering::equal;
+            } else {
+                // e.g. 3.5 > 3
+                return (DecimalHalf > 0)
+                    ? std::strong_ordering::greater
+                    : std::strong_ordering::equal;
+            }
+        }
+    }
+
+    std::strong_ordering operator<=>(const IntHalfT& that) const
+    requires (UseCustomMode)
+    {
+      if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+          return IntHalfCmp;
+      if(DecimalHalf > 0)
+        return std::strong_ordering::greater;
+      return std::strong_ordering::equal;
+    }
+
+    std::strong_ordering operator<=>(const SignedIntHalfT& that) const noexcept
+#if defined(__SIZEOF_INT128__)
+    requires (UseCustomMode && POLICY::INT_BITS<=128)
+#else
+    requires (UseCustomMode && POLICY::INT_BITS<=64)
+#endif
+    {
+        if constexpr (!SignedMode) {
+            // Unsigned mode
+            if (that < 0)
+                return std::strong_ordering::greater;
+    
+            if (auto IntHalfCmp = IntHalf <=> that;
+                IntHalfCmp != 0)
+                return IntHalfCmp;
+    
+            return (DecimalHalf > 0)
+                ? std::strong_ordering::greater
+                : std::strong_ordering::equal;
+    
+        } else {
+            // Signed mode
+            if (auto IntHalfCmp = IntHalf <=> that; IntHalfCmp != 0)
+                return IntHalfCmp;
+    
+            if (IsNegative()) {
+                // e.g. -3.5 < -3
+                return (DecimalHalf > 0)
+                    ? std::strong_ordering::less
+                    : std::strong_ordering::equal;
+            } else {
+                // e.g. 3.5 > 3
+                return (DecimalHalf > 0)
+                    ? std::strong_ordering::greater
+                    : std::strong_ordering::equal;
+            }
+        }
     }
 
     bool operator==(const BinaryDec& that) const
@@ -607,6 +758,7 @@ public:
     }
 
     bool operator==(const unsigned int& that) const
+    requires (!UseCustomMode)
     {
       if (IntHalf!=that)
         return false;
@@ -616,6 +768,7 @@ public:
     }
 
     bool operator!=(const unsigned int& that) const
+    requires (!UseCustomMode)
     {
       if (IntHalf!=that)
         return true;
@@ -625,6 +778,7 @@ public:
     }
 
     bool operator==(const signed int& that) const
+    requires (!UseCustomMode)
     {
       if (IntHalf!=that)
         return false;
@@ -634,6 +788,55 @@ public:
     }
 
     bool operator!=(const signed int& that) const
+    requires (!UseCustomMode)
+    {
+      if (IntHalf!=that)
+        return true;
+      if (DecimalHalf!=0)
+        return true;
+      return false;
+    }
+
+    bool operator==(const unsigned int& that) const
+    requires (UseCustomMode)
+    {
+      if (IntHalf!=that)
+        return false;
+      if (DecimalHalf!=0)
+        return false;
+      return true;
+    }
+
+    bool operator!=(const unsigned int& that) const
+    requires (UseCustomMode)
+    {
+      if (IntHalf!=that)
+        return true;
+      if (DecimalHalf!=0)
+        return true;
+      return false;
+    }
+
+    bool operator==(const SignedIntHalfT& that) const
+#if defined(__SIZEOF_INT128__)
+    requires (UseCustomMode && POLICY::INT_BITS<=128)
+#else
+    requires (UseCustomMode && POLICY::INT_BITS<=64)
+#endif
+    {
+      if (IntHalf!=that)
+        return false;
+      if (DecimalHalf!=0)
+        return false;
+      return true;
+    }
+
+    bool operator!=(const SignedIntHalfT& that) const
+#if defined(__SIZEOF_INT128__)
+    requires (UseCustomMode && POLICY::INT_BITS<=128)
+#else
+    requires (UseCustomMode && POLICY::INT_BITS<=64)
+#endif
     {
       if (IntHalf!=that)
         return true;
@@ -645,32 +848,52 @@ public:
   #pragma endregion Comparison Operators
 
   #pragma region NormalRep Integer Division Operations
-protected:
+public:
 
     template<IntegerType IntType=unsigned int>
-    void unsigned intDivOpV1(const IntType& rValue)
+    inline void PartialUDivOp(const IntType& rValue)
     {//Avoid using with special status representations such as approaching zero or result will be incorrect
-      unsigned _int64 SelfRes;
-      unsigned _int64 Res;
-      unsigned _int64 IntHalfRes;
-      unsigned _int64 DecimalRes;
-      SelfRes = DecimalHalf == 0? DecimalOverflowX * IntHalf: DecimalOverflowX * IntHalf + DecimalHalf.Value;
-      Res = SelfRes / rValue;
+      PackedT Res, IntHalfRes, DecimalRes;
+      if constexpr (IsValueEffective) {
+        Res = GetValue();
+      } else {
+        Res = DecimalHalf == 0 ? DecimalOverflow * IntHalf : DecimalOverflow * IntHalf + DecimalHalf;
+      }
+      Res /= rValue;
+      if constexpr (IsValueEffective) {
+        constexpr unsigned int ShiftAmount = UseCustomMode ? Policy::DEC_BITS : 32;
+      	IntHalfRes = Res >> ShiftAmount;
+      	DecimalRes = Res & DecimalMax;// mask out lower bits
+      } else {
+      	IntHalfRes = Res/DecimalOverflow;
+      	DecimalRes = Res - DecimalOverflow * IntHalfRes;
+      }
+      if constexpr (SignedMode)
+          IntHalf.Value = static_cast<unsigned int>(IntHalfRes);
+      else
+          IntHalf = static_cast<IntHalfT>(IntHalfRes);
+      DecimalHalf = (DecHalfT)DecimalRes;
+    }
 
-      IntHalfRes = Res/DecimalOverflowX;
-      DecimalRes = Res - DecimalOverflowX * IntHalfRes;
-      IntHalf = (unsigned int)IntHalfRes;
-      DecimalHalf.Value = (unsigned int)DecimalRes;
+    template<IntegerType IntType=signed int>
+    inline void PartialIntDivOp(const IntType& Value)
+    {
+      if constexpr (SignedMode){
+        if(Value<0)
+        {
+            SwapNegativeStatus();
+            PartialUIntDivOp(-Value);
+        }
+        else
+            PartialUIntDivOp(Value);
+      } else
+      {
+        // Forward directly to unsigned logic
+        PartialUDivOp(static_cast<std::make_unsigned_t<IntType>>(Value));
+      }
     }
 
 public:
-    void unsigned intDivOp(const unsigned int& rValue) { unsigned intDivOpV1(rValue); }
-    void PartialUInt64DivOp(const unsigned int& rValue) { unsigned intDivOpV1(rValue); }
-
-    void unsigned intDivOp(const signed int& rValue) { unsigned intDivOpV1(rValue); }
-    void unsigned int64DivOp(const signed __int64& rValue) { unsigned intDivOpV1(rValue); }
-
-protected:
 
     /// <summary>
     /// Basic division operation between BinaryDec Variant and unsigned Integer value
@@ -679,21 +902,46 @@ protected:
     /// </summary>
     /// <param name="rValue">The right side value</param>
     template<IntegerType IntType=unsigned int>
-    void IntDivOpV1(const IntType& Value)
+    inline void UIntDivOp(const IntType& Value)
     {
-      if (Value == 0)
+        if (Value == 0)
+        {
+            throw "Target value can not be divided by zero";
+        }
+        else if (IsZero())
+            return;
+        PartialUIntDivOpV1(Value);
+        if (IntHalf == 0 && DecimalHalf == 0)
+            DecimalHalf = 1;//Prevent Dividing into nothing
+    }
+
+    template<IntegerType IntType=signed int>
+    inline void IntDivOp(const IntType& Value)
+    {
+      if constexpr (SignedMode)
       {
-        throw "Target value can not be divided by zero";
+        if (Value == 0)
+        {
+            throw "Target value can not be divided by zero";
+        }
+        else if (IsZero())
+            return;
+        PartialIntDivOpV1(Value);
+        if (IntHalf == 0 && DecimalHalf == 0)
+            DecimalHalf = 1;//Prevent Dividing into nothing
+      } else
+      {
+        // Forward directly to unsigned logic
+        UIntDivOp(static_cast<std::make_unsigned_t<IntType>>(Value));
       }
-      else if (IsZero())
-        return;
-      unsigned intDivOpV1(Value);
-      if (IntHalf == 0 && DecimalHalf == 0)
-        DecimalHalf = 1;//Prevent Dividing into nothing
     }
 
     template<IntegerType IntType=unsigned int>
-    auto& IntDivOperationV1(const IntType& rValue)
+    inline VariantClass& UIntDivOperation(const IntType& rValue)
+    { UIntDivOpV1(rValue); return *this; }
+
+    template<IntegerType IntType=unsigned int>
+    inline VariantClass& IntDivOperation(const IntType& rValue)
     { IntDivOpV1(rValue); return *this; }
 
     /// <summary>
@@ -703,39 +951,18 @@ protected:
     /// </summary>
     /// <param name="rValue">The right side value</param>
     template<IntegerType IntType=unsigned int>
-    const auto DivideByIntV1(const IntType& rValue)
+    inline constexpr VariantClass DivideByUInt(const IntType& rValue)
+    { auto self = *this; return self.UIntDivOperation(rValue); }
+
+    /// <summary>
+    /// Basic division operation between BinaryDec Variant and signed Integer value
+    /// that ignores special representation status
+    /// (Doesn't modify owner object)
+    /// </summary>
+    /// <param name="rValue">The right side value</param>
+    template<IntegerType IntType=unsigned int>
+    inline constexpr VariantClass DivideByInt(const IntType& rValue)
     { auto self = *this; return self.IntDivOperationV1(rValue); }
-
-public:
-
-    void UIntDivOp(const unsigned int& rValue) { IntDivOpV1(rValue); }
-    void IntDivOp(const signed int& rValue) { IntDivOpV1(rValue); }
-    void UInt64DivOp(const unsigned __int64& rValue) { IntDivOpV1(rValue); }
-    void Int64DivOp(const signed __int64& rValue) { IntDivOpV1(rValue); }
-
-    void UInt8DivOp(const unsigned char& rValue) { IntDivOpV1(rValue); }
-    void Int8DivOp(const signed char& rValue) { IntDivOpV1(rValue); }
-    void UInt16DivOp(const unsigned short& rValue) { IntDivOpV1(rValue); }
-    void Int16DivOp(const signed short& rValue) { IntDivOpV1(rValue); }
-
-    BinaryDec& UIntDivOperation(const unsigned int& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& IntDivOperation(const signed int& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& UInt64DivOperation(const unsigned __int64& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& Int64DivOperation(const signed __int64& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& UInt8DivOperation(const unsigned char& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& Int8DivOperation(const signed char& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& UInt16DivOperation(const unsigned short& rValue) { return IntDivOperationV1(rValue); }
-    BinaryDec& Int16DivOperation(const signed short& rValue) { return IntDivOperationV1(rValue); }
-
-    const BinaryDec DivideByUInt(const unsigned int& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByInt(const signed int& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByUInt64(const unsigned __int64& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByInt64(const signed __int64& rValue) { return DivideByIntV1(rValue); }
-
-    const BinaryDec DivideByUInt8(const unsigned char& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByInt8(const signed char& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByUInt16(const unsigned short& rValue) { return DivideByIntV1(rValue); }
-    const BinaryDec DivideByInt16(const signed short& rValue) { return DivideByIntV1(rValue); }
 
   #pragma endregion NormalRep Integer Division Operations
 
@@ -751,13 +978,13 @@ protected:
     template<BinaryDecVariant VariantType=BinaryDec>
     bool PartialDivOpV1(const VariantType& rValue)
     {
-      unsigned _int64 SelfRes = DecimalOverflowX * IntHalf + DecimalHalf.Value;
-      unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf.Value;
+      unsigned _int64 SelfRes = DecimalOverflowX * IntHalf + DecimalHalf;
+      unsigned _int64 ValueRes = DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
 
       unsigned _int64 IntHalfRes = SelfRes / ValueRes;
       unsigned _int64 DecimalRes = SelfRes - ValueRes * IntHalfRes;
       IntHalf = (unsigned int) IntHalfRes;
-      DecimalHalf.Value = DecimalRes;
+      DecimalHalf = DecimalRes;
       if (IntHalfRes == 0 && DecimalRes == 0)
         return true;
       else
@@ -818,7 +1045,7 @@ protected:
         }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
         else if (PartialDivOp(rValue))//Prevent Dividing into nothing
-            DecimalHalf.Value = 1;
+            DecimalHalf = 1;
 #else
         else
           PartialDivOp(rValue);
@@ -826,7 +1053,7 @@ protected:
       }
 #if !defined(AltNum_DisableDivideDownToNothingPrevention)
       else if (PartialDivOp(rValue))//Prevent Dividing into nothing
-        DecimalHalf.Value = 1;
+        DecimalHalf = 1;
 #else
       else
         PartialDivOp(rValue);
@@ -974,19 +1201,19 @@ protected:
         IntHalf *= rValue;
       else
       {
-        unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
+        unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
         SRep *= rValue;
         if (SRep >= DecimalOverflowX)
         {
           unsigned __int64 OverflowVal = SRep / DecimalOverflowX;
           SRep -= OverflowVal * DecimalOverflowX;
           IntHalf = (unsigned int)OverflowVal;
-          DecimalHalf.Value = (unsigned int)SRep;
+          DecimalHalf = (unsigned int)SRep;
         }
         else
         {
           IntHalf = 0;
-          DecimalHalf.Value = (unsigned int)SRep;
+          DecimalHalf = (unsigned int)SRep;
         }
       }
     }
@@ -1130,13 +1357,13 @@ protected:
         else if (rValue.DecimalHalf == 0)
           IntHalf *= rValue.IntHalf;
         else {
-          __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf.Value : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf.Value;
+          __int64 rRep = rValue.IntHalf == 0 ? rValue.DecimalHalf : DecimalOverflowX * rValue.IntHalf + rValue.DecimalHalf;
           if (rRep >= DecimalOverflowX)
           {
             __int64 OverflowVal = rRep / DecimalOverflowX;
             rRep -= OverflowVal * DecimalOverflowX;
             IntHalf = (unsigned int)OverflowVal;
-            DecimalHalf.Value = (unsigned int)rRep;
+            DecimalHalf = (unsigned int)rRep;
             return;
           }
           else
@@ -1144,7 +1371,7 @@ protected:
             DecimalHalf = (signed int)rRep;
           #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0)
-              DecimalHalf.Value = 1;
+              DecimalHalf = 1;
           #endif
             IntHalf = 0;
             return;
@@ -1154,34 +1381,34 @@ protected:
       else if (IntHalf == 0)
       {
         __int64 SRep = (__int64)DecimalHalf;
-        SRep *= rValue.DecimalHalf.Value;
+        SRep *= rValue.DecimalHalf;
         SRep /= DecimalOverflowX;
         if (rValue.IntHalf == 0)
         {
           DecimalHalf = (signed int)SRep;
         #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
           if (DecimalHalf == 0)
-            DecimalHalf.Value = 1;
+            DecimalHalf = 1;
         #endif
           return;
         }
         else
         {
-          SRep += (__int64)DecimalHalf.Value * rValue.IntHalf;
+          SRep += (__int64)DecimalHalf * rValue.IntHalf;
           if (SRep >= DecimalOverflowX)
           {
             __int64 OverflowVal = SRep / DecimalOverflowX;
             SRep -= OverflowVal * DecimalOverflowX;
             IntHalf = OverflowVal;
-            DecimalHalf.Value = (signed int)SRep;
+            DecimalHalf = (signed int)SRep;
             return;
           }
           else
           {
-            DecimalHalf.Value = (unsigned int)SRep;
+            DecimalHalf = (unsigned int)SRep;
         #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
             if(DecimalHalf==0)
-              DecimalHalf.Value = 1;
+              DecimalHalf = 1;
         #endif
             return;
           }
@@ -1191,23 +1418,23 @@ protected:
       {
         if (rValue.DecimalHalf == 0)//Y is integer
         {
-          __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf.Value;
+          __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf;
           SRep *= rValue.IntHalf;
           if (SRep >= DecimalOverflowX)
           {
             __int64 OverflowVal = SRep / DecimalOverflowX;
             SRep -= OverflowVal * DecimalOverflowX;
             IntHalf = (unsigned int)OverflowVal;
-            DecimalHalf.Value = (unsigned int)SRep;
+            DecimalHalf = (unsigned int)SRep;
           }
           else
           {
-            DecimalHalf.Value = (unsigned int)SRep;
+            DecimalHalf = (unsigned int)SRep;
             if(DecimalHalf==0)
             {
         #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
               if(DecimalHalf==0)
-                DecimalHalf.Value = 1;
+                DecimalHalf = 1;
         #endif
             }
             IntHalf = 0;
@@ -1216,24 +1443,24 @@ protected:
         }
         else if (rValue.IntHalf == 0)
         {
-          __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf.Value;
-          SRep *= rValue.DecimalHalf.Value;
+          __int64 SRep = DecimalOverflowX * IntHalf + DecimalHalf;
+          SRep *= rValue.DecimalHalf;
           SRep /= DecimalOverflowX;
           if (SRep >= DecimalOverflowX)
           {
             __int64 OverflowVal = SRep / DecimalOverflowX;
             SRep -= OverflowVal * DecimalOverflowX;
             IntHalf = (unsigned int)OverflowVal;
-            DecimalHalf.Value = (unsigned int)SRep;
+            DecimalHalf = (unsigned int)SRep;
           }
           else
           {
-            DecimalHalf.Value = (unsigned int)SRep;
+            DecimalHalf = (unsigned int)SRep;
             if(DecimalHalf==0)
             {
         #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
               if(DecimalHalf==0)
-                DecimalHalf.Value = 1;
+                DecimalHalf = 1;
         #endif
             }
             IntHalf = 0;
@@ -1243,23 +1470,23 @@ protected:
         else
         {
           //X.Y * Z.V == ((X * Z) + (X * .V) + (.Y * Z) + (.Y * .V))
-          unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf.Value : DecimalOverflowX * IntHalf + DecimalHalf.Value;
+          unsigned __int64 SRep = IntHalf == 0 ? DecimalHalf : DecimalOverflowX * IntHalf + DecimalHalf;
           SRep *= rValue.IntHalf;//SRep holds __int64 version of X.Y * Z
           //X.Y *.V
           unsigned __int64 Temp03 = (__int64)(rValue.DecimalHalf * IntHalf);//Temp03 holds __int64 version of X *.V
-          unsigned __int64 Temp04 = (__int64)DecimalHalf.Value * (__int64)rValue.DecimalHalf.Value;
+          unsigned __int64 Temp04 = (__int64)DecimalHalf * (__int64)rValue.DecimalHalf;
           Temp04 /= DecimalOverflow;
           //Temp04 holds __int64 version of .Y * .V
           unsigned __int64 IntegerRep = SRep + Temp03 + Temp04;
           unsigned __int64 intHalf = IntegerRep / DecimalOverflow;
           IntegerRep -= intHalf * DecimalOverflowX;
           IntHalf = (unsigned int) intHalf;
-          DecimalHalf.Value = (unsigned int)IntegerRep;
+          DecimalHalf = (unsigned int)IntegerRep;
         }
       }
       #if !defined(AltNum_DisableMultiplyDownToNothingPrevention)
       if(DecimalHalf==0&&IntHalf==0)
-        DecimalHalf.Value = 1;
+        DecimalHalf = 1;
       #endif
     }
 
@@ -1589,22 +1816,22 @@ protected:
       {
         IntHalf += rValue.IntHalf;
 
-        unsigned int decResult = DecimalHalf.Value + rValue.DecimalHalf.Value;
+        DecimalOverflowT decResult = DecimalHalf + rValue.DecimalHalf;
         if (decResult == DecimalOverflow) {//5.4 + 4.6
           ++IntHalf;
           if (IntHalf == 0)
             SetAsZero();
           else
-            DecimalHalf.Value = 0;
+            DecimalHalf = 0;
         }
         else if (decResult > DecimalOverflow) {//5.4 + 4.7
           ++IntHalf;
-          DecimalHalf.Value = decResult - DecimalOverflow;
+          DecimalHalf = (DecimalHalfT)(decResult - DecimalOverflow);
         }
         else if (signBeforeOp != IntHalf.Sign)
-          DecimalHalf.Value = DecimalOverflow - decResult;
+          DecimalHalf = (DecimalHalfT)(DecimalOverflow - decResult);
         else
-          DecimalHalf.Value = decResult;
+          DecimalHalf = (DecimalHalfT)(decResult);
       }
     }
 
@@ -1621,23 +1848,23 @@ protected:
       else {
         IntHalf -= rValue.IntHalf;
         //5.XX - B
-        if (DecimalHalf.Value == rValue.DecimalHalf.Value) {//5.5 - 5.5 = 10
+        if (DecimalHalf == rValue.DecimalHalf) {//5.5 - 5.5 = 10
           if (IntHalf == 0)
             SetAsZero();
           else
-            DecimalHalf.Value = 0;
+            DecimalHalf = 0;
         }
-        else if (rValue.DecimalHalf.Value > DecimalHalf.Value) {
+        else if (rValue.DecimalHalf > DecimalHalf) {
           --IntHalf;
           if (signBeforeOp != IntHalf.Sign)//5.4 - 5.7 = -0.3
-            DecimalHalf.Value = rValue.DecimalHalf.Value - DecimalHalf.Value;
+            DecimalHalf = rValue.DecimalHalf - DecimalHalf;
           else//5.4 - 3.6 = 1.8
-            DecimalHalf.Value = DecimalOverflow + DecimalHalf.Value - rValue.DecimalHalf.Value;
+            DecimalHalf = (DecimalHalfT)(DecimalOverflow + DecimalHalf - rValue.DecimalHalf);
         }
         else if (signBeforeOp != IntHalf.Sign)//5.3 - 7.2 = -1.9
-          DecimalHalf.Value = DecimalOverflow - DecimalHalf.Value + rValue.DecimalHalf.Value;
+          DecimalHalf = (DecimalHalfT)(DecimalOverflow - DecimalHalf + rValue.DecimalHalf);
         else//5.4 - 5.3 = 0.1
-          DecimalHalf.Value -= rValue.DecimalHalf.Value;
+          DecimalHalf -= rValue.DecimalHalf;
       }
     }
 
@@ -1823,7 +2050,7 @@ public:
     template<BinaryDecVariant VariantType=BinaryDec>
     void ModulusOpV1(const VariantType& rValue)
     {
-      if(DecimalHalf.Value==0&&rValue.DecimalHalf.Value==0)
+      if(DecimalHalf==0&&rValue.DecimalHalf==0)
         IntHalf %= rValue.IntHalf;
       else {
         auto divRes = DivideBy(rValue);
@@ -1835,7 +2062,7 @@ public:
 
     void UIntModulusOp(const unsigned int& rValue)
     {
-      if(DecimalHalf.Value==0)
+      if(DecimalHalf==0)
         IntHalf %= rValue;
       else {
         auto divRes = DivideByIntV1(rValue);
@@ -1853,7 +2080,7 @@ public:
 
     void UInt64ModulusOp(const unsigned __int64& rValue)
     {
-      if(DecimalHalf.Value==0){
+      if(DecimalHalf==0){
         unsigned __int64 result = IntHalf;
         result %= rValue;
         IntHalf = (unsigned int) result;
@@ -1963,21 +2190,29 @@ public:
   #pragma endregion Other Operators
   };
 
+	// Naming convention:
+	//   BinaryDec   → signed fixed-point with binary fractional tail
+	//   BinaryUDec  → unsigned fixed-point with binary fractional tail
+	//   Prefix (e.g., Medium) indicates width category:
+	//       Medium → 32-bit integer half (uint32_t / int32_t)
+	// Derived concrete types below:
+	//   MediumBinaryUDec → unsigned, medium-width (uint32_t)
+	//   MediumBinaryDec  → signed, medium-width (int32_t)
+
   /// <summary>
   /// Unsigned mixed fraction
-  /// representing 0 - (4294967295+BinaryFraction)
+  /// representing 0 - (4294967295 + BinaryFraction)
   /// (8 bytes worth of Variable Storage inside class for each instance)
   /// </summary>
   class DLL_API MediumBinaryUDec : BinaryDec<MediumBinaryUDec>{
-  }
+  };
 
   /// <summary>
-  /// Unsigned mixed fraction
-  /// representing +-(2147483647+BinaryFraction)
-  /// (8 bytes worth of Variable Storage inside class for each instance)
+  /// Signed mixed fraction
+  /// representing ±(2147483647 + BinaryFraction)
+  /// (8 bytes worth of variable storage inside class for each instance)
   /// </summary>
-  class DLL_API MediumBinaryDec : BinaryDec<MediumBinaryUDec>{
-  }
+  class DLL_API MediumBinaryDec : BinaryDec<MediumBinaryDec, BinaryDecCode::SignedModePolicy>{
+  };
 }
-
 

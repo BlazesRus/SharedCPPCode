@@ -228,32 +228,77 @@ namespace BlazesRusCode
   /// Compare only the sign bits
   constexpr std::strong_ordering SignComparison(const MirroredInt& that) const
   {
-      // Comparing if number is negative vs positive
+    // Comparing if number is negative vs positive
   #if defined(AltNum_UseInvertedSign)
-      auto SignCmp = Sign <=> that.Sign;
+    auto SignCmp = Sign <=> that.Sign;
   #else   // (inverted comparison so sign of zero == positive)
-      auto SignCmp = that.Sign <=> Sign;
+    auto SignCmp = that.Sign <=> Sign;
   #endif
-      return SignCmp;
+    return SignCmp;
   }
 
   constexpr std::strong_ordering operator<=>(const MirroredInt& that) const
   {
-      // Compare sign first
+    // Compare sign first
   #if defined(AltNum_UseInvertedSign)
-      auto SignCmp = Sign <=> that.Sign;
+    auto SignCmp = Sign <=> that.Sign;
   #else
-      auto SignCmp = that.Sign <=> Sign;
+    auto SignCmp = that.Sign <=> Sign;
   #endif
-      if (SignCmp != 0)
-          return SignCmp;
+    if (SignCmp != 0)
+      return SignCmp;
 
-      // Compare magnitude
-      return Value <=> that.Value;
+    // Compare magnitude
+    return Value <=> that.Value;
   }
 
   constexpr std::strong_ordering operator<=>(const unsigned int& that) const
   {
+    // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+    auto SignCmp = Sign <=> PositiveSign;
+  #else
+    auto SignCmp = PositiveSign <=> Sign;
+  #endif
+    if (SignCmp != 0)
+      return SignCmp;
+
+    // Compare magnitude
+    return Value <=> that;
+  }
+
+  constexpr std::strong_ordering operator<=>(const std::uint64_t& that) const
+  {
+    // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+    auto SignCmp = Sign <=> PositiveSign;
+  #else
+    auto SignCmp = PositiveSign <=> Sign;
+  #endif
+    if (SignCmp != 0)
+      return SignCmp;
+
+    // Compare magnitude
+    return static_cast<std::uint64_t>(Value) <=> that;
+  }
+
+  constexpr std::strong_ordering operator<=>(const signed int& that) const
+  {
+    if (that < 0)
+    {
+      // Compare sign first
+  #if defined(AltNum_UseInvertedSign)
+      auto SignCmp = Sign <=> NegativeSign;
+  #else
+      auto SignCmp = NegativeSign <=> Sign;
+  #endif
+      if (SignCmp != 0)
+        return SignCmp;
+
+      return Value <=> static_cast<unsigned int>(-that);
+    }
+    else
+    {
       // Compare sign first
   #if defined(AltNum_UseInvertedSign)
       auto SignCmp = Sign <=> PositiveSign;
@@ -261,138 +306,113 @@ namespace BlazesRusCode
       auto SignCmp = PositiveSign <=> Sign;
   #endif
       if (SignCmp != 0)
-          return SignCmp;
+        return SignCmp;
 
-      // Compare magnitude
-      return Value <=> that;
-  }
-
-  constexpr std::strong_ordering operator<=>(const signed int& that) const
-  {
-      if (that < 0)
-      {
-          // Compare sign first
-  #if defined(AltNum_UseInvertedSign)
-          auto SignCmp = Sign <=> NegativeSign;
-  #else
-          auto SignCmp = NegativeSign <=> Sign;
-  #endif
-          if (SignCmp != 0)
-              return SignCmp;
-
-          return Value <=> static_cast<unsigned int>(-that);
-      }
-      else
-      {
-          // Compare sign first
-  #if defined(AltNum_UseInvertedSign)
-          auto SignCmp = Sign <=> PositiveSign;
-  #else
-          auto SignCmp = PositiveSign <=> Sign;
-  #endif
-          if (SignCmp != 0)
-              return SignCmp;
-
-          return Value <=> static_cast<unsigned int>(that);
-      }
+      return Value <=> static_cast<unsigned int>(that);
+    }
   }
 
   constexpr bool operator==(const MirroredInt& that) const
   {
-      return (Value == that.Value) && (Sign == that.Sign);
+    return (Value == that.Value) && (Sign == that.Sign);
   }
 
   constexpr bool operator==(const unsigned int& that) const
   {
-      return (Value == that) && (Sign == PositiveSign);
+    return (Value == that) && (Sign == PositiveSign);
+  }
+
+  constexpr bool operator==(const std::uint64_t& that) const
+  {
+    return (static_cast<std::uint64_t>(Value) == that) && (Sign == PositiveSign);
   }
 
   constexpr bool operator==(const signed int& that) const
   {
-      if (that < 0)
-          return (Sign == NegativeSign) && (Value == static_cast<unsigned int>(-that));
-      else
-          return (Sign == PositiveSign) && (Value == static_cast<unsigned int>(that));
+    if (that < 0)
+      return (Sign == NegativeSign) && (Value == static_cast<unsigned int>(-that));
+    else
+      return (Sign == PositiveSign) && (Value == static_cast<unsigned int>(that));
   }
 
   #pragma endregion Comparison Operators
 
 
-        /// <summary>
-        /// to int explicit conversion
-        /// </summary>
-        explicit operator unsigned int() { return Value; }
+    /// <summary>
+    /// to int explicit conversion
+    /// </summary>
+    explicit operator unsigned int() { return Value; }
 
-        /// <summary>
-        /// to int explicit conversion
-        /// </summary>
-        explicit operator unsigned __int64() { return Value; }
+    /// <summary>
+    /// to int explicit conversion
+    /// </summary>
+    explicit operator unsigned __int64() { return Value; }
 
-        /// <summary>
-        /// to int explicit conversion
-        /// </summary>
-        explicit operator signed int() { return GetValue(); }
+    /// <summary>
+    /// to int explicit conversion
+    /// </summary>
+    explicit operator signed int() { return GetValue(); }
 
-        /// <summary>
-        /// to int explicit conversion
-        /// </summary>
-        explicit operator signed __int64() { return GetValue(); }
+    /// <summary>
+    /// to int explicit conversion
+    /// </summary>
+    explicit operator signed __int64() { return GetValue(); }
 
   protected:
 
-        /// <summary>
-        /// Returns maximum stored value(2147483647)
-        /// </summary>
-        static MirroredInt MaximumValue();
+    /// <summary>
+    /// Returns maximum stored value(2147483647)
+    /// </summary>
+    static MirroredInt MaximumValue();
 
-        /// <summary>
-        /// Returns minimum stored value(-2147483647)
-        /// </summary>
-        static MirroredInt MinimumValue();
+    /// <summary>
+    /// Returns minimum stored value(-2147483647)
+    /// </summary>
+    static MirroredInt MinimumValue();
 
-        /// <summary>
-        /// Returns the value at negative one
-        /// </summary>
-        static MirroredInt NegativeOneValue();
+    /// <summary>
+    /// Returns the value at negative one
+    /// </summary>
+    static MirroredInt NegativeOneValue();
 
-        /// <summary>
-        /// Returns the value at one
-        /// </summary>
-        static MirroredInt OneValue();
+    /// <summary>
+    /// Returns the value at one
+    /// </summary>
+    static MirroredInt OneValue();
 
-        /// <summary>
-        /// Returns the value at two
-        /// </summary>
-        static MirroredInt TwoValue();
+    /// <summary>
+    /// Returns the value at two
+    /// </summary>
+    static MirroredInt TwoValue();
 
-        /// <summary>
-        /// Returns the value at negative zero(for negative fractions)
-        /// </summary>
-        static MirroredInt NegativeZeroValue();
+    /// <summary>
+    /// Returns the value at negative zero(for negative fractions)
+    /// </summary>
+    static MirroredInt NegativeZeroValue();
 
-        /// <summary>
-        /// Returns the value at zero
-        /// </summary>
-        static MirroredInt ZeroValue();
+    /// <summary>
+    /// Returns the value at zero
+    /// </summary>
+    static MirroredInt ZeroValue();
 
   public:
 
-        //Alias:MaxIntHalf
-        //Maximum value(2147483647) that can be stored inside IntHalf field
-        static const MirroredInt Maximum;
+    //Alias:MaxIntHalf
+    //Maximum value(2147483647) that can be stored inside IntHalf field
+    static const MirroredInt Maximum;
 
-        //Alias:MinIntHalf
-        //Minimum value(-2147483647) that can be stored inside IntHalf field
-        static const MirroredInt Minimum;
+    //Alias:MinIntHalf
+    //Minimum value(-2147483647) that can be stored inside IntHalf field
+    static const MirroredInt Minimum;
 
-        static const MirroredInt NegativeOne;
+    static const MirroredInt NegativeOne;
 
-        static const MirroredInt One;
+    static const MirroredInt One;
 
-        static const MirroredInt Two;
+    static const MirroredInt Two;
 
-        //Alias:NegativeZeroRep
-        static const MirroredInt NegativeZero;
+    //Alias:NegativeZeroRep
+    static const MirroredInt NegativeZero;
 
     static const MirroredInt Zero;
 
@@ -400,21 +420,21 @@ namespace BlazesRusCode
 
     void UInt64MultOp(const unsigned __int64& rValue);
 
-        void UIntDivOp(const unsigned int& rValue);
+    void UIntDivOp(const unsigned int& rValue);
 
-        void UIntMultOp(const unsigned int& rValue);
+    void UIntMultOp(const unsigned int& rValue);
 
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UnsignedAddOp(const MirroredInt& rValue);
+    //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+    void UnsignedAddOp(const MirroredInt& rValue);
 
-        //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
-        void UIntAddOp(const unsigned int& rValue);
+    //Default Negative zero including addition operation(When DecimalHalf.Value!=0)
+    void UIntAddOp(const unsigned int& rValue);
 
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void UnsignedSubOp(const MirroredInt& rValue);
+    //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+    void UnsignedSubOp(const MirroredInt& rValue);
 
-        //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
-        void UIntSubOp(const unsigned int& rValue);
+    //Default Negative zero including subtraction operation(When DecimalHalf.Value!=0)
+    void UIntSubOp(const unsigned int& rValue);
 
 private:
 

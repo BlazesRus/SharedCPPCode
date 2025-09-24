@@ -1,10 +1,10 @@
 // IMPORTANT REPRESENTATION NOTE:
 // RestrictedFloat encodes values as:
-//     value = 2^-(exp + signif / MaxDenom)
-// This is a FIXED-POINT EXPONENT format:
-// - 'exp' is the integer exponent component.
-// - 'signif' is the fractional exponent component, in ticks of 1/MaxDenom.
-// - MaxDenom = 1 << EXPFRAC_BITS.
+//     value = 2^-(ExpMag + ExpFrac / MaxDenom)
+// This is a FIXED-POINT exponent format:
+// - 'ExpMag' is the integer exponent component.
+// - 'ExpFrac' is the fractional exponent component, in ticks of 1/MaxDenom.
+// - MaxDenom = 1 << FRAC_BITS.
 // This is NOT a normalized mantissa+exponent float, and NOT just an inverted IEEE float.
 // All arithmetic must be done in exponent-tick space, not by shifting a mantissa.
 // ***********************************************************************
@@ -316,10 +316,10 @@ public:
   /// </summary>
   /// <returns>std.string</returns>
   std::string ToString(size_t maxDigits = 10) const {
-    auto e = exp();
-    auto s = signif();
+    auto e = ExpMag();
+    auto s = ExpFrac();
     // Case: Exp=0, Signif=0 -> exact zero
-    if (e == 0 && signif() == 0)
+    if (e == 0 && ExpFrac() == 0)
       return "0";
 
     // Zero band (Exp=0, Signif != 0)
@@ -451,7 +451,7 @@ protected:
 
   #pragma region Comparison Operators
   
-  //Reverse ordering as exp and signif gets larger, the number gets smaller
+  //Reverse ordering as ExpMag() and ExpFrac() gets larger, the number gets smaller
   std::strong_ordering operator<=>(const RestrictedFloat& that) const
   {
   if (isZero()) {
@@ -459,14 +459,14 @@ protected:
     else return 0 <=> 1;
   }
   if (that.isZero()) return 1 <=> 0;
-  return std::tie(that.exp, that.signif) <=> std::tie(exp, signif);
+  return std::tie(that.ExpMag(), that.ExpFrac()) <=> std::tie(ExpMag(), ExpFrac());
   }
   
   bool operator==(const RestrictedFloat& that) const
   {
-  if (signif()!=that.signif())
+  if (ExpFrac()!=that.ExpFrac())
     return false;
-  if (exp()!=that.exp())
+  if (ExpMag()!=that.ExpMag())
     return false;
   return true;
   }
@@ -807,30 +807,30 @@ public:
             SetAsZero();
         } else {
             // Remaining classic fraction = rem/MaxDenom
-            // In inverted form, that's a "gap" of MaxDenom - rem at exp=0
+            // In inverted form, that's a "gap" of MaxDenom - rem at ExpMag()=0
             SetMagnitudes(0, MaxDenom - rem);
         }
 
         return carry;
-      } else if(rhsSignif==lhsSignif){
-        //Overflow detected but code path is simplified because no signif or TrailingDigits left()
-        rhsExp -= lhsExp;// exponent delta
+      } else if(rhsExpFrac==lhsExpFrac){
+        //Overflow detected but code path is simplified because no ExpFrac() or TrailingDigits left()
+        rhsExpMag -= lhsExpMag;// Exponent delta
         SetAsZero();
-        return IntType(1) << rhsExp;
+        return IntType(1) << rhsExpMag;
       } else {
         //No Overflow Detected(Values reused for result)
-        lhsExp -= rhsExp;// exponent delta
-        lhsSignif -= rhsSignif;// fractional delta
-        SetMagnitudes(lhsExp, lhsSignif);
+        lhsExpMag -= rhsExpMag;// Exponent delta
+        lhsExpFrac -= rhsExpFrac;// fractional delta
+        SetMagnitudes(lhsExpMag, lhsExpFrac);
       }
     } else {//No Overflow Detected
-      if (lhsSignif >= rhsSignif) {
-        // No borrow from exponent
-        SetMagnitudes(lhsExp, lhsSignif - rhsSignif);
+      if (lhsExpFrac >= rhsExpFrac) {
+        // No borrow from Exponent
+        SetMagnitudes(lhsExpMag, lhsExpFrac - rhsExpFrac);
       } else {
-        // Borrow 1 from exponent: fractional = MaxDenom - (rhsSignif - lhsSignif)
-        const IntType gap = rhsSignif - lhsSignif; // 1..MaxDenom-1
-        SetMagnitudes(lhsExp - 1, MaxDenom - gap);
+        // Borrow 1 from Exponent: fractional = MaxDenom - (rhsExpFrac - lhsExpFrac)
+        const IntType gap = rhsExpFrac - lhsExpFrac; // 1..MaxDenom-1
+        SetMagnitudes(lhsExpMag - 1, MaxDenom - gap);
       }
     }
 		return 0u;
@@ -838,43 +838,43 @@ public:
 
   template<typename OverflowT=DefaultOverflowT>
   inline OverflowT DivOp(const RestrictedFloat &rhs){
-    auto lhsExp    = exp();
-    auto lhsSignif = signif();
-    auto rhsExp    = rhs.exp();
-    auto rhsSignif = rhs.signif();
+    auto lhsExpMag    = ExpMag();
+    auto lhsExpFrac = ExpFrac();
+    auto rhsExpMag    = rhs.ExpMag();
+    auto rhsExpFrac = rhs.ExpFrac();
 
-    if (lhsExp >= rhsExp) {
-        if (lhsSignif > rhsSignif) {
-            // delta = (lhsExp - rhsExp, lhsSignif - rhsSignif)
-            lhsExp    -= rhsExp;    // exponent delta
-            lhsSignif -= rhsSignif; 
-            const IntType scale = IntType(1) << lhsExp;
+    if (lhsExpMag >= rhsExpMag) {
+        if (lhsExpFrac > rhsExpFrac) {
+            // delta = (lhsExpMag - rhsExpMag, lhsExpFrac - rhsExpFrac)
+            lhsExpMag    -= rhsExpMag;    // Exponent delta
+            lhsExpFrac -= rhsExpFrac; 
+            const IntType scale = IntType(1) << lhsExpMag;
             OverflowT carry = OverflowT(scale);
-            const OverflowT mixed = OverflowT(scale) * OverflowT(lhsSignif);
+            const OverflowT mixed = OverflowT(scale) * OverflowT(lhsExpFrac);
             carry += mixed / MaxDenom;
             const IntType rem = static_cast<IntType>(mixed % MaxDenom);
             if (rem == 0) SetAsZero();
             else SetMagnitudes(0, MaxDenom - rem);
             return carry;
         }
-        else if (lhsSignif == rhsSignif) {
-            lhsExp -= rhsExp;
+        else if (lhsExpFrac == rhsExpFrac) {
+            lhsExpMag -= rhsExpMag;
             SetAsZero();
-            return IntType(1) << lhsExp;
+            return IntType(1) << lhsExpMag;
         }
         else {
-            lhsExp    -= rhsExp;
-            rhsSignif -= lhsSignif; // borrow-safe if you normalise
-            SetMagnitudes(lhsExp, rhsSignif);
+            lhsExpMag    -= rhsExpMag;
+            rhsExpFrac -= lhsExpFrac; // borrow-safe if you normalise
+            SetMagnitudes(lhsExpMag, rhsExpFrac);
         }
     } else {
         // no overflow, borrow-safe subtraction
-        rhsExp -= lhsExp;
-        if (rhsSignif >= lhsSignif) {
-            SetMagnitudes(rhsExp, rhsSignif - lhsSignif);
+        rhsExpMag -= lhsExpMag;
+        if (rhsExpFrac >= lhsExpFrac) {
+            SetMagnitudes(rhsExpMag, rhsExpFrac - lhsExpFrac);
         } else {
-            const IntType gap = lhsSignif - rhsSignif;
-            SetMagnitudes(rhsExp - 1, MaxDenom - gap);
+            const IntType gap = lhsExpFrac - rhsExpFrac;
+            SetMagnitudes(rhsExpMag - 1, MaxDenom - gap);
         }
     }
     return OverflowT(0);
@@ -882,27 +882,27 @@ public:
   
 	template<typename StoreT=DefaultOverflowT>
   inline void MultOp(const RestrictedFloat &rhs){
-    auto sumExp    = exp()    + rhs.exp();
-    auto sumSignif = signif() + rhs.signif();
-    if (sumSignif >= MaxDenom) { sumSignif -= MaxDenom; ++sumExp; }
-    SetMagnitudes(sumExp, sumSignif);
+    auto sumExpMag    = ExpMag()    + rhs.ExpMag();
+    auto sumExpFrac = ExpFrac() + rhs.ExpFrac();
+    if (sumExpFrac >= MaxDenom) { sumExpFrac -= MaxDenom; ++sumExpMag; }
+    SetMagnitudes(sumExpMag, sumExpFrac);
   }
   
-  //Convert from numerator/denom (with PowerOfTwo denominator such as when both signif==0) back to RestrictedFloat
+  //Convert from numerator/denom (with PowerOfTwo denominator such as when both ExpFrac()==0) back to RestrictedFloat
   template<typename TickT>
-  inline void ConvertPureExpPair(TickT numerator, TickT denominator)
+  inline void ConvertPureExpMag()Pair(TickT numerator, TickT denominator)
   {
-      constexpr TickT OV = RestrictedFloat::DENOM_MAX; // MaxDenom
+      constExpMag()r TickT OV = RestrictedFloat::DENOM_MAX; // MaxDenom
 
       // E_total = log2(denominator) - log2(numerator)
       // Whole steps:
-      uint32_t denomExp = std::countr_zero(denominator);
-      uint32_t numExp   = std::countr_zero(numerator);
-      int32_t  expPart  = int32_t(denomExp) - int32_t(numExp);
+      uint32_t denomExpMag() = std::countr_zero(denominator);
+      uint32_t numExpMag()   = std::countr_zero(numerator);
+      int32_t  ExpMag()Part  = int32_t(denomExpMag()) - int32_t(numExpMag());
 
       // Remove whole steps from denom/num
-      TickT denomRem = denominator >> denomExp;
-      TickT numRem   = numerator   >> numExp;
+      TickT denomRem = denominator >> denomExpMag();
+      TickT numRem   = numerator   >> numExpMag();
 
       // Fractional ticks: ratio denomRem/numRem is a power-of-two within one coarse step
       uint32_t FracPart = 0;
@@ -912,23 +912,23 @@ public:
           FracPart  = uint32_t(fracPow)*OV;
       }
 
-			SetMagnitudes(uint32_t(expPart), FracPart);
+			SetMagnitudes(uint32_t(ExpMag()Part), FracPart);
   }
   
-  // For the fractional-exponent band: convert from an exact power-of-two ratio
-  // numerator/denominator back to (exp, signif) where
+  // For the fractional-Exponent band: convert from an exact power-of-two ratio
+  // numerator/denominator back to (ExpMag(), ExpFrac()) where
   // value = 1 / 2^(ExpMag + ExpFrac / MaxDenom)
   template<typename TickT = StoreT>
   inline void ConvertFracPair(TickT numerator, TickT denominator)
   {
-      constexpr TickT OV = MaxDenom; // fractional ticks per whole exponent step
+      constExpMag()r TickT OV = MaxDenom; // fractional ticks per whole Exponent step
 
       TickT ratioNum = denominator;
       TickT ratioDen = numerator;
 
-      int32_t expPart = 0;
-      while (ratioNum >= (ratioDen << 1)) { ratioNum >>= 1; ++expPart; }
-      while (ratioNum < ratioDen)         { ratioNum <<= 1; --expPart; }
+      int32_t ExpMag()Part = 0;
+      while (ratioNum >= (ratioDen << 1)) { ratioNum >>= 1; ++ExpMag()Part; }
+      while (ratioNum < ratioDen)         { ratioNum <<= 1; --ExpMag()Part; }
 
       uint32_t FracPart = 0;
       if (ratioNum != ratioDen) {
@@ -936,12 +936,12 @@ public:
           FracPart  = uint32_t(fracPow) * OV;
       }
 
-			SetMagnitudes(uint32_t(expPart), FracPart);
+			SetMagnitudes(uint32_t(ExpMag()Part), FracPart);
   }
 
 // ADD/SUB REMINDER:
-// Because this is a fixed-point exponent representation, addition/subtraction
-// must adjust the exponent term by log2(1 ± 2^-Δ) where Δ is the exponent-tick gap.
+// Because this is a fixed-point Exponent representation, addition/subtraction
+// must adjust the Exponent term by log2(1 ± 2^-Δ) where Δ is the Exponent-tick gap.
 // Do NOT attempt to align mantissas — there is no mantissa.
 // Early-out threshold for lossless add/sub is ~log2(1 + 1/MaxDenom) ≈ 1 tick.
 // For MaxDenom = 2^25, Δ >= 26 ticks means the smaller term cannot change the result.
@@ -958,7 +958,7 @@ public:
       // 0 - 0 → zero
       else if(rhs.isZero()) return 0;
       // Inverting fractional lane across integer boundary: 0 - rhs
-      uint32_t uRHS = rhs.exp() * MaxDenom + rhs.signif();
+      uint32_t uRHS = rhs.ExpMag() * MaxDenom + rhs.ExpFrac();
       uint32_t u     = u_minus_mag_from_gap_ticks(uRHS);
       unsigned E     = u / MaxDenom;
       unsigned S     = u % MaxDenom;
@@ -966,16 +966,16 @@ public:
       return 2;
     }
     if (rhs.isZero()) { return 0; }
-    auto lExp = this-> exp();
-    auto lSignif = this->signif();
-    auto rExp = rhs.exp();
-    auto rSignif = rhs.signif();
+    auto lExpMag = this-> ExpMag();
+    auto lExpFrac = this->ExpFrac();
+    auto rExpMag = rhs.ExpMag();
+    auto rExpFrac = rhs.ExpFrac();
     
-    if (lSignif != 0 && rSignif != 0) {
-      // Both operands in fractional-exponent band: at least one signif > 0
-      if(lExp==rExp){
+    if (lExpFrac != 0 && rExpFrac != 0) {
+      // Both operands in fractional-Exponent band: at least one ExpFrac() > 0
+      if(lExpMag==rExpMag){
         //Both sides in same band
-        if(lSignif!=rSignif){
+        if(lExpFrac!=rExpFrac){
           //ToDo:Add code
         }
         //Both sides have same value so either double or negate
@@ -985,7 +985,7 @@ public:
         } else {//Doubling
           //ToDo:Add code
         }
-      } else if(lExp<rExp) {
+      } else if(lExpMag<rExpMag) {
         //Left side is bigger than right
         //ToDo:Add code
       } else {
@@ -993,22 +993,22 @@ public:
         //ToDo:Add code
       }
     } else {
-      // Align smaller-exp side to larger-exp side
+      // Align smaller-ExpMag() side to larger-ExpMag() side
       //Shift numerator to same denom such as 1/2 + 1/4 becomes 2/4 + 1/4
       //Shift numerator to same denom such as 1/2 + 1/8 becomes 4/8 + 1/8
       //Shift numerator to same denom such as 1/2 - 1/4 becomes 2/4 - 1/4
       //Shift numerator to same denom such as 1/8 - 1/2 becomes 1/8 - 4/8 = -3/8
-      if (lExp < rExp) {
-        auto shift = rExp - lExp;
+      if (lExpMag < rExpMag) {
+        auto shift = rExpMag - lExpMag;
         StoreT numResult = sameSign ? (1 << shift) + 1: (1 << shift) - 1;
-        ConvertPureExpPair(numResult, rExp);
+        ConvertPureExpMag()Pair(numResult, rExpMag);
         if(sameSign||rightIsPositive) return 0;//1/2 + 1/4 becomes 2/4 - 1/4 = 1/4 ; 1/2 - 1/4 becomes 2/4 - 1/4 = 1/4
         else
           return 2;
-      } else if (rExp < lExp) {
-        auto shift = lExp - rExp;
+      } else if (rExpMag < lExpMag) {
+        auto shift = lExpMag - rExpMag;
         StoreT numResult = sameSign ? (1 << shift) - 1: (1 << shift) + 1;
-        ConvertPureExpPair(numResult, lExp);
+        ConvertPureExpMag()Pair(numResult, lExpMag);
         if(sameSign) return 0;
         else if(rightIsPositive)//-1/8 + 1/2 becomes -1/8 + 4/8 = 3/8
           return 1;
@@ -1018,14 +1018,14 @@ public:
           SetAsZero();//0.5 - 0.5 
           return 0;
       } else {//Doubling
-          //(exp:1) 0.5 + 0.5 = (exp:0) 1.0
-          //(exp:2) 0.25 + 0.25 = (exp:-1) 0.5
-          //(exp:3) 0.0.125 + 0.0.125 = (exp:-1) 0.25
-          if(lExp==1){
+          //(ExpMag():1) 0.5 + 0.5 = (ExpMag():0) 1.0
+          //(ExpMag():2) 0.25 + 0.25 = (ExpMag():-1) 0.5
+          //(ExpMag():3) 0.0.125 + 0.0.125 = (ExpMag():-1) 0.25
+          if(lExpMag==1){
             SetAsZero();
             return 1;
           }
-          SetExp(lExp-1);
+          SetExpMag()(lExpMag-1);
           return 0;
       }
     }
