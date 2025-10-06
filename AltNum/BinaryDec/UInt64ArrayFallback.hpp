@@ -116,6 +116,7 @@ struct DLLAPI UInt64ArrayFallback {
       return *this;
     }
 
+			// shift whole words
     if (wordShift > 0) {
       for (std::size_t i = N; i-- > wordShift; ) {
         limbs[i] = limbs[i - wordShift];
@@ -123,6 +124,7 @@ struct DLLAPI UInt64ArrayFallback {
       for (std::size_t i = 0; i < wordShift; ++i) limbs[i] = 0;
     }
 
+			// shift intra‑word
     if (bitShift > 0) {
       for (std::size_t i = N; i-- > 0; ) {
         std::uint64_t hi = (i > 0) ? (limbs[i - 1] >> (64 - bitShift)) : 0;
@@ -132,6 +134,7 @@ struct DLLAPI UInt64ArrayFallback {
     return *this;
   }
 
+	// Shift right by k bits
   constexpr UInt64ArrayFallback& operator>>=(std::size_t k) noexcept {
     const std::size_t wordShift = k / 64;
     const std::size_t bitShift  = k % 64;
@@ -141,6 +144,7 @@ struct DLLAPI UInt64ArrayFallback {
       return *this;
     }
 
+		// shift whole words
     if (wordShift > 0) {
       for (std::size_t i = 0; i + wordShift < N; ++i) {
         limbs[i] = limbs[i + wordShift];
@@ -150,6 +154,7 @@ struct DLLAPI UInt64ArrayFallback {
       }
     }
 
+		// shift intra‑word
     if (bitShift > 0) {
       for (std::size_t i = 0; i < N; ++i) {
         std::uint64_t lo = (i + 1 < N) ? (limbs[i + 1] << (64 - bitShift)) : 0;
@@ -353,7 +358,6 @@ struct DLLAPI UInt64ArrayFallback {
       }
       return a;
   }
-
 };
 
 // Non-mutating shifts (free functions)
@@ -370,5 +374,17 @@ operator>>(UInt64ArrayFallback<N, UseIntrinsics> lhs, std::size_t k) noexcept {
   lhs >>= k;
   return lhs;
 }
+
+template<typename T>
+concept UInt64ArrayFallbackVariant = std::is_base_of<UInt64ArrayFallback, T>::value;
+
+template<typename>
+struct is_UInt64ArrayFallbackVariant : std::false_type {};
+
+template<std::size_t N, bool UseIntrinsics>
+struct is_UInt64ArrayFallbackVariant<UInt64ArrayFallback<N, UseIntrinsics>> : std::true_type {};
+
+template<typename T>
+concept UInt64ArrayFallbackVariant = is_UInt64ArrayFallbackVariant<T>::value;
 
 } // namespace BlazesRusCode
