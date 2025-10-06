@@ -375,9 +375,6 @@ operator>>(UInt64ArrayFallback<N, UseIntrinsics> lhs, std::size_t k) noexcept {
   return lhs;
 }
 
-template<typename T>
-concept UInt64ArrayFallbackVariant = std::is_base_of<UInt64ArrayFallback, T>::value;
-
 template<typename>
 struct is_UInt64ArrayFallbackVariant : std::false_type {};
 
