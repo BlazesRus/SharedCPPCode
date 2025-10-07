@@ -12,16 +12,25 @@ namespace BlazesRusCode
 {
   namespace BinaryTypeSelector
   {
-    template<unsigned TotalBits>
-    using TypeBasedOnBits =
-        std::conditional_t<TotalBits <= 32, std::uint32_t,
-        std::conditional_t<TotalBits <= 64, std::uint64_t,
-    #if defined(__SIZEOF_INT128__)
-        std::conditional_t<TotalBits <= 128, unsigned __int128,
-    #else
-        std::conditional_t<TotalBits <= 128, UInt64ArrayFallBack<2>, // fallback if no 128-bit
-    #endif
-        UInt64ArrayFallBack<(BitsCeil + 63) / 64>>>>;
+		template<std::size_t TotalBits>
+		struct TypeForBits {
+			static_assert(TotalBits > 0, "TotalBits must be greater than zero");
+
+			using type =
+				std::conditional_t<(TotalBits <= 32), std::uint32_t,
+				std::conditional_t<(TotalBits <= 64), std::uint64_t,
+		#if defined(__SIZEOF_INT128__)
+				std::conditional_t<(TotalBits <= 128), unsigned __int128,
+				UInt64ArrayFallback<(TotalBits + 63) / 64>
+				>
+		#else
+				UInt64ArrayFallback<(TotalBits + 63) / 64>
+		#endif
+				>>;
+		};
+
+		template<std::size_t TotalBits>
+		using TypeBasedOnBits = typename TypeForBits<TotalBits>::type;
 				
     // Native-word detection (effective only if PackedT is a single integer type)
     template<typename T>
@@ -33,6 +42,7 @@ namespace BlazesRusCode
     #endif
         ;
     
+		// Storage bit width (useful for native words only; not a semantic ceiling)
     template<typename T>
     constexpr unsigned bit_width_of_v = sizeof(T) * 8;
 	}
