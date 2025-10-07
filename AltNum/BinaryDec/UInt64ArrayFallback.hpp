@@ -25,6 +25,7 @@ namespace BlazesRusCode {
 template <std::size_t N, bool UseIntrinsics = false>
 struct DLLAPI UInt64ArrayFallback {
   static_assert(N > 0, "UInt64ArrayFallback must have at least one limb");
+	static constexpr std::size_t LimbCount = N;
 
   // limbs[0] = least significant 64 bits; limbs[N-1] = most significant 64 bits
   std::array<std::uint64_t, N> limbs{};
