@@ -59,41 +59,58 @@ namespace BlazesRusCode
 					- PrecisionLevel == 0 → treat as maximum precision (walk all digits).
 					- PrecisionLevel > 0 → walk up to that many digits, then conservatively
 						upgrade if undecided before the last digit.
+          - Default: only apostrophe (') separators allowed. 
+          - AllowCommas=true: to also accept ','.
 				Return value is the minimum number of bits required at the current precision level.
 		*/
-		template<unsigned int PrecisionLevel, int N>
+		template<unsigned int PrecisionLevel=0, bool AllowCommas=false, int N>
 		constexpr unsigned int stringBitsCorridor(std::string_view digits,
 																							const char (&ceiling)[N],
 																							unsigned int X, unsigned int Y) {
 			const unsigned int LastIndex = N - 1;
 
 			// Normalize: 0 = unlimited
-			const unsigned int effectivePrecision =
-					(PrecisionLevel == 0) ? LastIndex : PrecisionLevel;
+			if constexpr (PrecisionLevel==0){
+				unsigned int digitIndex = 1; // skip leading digit (handled outside)
 
-			unsigned int digitIndex = 1; // skip leading digit (handled outside)
+				for (unsigned int ceilingIndex = 1; ceilingIndex < LastIndex; ++ceilingIndex) {
+						char ceilingDigit = ceiling[ceilingIndex];
+						if (ceilingDigit == '\'') continue; // skip ' separators
+						if constexpr (AllowCommas){ if (ceilingDigit == ',') continue; /*skip , separators*/}
 
-			for (unsigned int ceilingIndex = 1;
-					 ceilingIndex < LastIndex && digitIndex < effectivePrecision;
-					 ++ceilingIndex) {
-					char ceilingDigit = ceiling[ceilingIndex];
-					if (ceilingDigit == '\'') continue; // skip separators
+						char currentDigit = digits[digitIndex++];
+						if (currentDigit > ceilingDigit) return Y;
+						if (currentDigit < ceilingDigit) return X;
+				}
 
-					char currentDigit = digits[digitIndex++];
-					if (currentDigit > ceilingDigit) return Y;
-					if (currentDigit < ceilingDigit) return X;
+				// Last digit in ceiling is guaranteed numeric if formatted correctly
+				char currentDigit = digits.back();
+				return (currentDigit >= ceiling[LastIndex]) ? Y : X;
+			} else {
+				unsigned int digitIndex = 1; // skip leading digit (handled outside)
+
+				for (unsigned int ceilingIndex = 1;
+						 ceilingIndex < LastIndex && digitIndex < PrecisionLevel;
+						 ++ceilingIndex) {
+						char ceilingDigit = ceiling[ceilingIndex];
+						if (ceilingDigit == '\'') continue; // skip ' separators
+						if constexpr (AllowCommas){ if (ceilingDigit == ',') continue; /*skip , separators*/}
+
+						char currentDigit = digits[digitIndex++];
+						if (currentDigit > ceilingDigit) return Y;
+						if (currentDigit < ceilingDigit) return X;
+				}
+
+				if (PrecisionLevel >= LastIndex) {
+						// Last digit in ceiling is guaranteed numeric if formatted correctly
+						char currentDigit = digits.back();
+						return (currentDigit >= ceiling[LastIndex]) ? Y : X;
+				}
 			}
-
-			if (effectivePrecision >= LastIndex) {
-					// Last digit in ceiling is guaranteed numeric if formatted correctly
-					char currentDigit = digits.back();
-					return (currentDigit >= ceiling[LastIndex]) ? Y : X;
-			}
-
 			return Y; // conservative fallback
 		}
 		
-		template<unsigned int PrecisionLevel, int N>
+		template<unsigned int PrecisionLevel=0, int N>
 		constexpr bool stringBitsDigitsCorridor(std::string_view digits,
 																						const char (&ceiling)[N],
 																						unsigned int X, unsigned int Y,
@@ -110,9 +127,31 @@ namespace BlazesRusCode
 				return false;
 		}
 		
-		//Minimum PrecisionLevel is treated as 1, if PrecisionLevel==0 then at maximum precision level
+		template<unsigned int PrecisionLevel>
+		constexpr bool stringBitsDigitsCorridor(
+				std::string_view digits,
+				std::string_view ceiling,
+				unsigned int Y,
+				unsigned int& result)
+		{
+				return stringBitsDigitsCorridor<PrecisionLevel>(digits, ceiling, Y - 1, Y, result);
+		}
+
+		// Reads the minimum number of bits required to represent the numeric value
+		// encoded in `digits`.
+		//
+		// PrecisionLevel semantics:
+		//   - 0 → special case: walk all digits (maximum precision).
+		//   - >0 → walk up to that many digits, then conservatively
+		//          upgrade if undecided before the last digit.
+		//
+		// Precondition:
+		//   - `digits` contains only decimal digits (0–9).
+		//   - No separators (' ,) are allowed here; normalization must be done
+		//     before calling this function.
+		//   - Leading digits are assumed valid(01 is invalid formatting).
     template<unsigned int PrecisionLevel=0>
-    constexpr unsigned required_bits(std::string_view digits) {
+    constexpr unsigned requiredBitsFromString(std::string_view digits) {
     //Requires format to not have ' etc inside string
     //Between top bits it costs same as top bit minimum
     //ToDo:Cases 3+ are just skeletons to finish later
@@ -264,101 +303,92 @@ namespace BlazesRusCode
           */
           throw std::runtime_error("Invalid digit format");//This should not be reached unless formatting is invalid
         }
-//        case 11: {
-//            char currentDigit = digits[0];
-/*
-        17'179'869'184(35): X-? (to Y/X)
-        34'359'738'368(36): X-? (to Y/X)
-        68'719'476'736(37): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 12: {
-//            char currentDigit = digits[0];
-/*
-        137'438'953'472(38): X-? (to Y/X)
-        274'877906944(39): X-? (to Y/X)
-        549'755813888(40): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 13: {
-//            char currentDigit = digits[0];
-/*
-        1'099'511627776(41): X-? (to Y/X)
-        2'199'023255552(42): X-? (to Y/X)
-        4'398'046511104(43): X-? (to Y/X)
-        8'796'093022208(44): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 14: {
-//            char currentDigit = digits[0];
-/*
-        17'592'186044416(45): X-? (to Y/X)
-        35'184372088832(46): X-? (to Y/X)
-        70'368744177664(47): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 15: {
-//            char currentDigit = digits[0];
-/*
-        140'737488355328(48): X-? (to Y/X)
-        281'474976710656(49): X-? (to Y/X)
-        562'949953421312(50): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 16: {
-//            char currentDigit = digits[0];
-/*
-        1'125'899906842624(51): X-? (to Y/X)
-        2'251'799813685248(52): X-? (to Y/X)
-        4'503'599627370496(53): X-? (to Y/X)
-        9'007'199254740992(54): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 17: {
-//            char currentDigit = digits[0];
-/*
-        18'014'398509481984(55): X-? (to Y/X)
-        36'028'797018963968(56): X-? (to Y/X)
-        72'057'594037927936(57): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 18: {
-//            char currentDigit = digits[0];
-/*
-        144'115'188075855872(58): X-? (to Y/X)
-        288'230'376151711744(59): X-? (to Y/X)
-        576'460'752303423488(60): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 19: {
-//            char currentDigit = digits[0];
-/*
-        1'152'921504606846976(61): X-? (to Y/X)
-        2'305'843009213693952(62): X-? (to Y/X)
-        4'611'686018427387904(63): X-? (to Y/X)
-        9'223'372036854775808(64): X-? (to Y/9223372036854775808)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
-//        case 20: {
-//            char currentDigit = digits[0];
-/*
-        18'446'744073709551616(65): X-? (to Y/X)
-*/
-//            throw("Invalid digit format");//This should not be reached unless formatting is invalid
-//        }
+        case 11: {
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "68'719'476'736", 37, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "34'359'738'368", 36, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "17'179'869'184", 35, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 12: {
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "549'755'813'888", 40, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "274'877'906'944", 39, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "137'438'953'472", 38, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 13: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "8'796'093'022'208", 47, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "4'398'046'511'104", 46, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "2'199'023'255'552", 42, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "1'099'511'627'776", 41, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 14: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "70'368'744'177'664", 47, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "35'184'372'088'832", 46, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "17'592'186'044'416", 45, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 15: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "562'949'953'421'312", 50, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "281'474'976'710'656", 49, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "140'737'488'355'328", 48, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 16: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "9'007'199'254'740'992", 54, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "4'503'599'627'370'496", 53, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "2'251'799'813'685'248", 52, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "1'125'899'906'842'624", 51, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 17: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "72'057'594037927936", 57, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "36'028'797018963968", 56, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "18'014'398509481984", 55, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 18: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "576'460'752303423488", 60, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "288'230'376151711744", 59, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "144'115'188075855872", 58, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 19: {
+					unsigned int result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "9'223'372036854775808", 64, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "4'611'686018427387904", 63, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "2'305'843009213693952", 62, result)) return result;
+					if (stringBitsDigitsCorridor<PrecisionLevel>(digits, "1'152'921504606846976", 61, result)) return result;
+					throw std::runtime_error("Invalid digit format");
+        }
+        case 20: {
+					char currentDigit = digits[0];
+					if (currentDigit > '7')
+						return 67;
+					else if (currentDigit == '7')
+            return stringBitsCorridor<PrecisionLevel>(digits, "73786976294838206464", 67);
+					else if (currentDigit > '2')
+						return 66;
+					else if (currentDigit == '3')
+            return stringBitsCorridor<PrecisionLevel>(digits, "36893488147419103232", 66);
+					else if (currentDigit == '2')
+						return 65;
+					else if (currentDigit == '1')
+            return stringBitsCorridor<0>(digits, "18'446'744'073'709'551'616", 65);// UInt64 boundary (2^64)
+					throw std::runtime_error("Invalid digit format");
+        }
 //        case 21: {
 //            char currentDigit = digits[0];
 /*
-
+147573952589676412928
+295147905179352825856
+590295810358705651712
 */
 //            throw("Invalid digit format");//This should not be reached unless formatting is invalid
 //        }
