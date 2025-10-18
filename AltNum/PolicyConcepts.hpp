@@ -26,9 +26,11 @@ namespace BlazesRusCode
 	
 	#pragma region RestrictedFloat Variant Specific
 	template<typename Policy>
-  concept Has_EXPMAG_BITS   = requires { { Policy::EXPMAG_BITS }   -> std::convertible_to<unsigned>; };
+  concept Has_ExpMagBits   = requires { { Policy::ExpMagBits }   -> std::convertible_to<unsigned>; };
 	template<typename Policy>
-  concept Has_EXPFRAC_BITS   = requires { { Policy::EXPFRAC_BITS }   -> std::convertible_to<unsigned>; };
+  concept Has_ExpFracBits   = requires { { Policy::ExpFracBits }   -> std::convertible_to<unsigned>; };
+	template<typename Policy>
+	concept Has_ExpFracExpansionRate  = requires { { Policy::ExpFracExpansionRate }   -> std::convertible_to<unsigned>; };
 	template<typename Policy>
   concept Has_NScaleFactor   = requires { { Policy::NScaleFactor }   -> std::convertible_to<unsigned>; };
 
