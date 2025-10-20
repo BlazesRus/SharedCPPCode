@@ -4,7 +4,7 @@
 // This is a FIXED-POINT exponent format:
 // - 'ExpMag' is the integer exponent component.
 // - 'ExpFrac' is the fractional exponent component, in ticks of 1/MaxDenom.
-// - MaxDenom = 1 << FRAC_BITS.
+// - MaxDenom = 1 << ExpFracBits.
 // This is NOT a normalized mantissa+exponent float, and NOT just an inverted IEEE float.
 // All arithmetic must be done in exponent-tick space, not by shifting a mantissa.
 // ***********************************************************************
