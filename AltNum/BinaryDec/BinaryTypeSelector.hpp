@@ -8,6 +8,9 @@
 #include <cstddef>
 #include <string>
 #include "UInt64ArrayFallback.hpp"
+#include <bit>
+#include <limits>
+#include <type_traits>
 
 namespace BlazesRusCode
 {
@@ -43,13 +46,28 @@ namespace BlazesRusCode
     #endif
         ;
     
-    template <unsigned PrecisionLevel:1>
-    constexpr unsigned bits_required_from_value(UInt v) {
-        static_assert(std::is_unsigned_v<UInt>, "Unsigned type required");
-        if (v == 0) return 0;
-        return std::numeric_limits<UInt>::digits - std::countl_zero(v);
+    template <typename T>
+    constexpr bool has_countl_zero_v =
+      std::is_unsigned_v<T> &&
+      requires(T v) {
+        { std::countl_zero(v) } -> std::same_as<int>;
+        { std::numeric_limits<T>::digits } -> std::convertible_to<int>;
+      };
+		
+    template <typename T>
+    constexpr unsigned RequiredBits(T v) {
+      if constexpr (has_countl_zero_v<T>) {
+        return v == 0 ? 0 : std::numeric_limits<T>::digits - std::countl_zero(v);
+      } else {
+        // fallback: manual loop
+        unsigned bits = 0;
+        auto u = static_cast<std::make_unsigned_t<T>>(v);
+        while (u > 0) { ++bits; u >>= 1; }
+        return bits;
+      }
     }
-    
+
+		
     // Storage bit width (useful for native words only; not a semantic ceiling)
     template<typename T>
     constexpr unsigned bit_width_of_v = sizeof(T) * 8;
@@ -396,7 +414,7 @@ namespace BlazesRusCode
             throw("Unsupported string length parsed");
         }
     }
-    
+		
     static constexpr bool IsValueEffective = ValueSafe ?
     (UseCustomMode? (BinaryDecCode::is_native_word_v<PackedT> && (INT_BITS + DEC_BITS) <= BinaryDecCode::bit_width_of_v<PackedT>)
     : true):false;
