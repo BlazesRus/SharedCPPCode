@@ -246,6 +246,21 @@ namespace BlazesRusCode
 
 #pragma endregion PowerOf representations
 
+#pragma region RootOf representations
+    //Does not require ExtraRep since fixed root of
+		AboveSubSqrtOf = SqrtOfRepresented<Layout>&&SignedExpEnabled<Layout>?
+    Layout::SqrtOfRep| AboveSub  : UnknownType,
+		SubRangeSqrtOf = SqrtOfRepresented<Layout>&&ReciprocalRepresented<Layout>?
+    Layout::SqrtOfRep : UnknownType,
+
+    //Requires ExtraRep (same as with PowerOf)
+		AboveSubNthRootOf = PowerOfRepresented<Layout>&&SignedExpEnabled<Layout>&&ReciprocalRepresented<Layout>?
+    Layout::ToPowerOfRep| AboveSub | Layout::ReciprocalOfRep : UnknownType,
+		SubRangeNthRootOf = PowerOfRepresented<Layout>&&ReciprocalRepresented<Layout>?
+    Layout::ToPowerOfRep|Layout::ReciprocalOfRep: UnknownType,
+
+#pragma endregion RootOf representations
+
 #pragma region WithinMinMaxRange representations
 /*
 		//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
