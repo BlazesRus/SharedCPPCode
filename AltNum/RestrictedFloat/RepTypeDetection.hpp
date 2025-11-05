@@ -208,6 +208,9 @@ namespace RepTypeDetection {
 
 	template<typename Layout>
 	concept PowerOfRepresented    = requires { { Layout::ToPowerOfRep }    -> std::unsigned_integral; }&&(Layout::ToPowerOfRep!=0);
+	
+	template<typename Layout>
+	concept SqrtOfRepresented    = requires { { Layout::SqrtOfRep }    -> std::unsigned_integral; }&&(Layout::SqrtOfRep!=0);
 		
 	template<typename Layout>
 	concept ExtraPiRepresented    = requires {

@@ -270,7 +270,7 @@ namespace BlazesRusCode
 */
 #pragma endregion WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 /*
 	  PhiNum    = Has_EnablePhi<Policy>&&Policy::EnablePhi ? Layout::PhiNumRep : UnknownType,
 		//√5
@@ -281,9 +281,9 @@ namespace BlazesRusCode
 	  PlasticNum    = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum ? Layout::PlasticNumRep : UnknownType
 	  PlasticSquareNum    = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum ? Layout::PlasticSquareNumRep : UnknownType
 */
-#pragma Other math constants
+#pragma endregion Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region Experimental symbolic trig expression flags
 		// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
 		#pragma region Circular symbolic trig expression flags
 
@@ -493,7 +493,7 @@ namespace BlazesRusCode
 
     #pragma region Hyperbolic Arc cotangent
 
-#pragma Experimental symbolic trig expression flags
+#pragma endregion Experimental symbolic trig expression flags
 
 #pragma region Indeterminate forms
 	  // --------------------

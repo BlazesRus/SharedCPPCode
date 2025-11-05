@@ -106,16 +106,16 @@ namespace BlazesRusCode
 		PositiveZero = Has_SignedZero<Policy>?PositiveSign|ZeroSentinal : UnknownType,
 		NegativeZero = Has_SignedZero<Policy>?NegativeSign|ZeroSentinal : UnknownType,
 	
-#pragma region NormalType
+#pragma region  NormalType
 
 		PositiveAboveSubNormalType = Policy::SignedExpMode ? PositiveSign| AboveSub : UnknownType,
 		NegativeAboveSubNormalType = Policy::SignedExpMode&&Policy::SignedMode ? NegativeSign| AboveSub : UnknownType,
 		PositiveSubRangeNormalType = PositiveSign,
 		NegativeSubRangeNormalType = Policy::SignedMode ? NegativeSign : UnknownType,
 
-#pragma endregion NormalType
+#pragma endregion  NormalType
 
-#pragma region Core multipliers
+#pragma region  Core multipliers
 
 		PositiveAboveSubPiNum = PiRepresented<Layout>&&Policy::SignedExpMode ? Layout::PiNumRep|PositiveSign| AboveSub : UnknownType,
 		NegativeAboveSubPiNum = PiRepresented<Layout>&&Policy::SignedExpMode&&Policy::SignedMode ? Layout::PiNumRep|NegativeSign| AboveSub : UnknownType,
@@ -132,9 +132,9 @@ namespace BlazesRusCode
 		PositiveSubRangeINum = IRepresented<Layout>? Layout::INumRep|PositiveSign : UnknownType,
 		NegativeSubRangeINum = IRepresented<Layout>&&Policy::SignedMode ? Layout::INumRep|NegativeSign : UnknownType,
 
-#pragma endregion Core multipliers
+#pragma endregion  Core multipliers
 
-#pragma region Core composite representations
+#pragma region  Core composite representations
 
 		PositiveAboveSubPiENum = PiERepresented<Layout>&&Policy::SignedExpMode ? Layout::PiENumRep|PositiveSign| AboveSub : UnknownType,
 		NegativeAboveSubPiENum = PiERepresented<Layout>&&Policy::SignedExpMode&&Policy::SignedMode ? Layout::PiENumRep|NegativeSign| AboveSub : UnknownType,
@@ -156,9 +156,9 @@ namespace BlazesRusCode
 		PositiveSubRangePiEINum = PiEIRepresented<Layout>? Layout::PiEINumRep|PositiveSign : UnknownType,
 		NegativeSubRangePiEINum = PiEIRepresented<Layout>&&Policy::SignedMode ? Layout::PiEINumRep|NegativeSign : UnknownType,
 
-#pragma endregion Core composite representations
+#pragma endregion  Core composite representations
 
-#pragma endregion Fractional representations
+#pragma endregion  Fractional representations
 
 	  PositiveAboveSubNumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout> ? Layout::NumByDivRep|PositiveSign| AboveSub : UnknownType,
 	  NegativeAboveSubNumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> ? Layout::NumByDivRep|NegativeSign| AboveSub : UnknownType,
@@ -170,9 +170,9 @@ namespace BlazesRusCode
 		PositiveSubRangeMixedFrac = MixedFracRepresented<Layout> ? Layout::MixedFracRep|PositiveSign : UnknownType,
 		NegativeSubRangeMixedFrac = MixedFracRepresented<Layout>&&SignEnabled<Layout> ? Layout::MixedFracRep|NegativeSign : UnknownType,
 
-#pragma endregion Fractional representations
+#pragma endregion  Fractional representations
 
-#pragma region Approaching representations
+#pragma region  Approaching representations
 
 		//(Approaching Towards Zero),((Raw as unsigned) of 0 results in 0.00...1)
     //Not allowed for Pi and E variants(because constant would vanish in infinite approaching slope)
@@ -185,7 +185,7 @@ namespace BlazesRusCode
 		PositiveApproachingTop = ApproachingTopRepresented<Layout>? Layout::ApproachingTopRep|PositiveSign : UnknownType,
 		NegativeApproachingTop = ApproachingTopRepresented<Layout>&&SignEnabled<Layout> ? Layout::ApproachingTopRep|NegativeSign : UnknownType,
 
-  #pragma region ApproachingBottom representation divided by ExtraRep
+#pragma region  ApproachingBottom representation divided by ExtraRep
 
     PositiveApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> ?
     Layout::ApproachingBottomByDivRep|PositiveSign : UnknownType,
@@ -193,9 +193,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign : UnknownType,
 
-  #pragma region ApproachingBottom representation divided by ExtraRep
+#pragma region  ApproachingBottom representation divided by ExtraRep
 
-  #pragma region ApproachingTop representation divided by ExtraRep
+#pragma region  ApproachingTop representation divided by ExtraRep
 
     PositiveApproachingTopByDiv = ApproachingTopByDivRepresented<Layout> ?
     Layout::ApproachingTopByDivRep|PositiveSign : UnknownType,
@@ -203,14 +203,14 @@ namespace BlazesRusCode
     NegativeApproachingTopByDiv = ApproachingTopByDivRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|Layout::NumByDivRep|NegativeSign : UnknownType,
 
-  #pragma endregion ApproachingTop representation divided by ExtraRep
+#pragma endregion  ApproachingTop representation divided by ExtraRep
 
-  // Approaching midpoint from below (fractional part = 0.999… / ExtraRep)
-  // Requires EnableApproachingDivided and ExtraRep divisor.
-  // When ExtraRep == 1, numerically equals ApproachingTop.
-  // Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)-0.0...01)
-  // For variant representations : equals (Normal formula)*constant
-  #pragma region ApproachingMidLeft
+// Approaching midpoint from below (fractional part = 0.999… / ExtraRep)
+// Requires EnableApproachingDivided and ExtraRep divisor.
+// When ExtraRep == 1, numerically equals ApproachingTop.
+// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)-0.0...01)
+// For variant representations : equals (Normal formula)*constant
+#pragma region  ApproachingMidLeft
 
 		PositiveApproachingMidLeft = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> ?
     Layout::ApproachingMidLeftRep|PositiveSign : UnknownType,
@@ -223,10 +223,10 @@ namespace BlazesRusCode
 		NegativeZeroApproachingMidLeft = ApproachingMidRepresented<Layout> && SignEnabled<Layout> ?
     Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal : UnknownType,
 
-  #pragma endregion ApproachingMidLeft
+#pragma endregion  ApproachingMidLeft
 
-  // Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-  #pragma region ApproachingMidRight
+// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
+#pragma region  ApproachingMidRight
 
 		PositiveApproachingMidRight = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> ?
     Layout::ApproachingMidRightRep|PositiveSign : UnknownType,
@@ -239,10 +239,10 @@ namespace BlazesRusCode
 		NegativeZeroApproachingMidRight = ApproachingMidRepresented<Layout> && SignEnabled<Layout> ?
     Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal : UnknownType,
 
-  #pragma endregion ApproachingMidRight
+#pragma endregion  ApproachingMidRight
 
-  // PlusOffset = +ε (approach from below), MinusOffset = −ε (approach from above).
-  #pragma region ApproachingOffsets
+// PlusOffset = +ε (approach from below), MinusOffset = −ε (approach from above).
+#pragma region  ApproachingOffsets
     
 		//SignMultiplier*(NormalNum magnitude) + ApproachingBottom)*(constant multiplier)
 		PositiveApproachingBottomPlusOffset = ApproachingOffsetsRepresented<Layout>?
@@ -269,20 +269,20 @@ namespace BlazesRusCode
     NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep:UnknownType,
 
 
-  #pragma endregion ApproachingOffsets
+#pragma endregion  ApproachingOffsets
 
-#pragma endregion Approaching representations
+#pragma endregion  Approaching representations
 
-#pragma region Infinite representations
+#pragma region  Infinite representations
 
 		PositiveInfinity = InfinityRepresented<Layout> ? PositiveSign|Layout::InfinityRep : UnknownType,
     PositiveImaginaryInfinity = InfinityRepresented<Layout> ? PositiveSign|Layout::InfinityRep| Layout::INumRep : UnknownType,
 		NegativeInfinity = InfinityRepresented<Layout> ? NegativeSign|Layout::InfinityRep : UnknownType,
     NegativeImaginaryInfinity = InfinityRepresented<Layout> ? NegativeSign|Layout::InfinityRep| Layout::INumRep : UnknownType,
 
-#pragma endregion Infinite representations
+#pragma endregion  Infinite representations
 
-#pragma endregion UniverseUnits representations
+#pragma endregion  UniverseUnits representations
 
     //Bounded to maximum of either 1 magnitude(either wrap around behavior or exception if exceed)
 		//Similar to infinity in that doesn't have measureable in real units length
@@ -292,9 +292,9 @@ namespace BlazesRusCode
 		NegativeUniverseUnits = UniverseUnitsRepresented<Layout> ? NegativeSign|Layout::UniverseUnitsRep : UnknownType,
     NegativeImaginaryUniverseUnits = UniverseUnitsRepresented<Layout> ? NegativeSign|Layout::UniverseUnitsRep| Layout::INumRep : UnknownType,
 
-#pragma endregion UniverseUnits representations
+#pragma endregion  UniverseUnits representations
 
-#pragma region PowerOf representations
+#pragma region  PowerOf representations
 
 		PositiveAboveSubPowerOf = PowerOfRepresented<Layout>&&SignedExpEnabled<Layout>?
     Layout::ToPowerOfRep|PositiveSign| AboveSub : UnknownType,
@@ -365,18 +365,18 @@ namespace BlazesRusCode
 		NegativeSubRangePowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&SignEnabled<Layout>?
     Layout::ToPowerOfRep|Layout:PiEINumExtraRep|NegativeSign : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-#pragma region WithinMinMaxRange representations
+#pragma region  WithinMinMaxRange representations
 /*
 		//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 		WithinMinMaxRange = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange ? Layout::WithinMinMaxRangeRep : UnknownType,
 		//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 		NotWithinMinMaxRange = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange ? Layout::NotWithinMinMaxRangeRep : UnknownType,
 */
-#pragma endregion WithinMinMaxRange representations
+#pragma endregion  WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 /*
 	  PhiNum    = Has_EnablePhi<Policy>&&Policy::EnablePhi ? Layout::PhiNumRep : UnknownType,
 		//√5
@@ -387,11 +387,11 @@ namespace BlazesRusCode
 	  PlasticNum    = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum ? Layout::PlasticNumRep : UnknownType
 	  PlasticSquareNum    = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum ? Layout::PlasticSquareNumRep : UnknownType
 */
-#pragma Other math constants
+#pragma endregion Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region  Experimental symbolic trig expression flags
 		// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-		#pragma region Circular symbolic trig expression flags
+  #pragma region  Circular symbolic trig expression flags
 
 		PositiveAboveSubSin = TrigRepresented<Layout>&&SignedExpEnabled<Layout>?
     Layout::SinRep|PositiveSign| AboveSub : UnknownType,
@@ -419,9 +419,9 @@ namespace BlazesRusCode
 		NegativeSubRangeTan = TrigRepresented<Layout>&&SignEnabled<Layout>?
     Layout::TanRep|NegativeSign : UnknownType,
 
-		#pragma endregion Circular symbolic trig expression flags
+  #pragma endregion  Circular symbolic trig expression flags
 
-		#pragma region Hyperbolic symbolic expression flags
+  #pragma region  Hyperbolic symbolic expression flags
 
 		PositiveAboveSubSinH = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> ? Layout::SinHRep|PositiveSign| AboveSub : UnknownType,
 		NegativeAboveSubSinH = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> ? Layout::SinHRep|NegativeSign| AboveSub : UnknownType,
@@ -438,9 +438,9 @@ namespace BlazesRusCode
 		PositiveSubRangeTanH = HyperbolicRepresented<Layout> ? Layout::TanHRep|PositiveSign : UnknownType,
 		NegativeSubRangeTanH = HyperbolicRepresented<Layout>&&SignEnabled<Layout> ? Layout::TanHRep|NegativeSign : UnknownType,
 
-		#pragma endregion Hyperbolic symbolic expression flags
+  #pragma endregion  Hyperbolic symbolic expression flags
 
-		#pragma region Inversed expressions
+  #pragma region  Inversed expressions
 
     //Inversed Circular symbolic expression flag
 		PositiveAboveSubInversedOf = InversionRepresented<Layout>&&SignedExpEnabled<Layout> ? Layout::InversedOfRep|PositiveSign| AboveSub : UnknownType,
@@ -448,7 +448,7 @@ namespace BlazesRusCode
 		PositiveSubRangeInversedOf = InversionRepresented<Layout>? Layout::InversedOfRep|PositiveSign : UnknownType,
 		NegativeSubRangeInversedOf = InversionRepresented<Layout>&&SignEnabled<Layout> ? Layout::InversedOfRep|NegativeSign : UnknownType,
 
-    #pragma region ArcSin
+    #pragma region  ArcSin
 		PositiveAboveSubCsc = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep : UnknownType,
 		NegativeAboveSubCsc = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -457,9 +457,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::SinRep : UnknownType,
 		NegativeSubRangeCsc = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::InversedOfRep|NegativeSign | Layout::SinRep : UnknownType,
-    #pragma endregion ArcSin
+    #pragma endregion  ArcSin
 
-    #pragma region ArcCos
+    #pragma region  ArcCos
 		PositiveAboveSubArcCos = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep : UnknownType,
 		NegativeAboveSubArcCos = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -468,9 +468,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::CosRep: UnknownType,
 		NegativeSubRangeArcCos = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::InversedOfRep|NegativeSign | Layout::CosRep: UnknownType,
-    #pragma endregion ArcCos
+    #pragma endregion  ArcCos
 
-    #pragma region ArcTan
+    #pragma region  ArcTan
 		PositiveAboveSubArcTan = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep: UnknownType,
 		NegativeAboveSubArcTan = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -479,9 +479,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::TanRep: UnknownType,
 		NegativeSubRangeArcTan = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::InversedOfRep|NegativeSign | Layout::TanRep: UnknownType,
-    #pragma region ArcTan
+    #pragma region  ArcTan
 
-    #pragma region Hyperbolic ArcSin
+    #pragma region  Hyperbolic ArcSin
 		PositiveAboveSubCscH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep : UnknownType,
 		NegativeAboveSubCscH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -490,9 +490,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::SinHRep : UnknownType,
 		NegativeSubRangeCscH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
     ? Layout::InversedOfRep|NegativeSign | Layout::SinHRep : UnknownType,
-    #pragma endregion Hyperbolic ArcSin
+    #pragma endregion  Hyperbolic ArcSin
 
-    #pragma region Hyperbolic ArcCos
+    #pragma region  Hyperbolic ArcCos
 		PositiveAboveSubArcCosH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep : UnknownType,
 		NegativeAboveSubArcCosH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -501,9 +501,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::CosHRep: UnknownType,
 		NegativeSubRangeArcCosH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::InversedOfRep|NegativeSign | Layout::CosHRep: UnknownType,
-    #pragma endregion Hyperbolic ArcCos
+    #pragma endregion  Hyperbolic ArcCos
 
-    #pragma region Hyperbolic ArcTan
+    #pragma region  Hyperbolic ArcTan
 		PositiveAboveSubArcTanH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep: UnknownType,
 		NegativeAboveSubArcTanH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -512,11 +512,11 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::TanHRep: UnknownType,
 		NegativeSubRangeArcTanH = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::InversedOfRep|NegativeSign | Layout::TanHRep: UnknownType,
-    #pragma region Hyperbolic ArcTan
+    #pragma endregion  Hyperbolic ArcTan
 
-		#pragma endregion Inversed expressions
+  #pragma endregion  Inversed expressions
 
-		#pragma region Reciprocal expressions
+  #pragma region  Reciprocal expressions
 
 		//Reciprocal expression flag 1/OtherExpression/Value
 		PositiveAboveSubReciprocalOf = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout> ? Layout::ReciprocalOfRep|PositiveSign| AboveSub : UnknownType,
@@ -525,7 +525,7 @@ namespace BlazesRusCode
 		NegativeSubRangeReciprocalOf = ReciprocalRepresented<Layout>&&SignEnabled<Layout> ? Layout::ReciprocalOfRep|NegativeSign : UnknownType,
 
     //cosecant(x) == 1/sin(x)
-    #pragma region cosecant
+    #pragma region  cosecant
 		PositiveAboveSubCsc = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep : UnknownType,
 		NegativeAboveSubCsc = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -534,10 +534,10 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep : UnknownType,
 		NegativeSubRangeCsc = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep : UnknownType,
-    #pragma endregion cosecant
+    #pragma endregion  cosecant
 
     //secant(x) = 1/cos(x)
-    #pragma region secant
+    #pragma region  secant
 		PositiveAboveSubSec = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep : UnknownType,
 		NegativeAboveSubSec = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -546,10 +546,10 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep: UnknownType,
 		NegativeSubRangeSec = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep: UnknownType,
-    #pragma endregion secant
+    #pragma endregion  secant
 
     //Cotangent = 1/tan(x)
-    #pragma region Cotangent
+    #pragma region  Cotangent
 		PositiveAboveSubCot = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep: UnknownType,
 		NegativeAboveSubCot = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -558,9 +558,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep: UnknownType,
 		NegativeSubRangeCot = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep: UnknownType,
-    #pragma region Cotangent
+    #pragma region  Cotangent
 
-    #pragma region Hyperbolic cosecant
+    #pragma region  Hyperbolic cosecant
 		PositiveAboveSubCscH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep : UnknownType,
 		NegativeAboveSubCscH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -569,9 +569,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep : UnknownType,
 		NegativeSubRangeCscH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep : UnknownType,
-    #pragma endregion Hyperbolic cosecant
+    #pragma endregion  Hyperbolic cosecant
 
-    #pragma region Hyperbolic secant
+    #pragma region  Hyperbolic secant
 		PositiveAboveSubSecH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep : UnknownType,
 		NegativeAboveSubSecH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -580,9 +580,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep: UnknownType,
 		NegativeSubRangeSecH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep: UnknownType,
-    #pragma endregion Hyperbolic secant
+    #pragma endregion  Hyperbolic secant
 
-    #pragma region Hyperbolic Cotangent
+    #pragma region  Hyperbolic Cotangent
 		PositiveAboveSubCotH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep: UnknownType,
 		NegativeAboveSubCotH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -591,11 +591,11 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep: UnknownType,
 		NegativeSubRangeCotH = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep: UnknownType,
-    #pragma region Hyperbolic Cotangent
+    #pragma region  Hyperbolic Cotangent
 
-		#pragma endregion Reciprocal expressions
+  #pragma endregion  Reciprocal expressions
 
-    #pragma region Arc cosecant
+  #pragma region  Arc cosecant
 		PositiveAboveSubArcCsc = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep : UnknownType,
 		NegativeAboveSubArcCsc = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -604,9 +604,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep : UnknownType,
 		NegativeSubRangeArcCsc = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep : UnknownType,
-    #pragma endregion Arc cosecant
+  #pragma endregion  Arc cosecant
 
-    #pragma region Arc secant
+  #pragma region  Arc secant
 		PositiveAboveSubArcCos = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep : UnknownType,
 		NegativeAboveSubArcCos = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -615,9 +615,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep: UnknownType,
 		NegativeSubRangeArcCos = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep: UnknownType,
-    #pragma endregion ArcCos
+  #pragma endregion  ArcCos
 
-    #pragma region Arc cotangent
+  #pragma region  Arc cotangent
 		PositiveAboveSubArcTan = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep: UnknownType,
 		NegativeAboveSubArcTan = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -626,9 +626,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep: UnknownType,
 		NegativeSubRangeArcTan = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep: UnknownType,
-    #pragma region Arc cotangent
+  #pragma region  Arc cotangent
 
-    #pragma region Hyperbolic Arc cosecant
+  #pragma region  Hyperbolic Arc cosecant
 		PositiveAboveSubCscH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
     ? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep : UnknownType,
 		NegativeAboveSubCscH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -637,9 +637,9 @@ namespace BlazesRusCode
     ? Layout::InversedOfRep|PositiveSign | Layout::SinHRep : UnknownType,
 		NegativeSubRangeCscH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
     ? Layout::InversedOfRep|NegativeSign | Layout::SinHRep : UnknownType,
-    #pragma endregion Hyperbolic ArcSin
+  #pragma endregion  Hyperbolic ArcSin
 
-    #pragma region Hyperbolic Arc secant
+  #pragma region  Hyperbolic Arc secant
 		PositiveAboveSubArcCosH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep : UnknownType,
 		NegativeAboveSubArcCosH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -648,9 +648,9 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep: UnknownType,
 		NegativeSubRangeArcCosH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep: UnknownType,
-    #pragma endregion Hyperbolic Arc secant
+  #pragma endregion  Hyperbolic Arc secant
 
-    #pragma region Hyperbolic Arc cotangent
+  #pragma region  Hyperbolic Arc cotangent
 		PositiveAboveSubArcTanH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep: UnknownType,
 		NegativeAboveSubArcTanH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -659,11 +659,11 @@ namespace BlazesRusCode
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep: UnknownType,
 		NegativeSubRangeArcTanH = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
     ? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep: UnknownType,
-    #pragma region Hyperbolic Arc cotangent
+  #pragma region  Hyperbolic Arc cotangent
 
-#pragma Experimental symbolic trig expression flags
+#pragma endregion  Experimental symbolic trig expression flags
 
-#pragma region Indeterminate forms
+#pragma region  Indeterminate forms
 	  // --------------------
     // Indeterminate forms(Required to be highest bit value from Layout)
     // Requires enough bits set in layout in order for all Indeterminate forms to be enabled
@@ -736,10 +736,10 @@ namespace BlazesRusCode
 		//DomainError — generic “arg outside allowed domain” catch-all.
 		DomainError = Layout::IndeterminateFormRep!=0&&(Layout::DomainErrorRep > IndeterminateFormRep) ? Layout::DomainErrorRep : UnknownType,
 		//NaN = Layout::IndeterminateFormRep!=0&&(Layout::NaNRep > IndeterminateFormRep) ? Layout::NaNRep : UnknownType,
-#pragma endregion Indeterminate forms
+#pragma endregion  Indeterminate forms
 
-#pragma region --PiNum Variants--
-#pragma region Fractional representations
+#pragma region  --PiNum Variants--
+#pragma region  Fractional representations
 
 	  PositiveAboveSubPiNumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::PiNumRep : UnknownType,
 	  NegativeAboveSubPiNumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::PiNumRep : UnknownType,
@@ -751,11 +751,11 @@ namespace BlazesRusCode
 		PositiveSubRangeMixedPi = MixedFracRepresented<Layout>&&PiRepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::PiNumRep : UnknownType,
 		NegativeSubRangeMixedPi = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-#pragma endregion Fractional representations
+#pragma endregion  Fractional representations
 
-#pragma region Approaching representations
+#pragma region  Approaching representations
 	
-  #pragma region ApproachingBottom representation
+  #pragma region  ApproachingBottom representation
 
     PositiveApproachingBottomPi = ApproachingBottomRepresented<Layout> && PiRepresented<Layout> ?
     Layout::ApproachingBottomRep|PositiveSign | Layout::PiNumRep : UnknownType,
@@ -763,9 +763,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomPi = ApproachingBottomRepresented<Layout> && PiRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation
+	#pragma endregion  ApproachingBottom representation
 	
-  #pragma region ApproachingTop representation
+  #pragma region  ApproachingTop representation
 
     PositiveApproachingTopPi = ApproachingTopRepresented<Layout> && PiRepresented<Layout>?
     Layout::ApproachingTopRep|PositiveSign | Layout::PiNumRep : UnknownType,
@@ -773,9 +773,9 @@ namespace BlazesRusCode
     NegativeApproachingTopPi = ApproachingTopRepresented<Layout> && PiRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-	#pragma endregion ApproachingTop representation
+	#pragma endregion  ApproachingTop representation
 
-  #pragma region ApproachingBottom representation divided by ExtraRep
+  #pragma region  ApproachingBottom representation divided by ExtraRep
 
     PositiveApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> ?
     Layout::ApproachingBottomRep|Layout::NumByDivRep|PositiveSign | Layout::PiNumRep : UnknownType,
@@ -783,9 +783,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation divided by ExtraRep
+	#pragma endregion  ApproachingBottom representation divided by ExtraRep
 
-  #pragma region ApproachingTop representation divided by ExtraRep
+  #pragma region  ApproachingTop representation divided by ExtraRep
 
     PositiveApproachingTopByDivPi = ApproachingTopByDivRepresented<Layout> && PiRepresented<Layout>?
     Layout::ApproachingTopByDivRep|PositiveSign | Layout::PiNumRep : UnknownType,
@@ -793,9 +793,9 @@ namespace BlazesRusCode
     NegativeApproachingTopByDivPi = ApproachingTopByDivRepresented<Layout> && PiRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|Layout::NumByDivRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-  #pragma endregion ApproachingTop representation divided by ExtraRep
+  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	#pragma region ApproachingMidLeft
+	#pragma region  ApproachingMidLeft
 
 	  PositiveApproachingMidLeftPi = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiRepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign | Layout::PiNumRep : UnknownType,
 	  NegativeApproachingMidLeftPi = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign | Layout::PiNumRep : UnknownType,
@@ -804,10 +804,10 @@ namespace BlazesRusCode
 		PositiveZeroApproachingMidLeftPi = ApproachingMidRepresented<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign|ZeroSentinal | Layout::PiNumRep : UnknownType,
 		NegativeZeroApproachingMidLeftPi = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::PiNumRep : UnknownType,
 
-  #pragma endregion ApproachingMidLeft
+  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-  #pragma region ApproachingMidRight
+  #pragma region  ApproachingMidRight
 
     PositiveApproachingMidRightPi = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiRepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign | Layout::PiNumRep : UnknownType,
     NegativeApproachingMidRightPi = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign | Layout::PiNumRep : UnknownType,
@@ -816,9 +816,9 @@ namespace BlazesRusCode
     PositiveZeroApproachingMidRightPi = ApproachingMidRepresented<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign|ZeroSentinal | Layout::PiNumRep : UnknownType,
     NegativeZeroApproachingMidRightPi = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiRepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::PiNumRep : UnknownType,
 
-  #pragma endregion ApproachingMidRight
+  #pragma endregion  ApproachingMidRight
 
-  #pragma region ApproachingOffsets
+  #pragma region  ApproachingOffsets
 
 		PositiveApproachingBottomPlusOffsetPi = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep |Layout::PiNumRep:UnknownType,
@@ -840,11 +840,11 @@ namespace BlazesRusCode
     NegativeApproachingTopMinusOffsetPi = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep |Layout::PiNumRep:UnknownType,
 
-  #pragma endregion ApproachingOffsets
+  #pragma endregion  ApproachingOffsets
 
-#pragma endregion Approaching representations
+#pragma endregion  Approaching representations
 
-#pragma region PowerOf representations
+#pragma region  PowerOf representations
 
 			//PiNum to power of ExtraRep
 			PositiveAboveSubPiPower = PowerOfRepresented<Layout>&&PiRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>? Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::PiNumRep : UnknownType,
@@ -887,18 +887,18 @@ namespace BlazesRusCode
 			PositiveSubRangePiPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&PiRepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|PositiveSign | Layout::PiNumRep : UnknownType,
 			NegativeSubRangePiPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-	#pragma region WithinMinMaxRange representations
+	#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangePi = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&PiRepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangePi = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&PiRepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-	#pragma endregion WithinMinMaxRange representations
+	#pragma endregion  WithinMinMaxRange representations
 
-	#pragma Other math constants
+	#pragma region Other math constants
 	/*
 			PhiNum   Pi = Has_EnablePhi<Policy>&&Policy::EnablePhi&&PiRepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -909,11 +909,11 @@ namespace BlazesRusCode
 			PlasticNum   Pi = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiRepresented<Layout>? Layout::PlasticNumRep : UnknownType,
 			PlasticSquareNum   Pi = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiRepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType,
 	*/
-	#pragma Other math constants
+	#pragma endregion Other math constants
 
-	#pragma Experimental symbolic trig expression flags
+	#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinPi = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>? Layout::SinRep|PositiveSign| AboveSub | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubSinPi = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::SinRep|NegativeSign| AboveSub | Layout::PiNumRep : UnknownType,
@@ -930,9 +930,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanPi = TrigRepresented<Layout>&&PiRepresented<Layout>? Layout::TanRep|PositiveSign | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeTanPi = TrigRepresented<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::TanRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHPi = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>? Layout::SinHRep|PositiveSign| AboveSub | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubSinHPi = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::SinHRep|NegativeSign| AboveSub | Layout::PiNumRep : UnknownType,
@@ -949,9 +949,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanHPi = HyperbolicRepresented<Layout>&&PiRepresented<Layout>? Layout::TanHRep|PositiveSign | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeTanHPi = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>? Layout::TanHRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfPi = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>?
@@ -963,7 +963,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfPi = InversionRepresented<Layout>&&SignEnabled<Layout>&&PiRepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCscPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -972,9 +972,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCscPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcCosPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -983,9 +983,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcCosPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcTanPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -994,9 +994,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcTanPi = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCscHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1005,9 +1005,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCscHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcCosHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1016,9 +1016,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcCosHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcTanHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1027,11 +1027,11 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcTanHPi = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfPi = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&PiRepresented<Layout>?
@@ -1044,7 +1044,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::PiNumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCscPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1053,10 +1053,10 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCscPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)Pi = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubSecPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1065,10 +1065,10 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeSecPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentPi = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCotPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1077,9 +1077,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCotPi = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCscHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1088,9 +1088,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCscHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubSecHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1099,9 +1099,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeSecHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCotHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1110,11 +1110,11 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCotHPi = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubCscPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1123,9 +1123,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeCscPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcCosPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1134,9 +1134,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcCosPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcTanPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1145,9 +1145,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcTanPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiNumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcCscHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1156,9 +1156,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcCscHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcCosHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1167,9 +1167,9 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcCosHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiNumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeAboveSubArcTanHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1178,13 +1178,13 @@ namespace BlazesRusCode
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
 			NegativeSubRangeArcTanHPi = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiNumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma endregion  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --PiNum Variants--
+	#pragma endregion  Experimental symbolic trig expression flags
+#pragma endregion  --PiNum Variants--
 
-#pragma region --ENum Variants--
-#pragma region Fractional representations
+#pragma region  --ENum Variants--
+#pragma region  Fractional representations
 
 	  PositiveAboveSubENumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::ENumRep : UnknownType,
 	  NegativeAboveSuENumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::ENumRep : UnknownType,
@@ -1196,11 +1196,11 @@ namespace BlazesRusCode
 		PositiveSubRangeMixedE = MixedFracRepresented<Layout>&&ERepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::ENumRep : UnknownType,
 		NegativeSubRangeMixedE = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-#pragma endregion Fractional representations
+#pragma endregion  Fractional representations
 
-#pragma region Approaching representations
+#pragma region  Approaching representations
 	
-  #pragma region ApproachingBottom representation
+  #pragma region  ApproachingBottom representation
 
     PositiveApproachingBottomE = ApproachingBottomRepresented<Layout> && ERepresented<Layout> ?
     Layout::ApproachingBottomRep|PositiveSign | Layout::ENumRep : UnknownType,
@@ -1208,9 +1208,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomE = ApproachingBottomRepresented<Layout> && ERepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation
+	#pragma endregion  ApproachingBottom representation
 	
-  #pragma region ApproachingTop representation
+  #pragma region  ApproachingTop representation
 
     PositiveApproachingTopE = ApproachingTopRepresented<Layout> && ERepresented<Layout>?
     Layout::ApproachingTopRep|PositiveSign | Layout::ENumRep : UnknownType,
@@ -1218,9 +1218,9 @@ namespace BlazesRusCode
     NegativeApproachingTopE = ApproachingTopRepresented<Layout> && ERepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-	#pragma endregion ApproachingTop representation
+	#pragma endregion  ApproachingTop representation
 
-  #pragma region ApproachingBottom representation divided by ExtraRep
+  #pragma region  ApproachingBottom representation divided by ExtraRep
 
     PositiveApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> ?
     Layout::ApproachingBottomRep|Layout::NumByDivRep|PositiveSign | Layout::ENumRep : UnknownType,
@@ -1228,9 +1228,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation divided by ExtraRep
+	#pragma endregion  ApproachingBottom representation divided by ExtraRep
 
-  #pragma region ApproachingTop representation divided by ExtraRep
+  #pragma region  ApproachingTop representation divided by ExtraRep
 
     PositiveApproachingTopByDivE = ApproachingTopByDivRepresented<Layout> && ERepresented<Layout>?
     Layout::ApproachingTopByDivRep|PositiveSign | Layout::ENumRep : UnknownType,
@@ -1238,9 +1238,9 @@ namespace BlazesRusCode
     NegativeApproachingTopByDivE = ApproachingTopByDivRepresented<Layout> && ERepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|Layout::NumByDivRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-  #pragma endregion ApproachingTop representation divided by ExtraRep
+  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	#pragma region ApproachingMidLeft
+	#pragma region  ApproachingMidLeft
 
 	  PositiveApproachingMidLeftE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&ERepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign | Layout::ENumRep : UnknownType,
 	  NegativeApproachingMidLeftE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&ERepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign | Layout::ENumRep : UnknownType,
@@ -1249,10 +1249,10 @@ namespace BlazesRusCode
 		PositiveZeroApproachingMidLeftE = ApproachingMidRepresented<Layout>&&ERepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign|ZeroSentinal | Layout::ENumRep : UnknownType,
 		NegativeZeroApproachingMidLeftE = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&ERepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::ENumRep : UnknownType,
 
-  #pragma endregion ApproachingMidLeft
+  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-  #pragma region ApproachingMidRight
+  #pragma region  ApproachingMidRight
 
     PositiveApproachingMidRightE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&ERepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign | Layout::ENumRep : UnknownType,
     NegativeApproachingMidRightE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&ERepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign | Layout::ENumRep : UnknownType,
@@ -1261,9 +1261,9 @@ namespace BlazesRusCode
     PositiveZeroApproachingMidRightE = ApproachingMidRepresented<Layout>&&ERepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign|ZeroSentinal | Layout::ENumRep : UnknownType,
     NegativeZeroApproachingMidRightE = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&ERepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::ENumRep : UnknownType,
 
-  #pragma endregion ApproachingMidRight
+  #pragma endregion  ApproachingMidRight
 
-  #pragma region ApproachingOffsets
+  #pragma region  ApproachingOffsets
 
 		PositiveApproachingBottomPlusOffsetE = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep |Layout::ENumRep:UnknownType,
@@ -1285,11 +1285,11 @@ namespace BlazesRusCode
     NegativeApproachingTopMinusOffsetE = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep |Layout::ENumRep:UnknownType,
 
-  #pragma endregion ApproachingOffsets
+  #pragma endregion  ApproachingOffsets
 
-#pragma endregion Approaching representations
+#pragma endregion  Approaching representations
 
-#pragma region PowerOf representations
+#pragma region  PowerOf representations
 
 			//PiNum to power of ExtraRep
 			PositiveAboveSubEPower = PowerOfRepresented<Layout>&&ERepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>? Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::ENumRep : UnknownType,
@@ -1332,18 +1332,18 @@ namespace BlazesRusCode
 			PositiveSubRangeEPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&ERepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|PositiveSign | Layout::ENumRep : UnknownType,
 			NegativeSubRangeEPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-	#pragma region WithinMinMaxRange representations
+	#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangeE = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&ERepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangeE = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&ERepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-	#pragma endregion WithinMinMaxRange representations
+	#pragma endregion  WithinMinMaxRange representations
 
-	#pragma Other math constants
+	#pragma region Other math constants
 	/*
 			PhiNum   E = Has_EnablePhi<Policy>&&Policy::EnablePhi&&ERepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -1354,11 +1354,11 @@ namespace BlazesRusCode
 			PlasticNum   E = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&ERepresented<Layout>? Layout::PlasticNumRep : UnknownType,
 			PlasticSquareNum   E = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&ERepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType,
 	*/
-	#pragma Other math constants
+	#pragma endregion Other math constants
 
-	#pragma Experimental symbolic trig expression flags
+	#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinE = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>? Layout::SinRep|PositiveSign| AboveSub | Layout::ENumRep : UnknownType,
 			NegativeAboveSubSinE = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::SinRep|NegativeSign| AboveSub | Layout::ENumRep : UnknownType,
@@ -1375,9 +1375,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanE = TrigRepresented<Layout>&&ERepresented<Layout>? Layout::TanRep|PositiveSign | Layout::ENumRep : UnknownType,
 			NegativeSubRangeTanE = TrigRepresented<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::TanRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHE = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>? Layout::SinHRep|PositiveSign| AboveSub | Layout::ENumRep : UnknownType,
 			NegativeAboveSubSinHE = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::SinHRep|NegativeSign| AboveSub | Layout::ENumRep : UnknownType,
@@ -1394,9 +1394,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanHE = HyperbolicRepresented<Layout>&&ERepresented<Layout>? Layout::TanHRep|PositiveSign | Layout::ENumRep : UnknownType,
 			NegativeSubRangeTanHE = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>? Layout::TanHRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfE = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>?
@@ -1408,7 +1408,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfE = InversionRepresented<Layout>&&SignEnabled<Layout>&&ERepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::ENumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubCscE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1417,9 +1417,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeCscE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::ENumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcCosE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1428,9 +1428,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcCosE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::ENumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcTanE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1439,9 +1439,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcTanE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::ENumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubCscHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1450,9 +1450,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeCscHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcCosHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1461,9 +1461,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcCosHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcTanHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1472,11 +1472,11 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcTanHE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma endregion  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfE = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&ERepresented<Layout>?
@@ -1489,7 +1489,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::ENumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubCscE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1498,10 +1498,10 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeCscE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::ENumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)E = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubSecE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1510,10 +1510,10 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeSecE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::ENumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentE = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubCotE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1522,9 +1522,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeCotE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::ENumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubCscHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1533,9 +1533,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeCscHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubSecHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1544,9 +1544,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeSecHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubCotHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1555,11 +1555,11 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeCotHE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubCscE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1568,9 +1568,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeCscE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::ENumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcCosE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1579,9 +1579,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcCosE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::ENumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcTanE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1590,9 +1590,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcTanE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::ENumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcCscHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1601,9 +1601,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcCscHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcCosHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1612,9 +1612,9 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcCosHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::ENumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeAboveSubArcTanHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1623,13 +1623,13 @@ namespace BlazesRusCode
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
 			NegativeSubRangeArcTanHE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&ERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::ENumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --ENum Variants--
+	#pragma endregion  Experimental symbolic trig expression flags
+#pragma endregion  --ENum Variants--
 
-#pragma region --INum Variants--
-#pragma region Fractional representations
+#pragma region  --INum Variants--
+#pragma region  Fractional representations
 
 	  PositiveAboveSubINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::INumRep : UnknownType,
 	  NegativeAboveSubINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::INumRep : UnknownType,
@@ -1641,11 +1641,11 @@ namespace BlazesRusCode
 		PositiveSubRangeMixedI = MixedFracRepresented<Layout>&&IRepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::INumRep : UnknownType,
 		NegativeSubRangeMixedI = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::INumRep : UnknownType,
 
-#pragma endregion Fractional representations
+#pragma endregion  Fractional representations
 
-#pragma region Approaching representations
+#pragma region  Approaching representations
 	
-  #pragma region ApproachingBottom representation
+  #pragma region  ApproachingBottom representation
 
     PositiveApproachingBottomI = ApproachingBottomRepresented<Layout> && IRepresented<Layout> ?
     Layout::ApproachingBottomRep|PositiveSign | Layout::INumRep : UnknownType,
@@ -1653,9 +1653,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomI = ApproachingBottomRepresented<Layout> && IRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|NegativeSign | Layout::INumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation
+	#pragma endregion  ApproachingBottom representation
 	
-  #pragma region ApproachingTop representation
+  #pragma region  ApproachingTop representation
 
     PositiveApproachingTopI = ApproachingTopRepresented<Layout> && IRepresented<Layout>?
     Layout::ApproachingTopRep|PositiveSign | Layout::INumRep : UnknownType,
@@ -1663,9 +1663,9 @@ namespace BlazesRusCode
     NegativeApproachingTopI = ApproachingTopRepresented<Layout> && IRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|NegativeSign | Layout::INumRep : UnknownType,
 
-	#pragma endregion ApproachingTop representation
+	#pragma endregion  ApproachingTop representation
 
-  #pragma region ApproachingBottom representation divided by ExtraRep
+  #pragma region  ApproachingBottom representation divided by ExtraRep
 
     PositiveApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> ?
     Layout::ApproachingBottomRep|Layout::NumByDivRep|PositiveSign | Layout::INumRep : UnknownType,
@@ -1673,9 +1673,9 @@ namespace BlazesRusCode
     NegativeApproachingBottomByDiv = ApproachingBottomByDivRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign | Layout::INumRep : UnknownType,
 
-	#pragma endregion ApproachingBottom representation divided by ExtraRep
+	#pragma endregion  ApproachingBottom representation divided by ExtraRep
 
-  #pragma region ApproachingTop representation divided by ExtraRep
+  #pragma region  ApproachingTop representation divided by ExtraRep
 
     PositiveApproachingTopByDivI = ApproachingTopByDivRepresented<Layout> && IRepresented<Layout>?
     Layout::ApproachingTopByDivRep|PositiveSign | Layout::INumRep : UnknownType,
@@ -1683,9 +1683,9 @@ namespace BlazesRusCode
     NegativeApproachingTopByDivI = ApproachingTopByDivRepresented<Layout> && IRepresented<Layout> &&
     SignEnabled<Layout> ? Layout::ApproachingTopRep|Layout::NumByDivRep|NegativeSign | Layout::INumRep : UnknownType,
 
-  #pragma endregion ApproachingTop representation divided by ExtraRep
+  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	#pragma region ApproachingMidLeft
+	#pragma region  ApproachingMidLeft
 
 	  PositiveApproachingMidLeftI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&IRepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign | Layout::INumRep : UnknownType,
 	  NegativeApproachingMidLeftI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&IRepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign | Layout::INumRep : UnknownType,
@@ -1694,10 +1694,10 @@ namespace BlazesRusCode
 		PositiveZeroApproachingMidLeftI = ApproachingMidRepresented<Layout>&&IRepresented<Layout>? Layout::ApproachingMidLeftRep|PositiveSign|ZeroSentinal | Layout::INumRep : UnknownType,
 		NegativeZeroApproachingMidLeftI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&IRepresented<Layout>? Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::INumRep : UnknownType,
 
-  #pragma endregion ApproachingMidLeft
+  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-  #pragma region ApproachingMidRight
+  #pragma region  ApproachingMidRight
 
     PositiveApproachingMidRightI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&IRepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign | Layout::INumRep : UnknownType,
     NegativeApproachingMidRightI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy> && SignEnabled<Layout>&&IRepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign | Layout::INumRep : UnknownType,
@@ -1706,9 +1706,9 @@ namespace BlazesRusCode
     PositiveZeroApproachingMidRightI = ApproachingMidRepresented<Layout>&&IRepresented<Layout>? Layout::ApproachingMidRightRep|PositiveSign|ZeroSentinal | Layout::INumRep : UnknownType,
     NegativeZeroApproachingMidRightI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&IRepresented<Layout>? Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::INumRep : UnknownType,
 
-  #pragma endregion ApproachingMidRight
+  #pragma endregion  ApproachingMidRight
 
-  #pragma region ApproachingOffsets
+  #pragma region  ApproachingOffsets
 
 		PositiveApproachingBottomPlusOffsetI = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep |Layout::INumRep:UnknownType,
@@ -1730,11 +1730,11 @@ namespace BlazesRusCode
     NegativeApproachingTopMinusOffsetI = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
     NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep |Layout::INumRep:UnknownType,
 
-  #pragma endregion ApproachingOffsets
+  #pragma endregion  ApproachingOffsets
 
-#pragma endregion Approaching representations
+#pragma endregion  Approaching representations
 
-#pragma region PowerOf representations
+#pragma region  PowerOf representations
 
 			//PiNum to power of ExtraRep
 			PositiveAboveSubIPower = PowerOfRepresented<Layout>&&IRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>? Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::INumRep : UnknownType,
@@ -1777,18 +1777,18 @@ namespace BlazesRusCode
 			PositiveSubRangeIPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&IRepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|PositiveSign | Layout::INumRep : UnknownType,
 			NegativeSubRangeIPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::ToPowerOfRep|Layout:PiEINumExtraRep|NegativeSign | Layout::INumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-	#pragma region WithinMinMaxRange representations
+	#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangeI = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&IRepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangeI = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&IRepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-	#pragma endregion WithinMinMaxRange representations
+	#pragma endregion  WithinMinMaxRange representations
 
-	#pragma Other math constants
+	#pragma region Other math constants
 	/*
 			PhiNum   I = Has_EnablePhi<Policy>&&Policy::EnablePhi&&IRepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -1799,11 +1799,11 @@ namespace BlazesRusCode
 			PlasticNum   I = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&IRepresented<Layout>? Layout::PlasticNumRep : UnknownType,
 			PlasticSquareNum   I = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&IRepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType,
 	*/
-	#pragma Other math constants
+	#pragma endregion Other math constants
 
-	#pragma Experimental symbolic trig expression flags
+	#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinI = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>? Layout::SinRep|PositiveSign| AboveSub | Layout::INumRep : UnknownType,
 			NegativeAboveSubSinI = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::SinRep|NegativeSign| AboveSub | Layout::INumRep : UnknownType,
@@ -1820,9 +1820,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanI = TrigRepresented<Layout>&&IRepresented<Layout>? Layout::TanRep|PositiveSign | Layout::INumRep : UnknownType,
 			NegativeSubRangeTanI = TrigRepresented<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::TanRep|NegativeSign | Layout::INumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHI = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>? Layout::SinHRep|PositiveSign| AboveSub | Layout::INumRep : UnknownType,
 			NegativeAboveSubSinHI = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::SinHRep|NegativeSign| AboveSub | Layout::INumRep : UnknownType,
@@ -1839,9 +1839,9 @@ namespace BlazesRusCode
 			PositiveSubRangeTanHI = HyperbolicRepresented<Layout>&&IRepresented<Layout>? Layout::TanHRep|PositiveSign | Layout::INumRep : UnknownType,
 			NegativeSubRangeTanHI = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>? Layout::TanHRep|NegativeSign | Layout::INumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfI = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>?
@@ -1853,7 +1853,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfI = InversionRepresented<Layout>&&SignEnabled<Layout>&&IRepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::INumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubCscI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1862,9 +1862,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeCscI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::INumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubArcCosI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1873,9 +1873,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcCosI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::INumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubArcTanI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1884,9 +1884,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcTanI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::INumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubCscHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1895,9 +1895,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeCscHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubArcCosHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1906,9 +1906,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcCosHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubArcTanHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1917,11 +1917,11 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcTanHI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::INumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfI = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&IRepresented<Layout>?
@@ -1934,7 +1934,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::INumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubCscI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1943,10 +1943,10 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeCscI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::INumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)I = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubSecI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1955,10 +1955,10 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeSecI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::INumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentI = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubCotI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1967,9 +1967,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeCotI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::INumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubCscHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -1978,9 +1978,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeCscHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubSecHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -1989,9 +1989,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeSecHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubCotHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2000,11 +2000,11 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeCotHI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::INumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubCscI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2013,9 +2013,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeCscI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::INumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubArcCosI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2024,9 +2024,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcCosI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::INumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubArcTanI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2035,9 +2035,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcTanI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::INumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma endregion  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubArcCscHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2046,9 +2046,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::INumRep : UnknownType,
 			NegativeSubRangeArcCscHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::INumRep : UnknownType,
 			NegativeAboveSubArcCosHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2057,9 +2057,9 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcCosHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::INumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeAboveSubArcTanHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2068,13 +2068,13 @@ namespace BlazesRusCode
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::INumRep : UnknownType,
 			NegativeSubRangeArcTanHI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&IRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::INumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma endregion  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --INum Variants--
+	#pragma endregion  Experimental symbolic trig expression flags
+#pragma endregion  --INum Variants--
 
-#pragma region --PiENum Variants--
-  #pragma region Fractional representations
+#pragma region  --PiENum Variants--
+  #pragma region  Fractional representations
 
 			PositiveAboveSubPiINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubPiINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::PiENumRep : UnknownType,
@@ -2086,9 +2086,9 @@ namespace BlazesRusCode
 			PositiveSubRangeMixedPiE = MixedFracRepresented<Layout>&&PiERepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeMixedPiE = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-  #pragma endregion Fractional representations
+  #pragma endregion  Fractional representations
 
-  #pragma region Approaching representations
+  #pragma region  Approaching representations
 
 		  PositiveApproachingBottomPiE = ApproachingRepresented<Layout>&&PiERepresented<Layout>? 
       Layout::ApproachingBottomRep|PositiveSign| Layout::PiENumRep : UnknownType,
@@ -2100,7 +2100,7 @@ namespace BlazesRusCode
 		  NegativeApproachingTopPiE = ApproachingTopRepresented<Layout>&&SignEnabled<Layout> ?
       Layout::ApproachingTopRep|NegativeSign| Layout::PiENumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
       PositiveApproachingBottomByDivPiE = ApproachingBottomByDivRepresented<Layout>&&PiERepresented<Layout>?
       Layout::ApproachingBottomByDivRep|PositiveSign| Layout::PiENumRep : UnknownType,
@@ -2108,18 +2108,18 @@ namespace BlazesRusCode
       NegativeApproachingBottomByDivPiE = ApproachingBottomByDivRepresented<Layout> && SignEnabled<Layout>
       &&PiERepresented<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign| Layout::PiENumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
-    #pragma region ApproachingTop representation divided by ExtraRep
+    #pragma region  ApproachingTop representation divided by ExtraRep
 
       PositiveApproachingTopPiE = ApproachingRepresented<Layout>&&PiERepresented<Layout>?
       Layout::ApproachingTopRep|PositiveSign | Layout::PiENumRep : UnknownType,
 			NegativeApproachingTopPiE = ApproachingRepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::ApproachingTopRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-	  #pragma endregion ApproachingTop representation divided by ExtraRep
+	  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	  #pragma region ApproachingMidLeft
+	  #pragma region  ApproachingMidLeft
 
 			PositiveApproachingMidLeftPiE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiERepresented<Layout>?
       Layout::ApproachingMidLeftRep|PositiveSign | Layout::PiENumRep : UnknownType,
@@ -2132,10 +2132,10 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidLeftPiE = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::PiENumRep : UnknownType,
 
-	  #pragma endregion ApproachingMidLeft
+	  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-	#pragma region ApproachingMidRight
+	#pragma region  ApproachingMidRight
 
 			PositiveApproachingMidRightPiE = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiERepresented<Layout>?
       Layout::ApproachingMidRightRep|PositiveSign | Layout::PiENumRep : UnknownType,
@@ -2148,9 +2148,9 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidRightPiE = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::PiENumRep : UnknownType,
 
-	#pragma endregion ApproachingMidRight
+	#pragma endregion  ApproachingMidRight
 
-	#pragma region ApproachingOffsets
+	#pragma region  ApproachingOffsets
 
 		  PositiveApproachingBottomPlusOffsetPiE = ApproachingOffsetsRepresented<Layout>&&PiERepresented<Layout>?
       PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep | Layout::PiENumRep:UnknownType,
@@ -2172,11 +2172,11 @@ namespace BlazesRusCode
       NegativeApproachingTopMinusOffsetPiE = ApproachingOffsetsRepresented<Layout>&&PiERepresented<Layout>?
       NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep | Layout::PiENumRep:UnknownType,
 
-		#pragma endregion ApproachingOffsets
+		#pragma endregion  ApproachingOffsets
 
-  #pragma endregion Approaching representations
+  #pragma endregion  Approaching representations
 
-  #pragma region PowerOf representations
+  #pragma region  PowerOf representations
 
 	    PositiveAboveSubPiEPower = PowerOfRepresented<Layout>&&PiERepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>?
       Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::PiENumRep : UnknownType,
@@ -2230,18 +2230,18 @@ namespace BlazesRusCode
 			PositiveSubRangePiEPowerOfPiE = PowerOfRepresented<Layout>&&ExtraPiERepresented<Layout>&&PiERepresented<Layout>? Layout::PowerOfPiEIRep|PositiveSign | Layout::PiENumRep : UnknownType,
 			NegativeSubRangePiEPowerOfPiE = PowerOfRepresented<Layout>&&ExtraPiERepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>? Layout::PowerOfPiEIRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-#pragma region WithinMinMaxRange representations
+#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangePiE = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&PiERepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangePiE = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&PiERepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-#pragma endregion WithinMinMaxRange representations
+#pragma endregion  WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 	/*
 			PhiNum   PiE = Has_EnablePhi<Policy>&&Policy::EnablePhi&&PiERepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -2252,11 +2252,11 @@ namespace BlazesRusCode
 			PlasticNum   PiE = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiERepresented<Layout>? Layout::PlasticNumRep : UnknownType
 			PlasticSquareNum   PiE = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiERepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType
 	*/
-#pragma Other math constants
+#pragma region Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinPiE = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>?
       Layout::SinRep|PositiveSign| AboveSub | Layout::PiENumRep : UnknownType,
@@ -2285,9 +2285,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanPiE = TrigRepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::TanRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHPiE = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>?
       Layout::SinHRep|PositiveSign| AboveSub | Layout::PiENumRep : UnknownType,
@@ -2314,9 +2314,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanHPiE = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::TanHRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfPiE = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>?
@@ -2328,7 +2328,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfPiE = InversionRepresented<Layout>&&SignEnabled<Layout>&&PiERepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCscPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2337,9 +2337,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCscPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcCosPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2348,9 +2348,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcCosPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcTanPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2359,9 +2359,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcTanPiE = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCscHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2370,9 +2370,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCscHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcCosHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2381,9 +2381,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcCosHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcTanHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2392,11 +2392,11 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcTanHPiE = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfPiE = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&PiERepresented<Layout>?
@@ -2409,7 +2409,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::PiENumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCscPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2418,10 +2418,10 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCscPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)PiE = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubSecPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2430,10 +2430,10 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeSecPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentPiE = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCotPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2442,9 +2442,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCotPiE = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCscHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2453,9 +2453,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCscHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubSecHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2464,9 +2464,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeSecHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCotHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2475,11 +2475,11 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCotHPiE = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubCscPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2488,9 +2488,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeCscPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcCosPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2499,9 +2499,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcCosPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcTanPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2510,9 +2510,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcTanPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiENumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcCscHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2521,9 +2521,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcCscHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcCosHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2532,9 +2532,9 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcCosHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiENumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeAboveSubArcTanHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2543,13 +2543,13 @@ namespace BlazesRusCode
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
 			NegativeSubRangeArcTanHPiE = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiERepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiENumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --PiENum Variants--
+	#pragma region  Experimental symbolic trig expression flags
+#pragma endregion  --PiENum Variants--
 
-#pragma region --PiINum Variants--
-  #pragma region Fractional representations
+#pragma region  --PiINum Variants--
+  #pragma region  Fractional representations
 
 			PositiveAboveSubPiINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubPiINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::PiINumRep : UnknownType,
@@ -2561,9 +2561,9 @@ namespace BlazesRusCode
 			PositiveSubRangeMixedPiI = MixedFracRepresented<Layout>&&PiIRepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeMixedPiI = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-  #pragma endregion Fractional representations
+  #pragma endregion  Fractional representations
 
-  #pragma region Approaching representations
+  #pragma region  Approaching representations
 
 		  PositiveApproachingBottomPiI = ApproachingRepresented<Layout>&&PiIRepresented<Layout>? 
       Layout::ApproachingBottomRep|PositiveSign| Layout::PiINumRep : UnknownType,
@@ -2575,7 +2575,7 @@ namespace BlazesRusCode
 		  NegativeApproachingTopPiI = ApproachingTopRepresented<Layout>&&SignEnabled<Layout> ?
       Layout::ApproachingTopRep|NegativeSign| Layout::PiINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
       PositiveApproachingBottomByDivPiI = ApproachingBottomByDivRepresented<Layout>&&PiIRepresented<Layout>?
       Layout::ApproachingBottomByDivRep|PositiveSign| Layout::PiINumRep : UnknownType,
@@ -2583,18 +2583,18 @@ namespace BlazesRusCode
       NegativeApproachingBottomByDivPiI = ApproachingBottomByDivRepresented<Layout> && SignEnabled<Layout>
       &&PiIRepresented<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign| Layout::PiINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
-    #pragma region ApproachingTop representation divided by ExtraRep
+    #pragma region  ApproachingTop representation divided by ExtraRep
 
       PositiveApproachingTopPiI = ApproachingRepresented<Layout>&&PiIRepresented<Layout>?
       Layout::ApproachingTopRep|PositiveSign | Layout::PiINumRep : UnknownType,
 			NegativeApproachingTopPiI = ApproachingRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::ApproachingTopRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-	  #pragma endregion ApproachingTop representation divided by ExtraRep
+	  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	  #pragma region ApproachingMidLeft
+	  #pragma region  ApproachingMidLeft
 
 			PositiveApproachingMidLeftPiI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|PositiveSign | Layout::PiINumRep : UnknownType,
@@ -2607,10 +2607,10 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidLeftPiI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::PiINumRep : UnknownType,
 
-	  #pragma endregion ApproachingMidLeft
+	  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-	#pragma region ApproachingMidRight
+	#pragma region  ApproachingMidRight
 
 			PositiveApproachingMidRightPiI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiIRepresented<Layout>?
       Layout::ApproachingMidRightRep|PositiveSign | Layout::PiINumRep : UnknownType,
@@ -2623,9 +2623,9 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidRightPiI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::PiINumRep : UnknownType,
 
-	#pragma endregion ApproachingMidRight
+	#pragma endregion  ApproachingMidRight
 
-	#pragma region ApproachingOffsets
+	#pragma region  ApproachingOffsets
 
 		  PositiveApproachingBottomPlusOffsetPiI = ApproachingOffsetsRepresented<Layout>&&PiIRepresented<Layout>?
       PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep | Layout::PiINumRep:UnknownType,
@@ -2647,11 +2647,11 @@ namespace BlazesRusCode
       NegativeApproachingTopMinusOffsetPiI = ApproachingOffsetsRepresented<Layout>&&PiIRepresented<Layout>?
       NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep | Layout::PiINumRep:UnknownType,
 
-		#pragma endregion ApproachingOffsets
+		#pragma endregion  ApproachingOffsets
 
-  #pragma endregion Approaching representations
+  #pragma endregion  Approaching representations
 
-  #pragma region PowerOf representations
+  #pragma region  PowerOf representations
 
 	    PositiveAboveSubPiIPower = PowerOfRepresented<Layout>&&PiIRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::PiINumRep : UnknownType,
@@ -2705,18 +2705,18 @@ namespace BlazesRusCode
 			PositiveSubRangePiIPowerOfPiI = PowerOfRepresented<Layout>&&ExtraPiIRepresented<Layout>&&PiIRepresented<Layout>? Layout::PowerOfPiEIRep|PositiveSign | Layout::PiINumRep : UnknownType,
 			NegativeSubRangePiIPowerOfPiI = PowerOfRepresented<Layout>&&ExtraPiIRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>? Layout::PowerOfPiEIRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-#pragma region WithinMinMaxRange representations
+#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangePiI = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&PiIRepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangePiI = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&PiIRepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-#pragma endregion WithinMinMaxRange representations
+#pragma endregion  WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 	/*
 			PhiNum   PiI = Has_EnablePhi<Policy>&&Policy::EnablePhi&&PiIRepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -2727,11 +2727,11 @@ namespace BlazesRusCode
 			PlasticNum   PiI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiIRepresented<Layout>? Layout::PlasticNumRep : UnknownType
 			PlasticSquareNum   PiI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiIRepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType
 	*/
-#pragma Other math constants
+#pragma region Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinPiI = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::SinRep|PositiveSign| AboveSub | Layout::PiINumRep : UnknownType,
@@ -2760,9 +2760,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanPiI = TrigRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::TanRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHPiI = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::SinHRep|PositiveSign| AboveSub | Layout::PiINumRep : UnknownType,
@@ -2789,9 +2789,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanHPiI = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::TanHRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfPiI = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>?
@@ -2803,7 +2803,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfPiI = InversionRepresented<Layout>&&SignEnabled<Layout>&&PiIRepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCscPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2812,9 +2812,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCscPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcCosPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2823,9 +2823,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcCosPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcTanPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2834,9 +2834,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcTanPiI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCscHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2845,9 +2845,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCscHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcCosHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2856,9 +2856,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcCosHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcTanHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2867,11 +2867,11 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcTanHPiI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfPiI = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&PiIRepresented<Layout>?
@@ -2884,7 +2884,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::PiINumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCscPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2893,10 +2893,10 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCscPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)PiI = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubSecPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2905,10 +2905,10 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeSecPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentPiI = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCotPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2917,9 +2917,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCotPiI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCscHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2928,9 +2928,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCscHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubSecHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2939,9 +2939,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeSecHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCotHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2950,11 +2950,11 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCotHPiI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubCscPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2963,9 +2963,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeCscPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcCosPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2974,9 +2974,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcCosPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcTanPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -2985,9 +2985,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcTanPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiINumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcCscHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -2996,9 +2996,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcCscHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcCosHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3007,9 +3007,9 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcCosHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiINumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeAboveSubArcTanHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3018,13 +3018,13 @@ namespace BlazesRusCode
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
 			NegativeSubRangeArcTanHPiI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiINumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --PiINum Variants--
+	#pragma region  Experimental symbolic trig expression flags
+#pragma endregion  --PiINum Variants--
 
-#pragma region --EINum Variants--
-  #pragma region Fractional representations
+#pragma region  --EINum Variants--
+  #pragma region  Fractional representations
 
 			PositiveAboveSubEINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::EINumRep : UnknownType,
 			NegativeAboveSubEINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::EINumRep : UnknownType,
@@ -3036,9 +3036,9 @@ namespace BlazesRusCode
 			PositiveSubRangeMixedEI = MixedFracRepresented<Layout>&&EIRepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::EINumRep : UnknownType,
 			NegativeSubRangeMixedEI = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-  #pragma endregion Fractional representations
+  #pragma endregion  Fractional representations
 
-  #pragma region Approaching representations
+  #pragma region  Approaching representations
 
 		  PositiveApproachingBottomEI = ApproachingRepresented<Layout>&&EIRepresented<Layout>? 
       Layout::ApproachingBottomRep|PositiveSign| Layout::EINumRep : UnknownType,
@@ -3050,7 +3050,7 @@ namespace BlazesRusCode
 		  NegativeApproachingTopEI = ApproachingTopRepresented<Layout>&&SignEnabled<Layout> ?
       Layout::ApproachingTopRep|NegativeSign| Layout::EINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
       PositiveApproachingBottomByDivEI = ApproachingBottomByDivRepresented<Layout>&&EIRepresented<Layout>?
       Layout::ApproachingBottomByDivRep|PositiveSign| Layout::EINumRep : UnknownType,
@@ -3058,18 +3058,18 @@ namespace BlazesRusCode
       NegativeApproachingBottomByDivEI = ApproachingBottomByDivRepresented<Layout> && SignEnabled<Layout>
       &&EIRepresented<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign| Layout::EINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
-    #pragma region ApproachingTop representation divided by ExtraRep
+    #pragma region  ApproachingTop representation divided by ExtraRep
 
       PositiveApproachingTopEI = ApproachingRepresented<Layout>&&EIRepresented<Layout>?
       Layout::ApproachingTopRep|PositiveSign | Layout::EINumRep : UnknownType,
 			NegativeApproachingTopEI = ApproachingRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::ApproachingTopRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-	  #pragma endregion ApproachingTop representation divided by ExtraRep
+	  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	  #pragma region ApproachingMidLeft
+	  #pragma region  ApproachingMidLeft
 
 			PositiveApproachingMidLeftEI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&EIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|PositiveSign | Layout::EINumRep : UnknownType,
@@ -3082,10 +3082,10 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidLeftEI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::EINumRep : UnknownType,
 
-	  #pragma endregion ApproachingMidLeft
+	  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-	#pragma region ApproachingMidRight
+	#pragma region  ApproachingMidRight
 
 			PositiveApproachingMidRightEI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&EIRepresented<Layout>?
       Layout::ApproachingMidRightRep|PositiveSign | Layout::EINumRep : UnknownType,
@@ -3098,9 +3098,9 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidRightEI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::EINumRep : UnknownType,
 
-	#pragma endregion ApproachingMidRight
+	#pragma endregion  ApproachingMidRight
 
-	#pragma region ApproachingOffsets
+	#pragma region  ApproachingOffsets
 
 		  PositiveApproachingBottomPlusOffsetEI = ApproachingOffsetsRepresented<Layout>&&EIRepresented<Layout>?
       PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep | Layout::EINumRep:UnknownType,
@@ -3122,11 +3122,11 @@ namespace BlazesRusCode
       NegativeApproachingTopMinusOffsetEI = ApproachingOffsetsRepresented<Layout>&&EIRepresented<Layout>?
       NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep | Layout::EINumRep:UnknownType,
 
-		#pragma endregion ApproachingOffsets
+		#pragma endregion  ApproachingOffsets
 
-  #pragma endregion Approaching representations
+  #pragma endregion  Approaching representations
 
-  #pragma region PowerOf representations
+  #pragma region  PowerOf representations
 
 	    PositiveAboveSubPiEIPower = PowerOfRepresented<Layout>&&EIRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>?
       Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::EINumRep : UnknownType,
@@ -3180,18 +3180,18 @@ namespace BlazesRusCode
 			PositiveSubRangePiEIPowerOfEI = PowerOfRepresented<Layout>&&ExtraEIRepresented<Layout>&&EIRepresented<Layout>? Layout::PowerOfPiEIRep|PositiveSign | Layout::EINumRep : UnknownType,
 			NegativeSubRangePiEIPowerOfEI = PowerOfRepresented<Layout>&&ExtraEIRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>? Layout::PowerOfPiEIRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-#pragma region WithinMinMaxRange representations
+#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangeEI = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&EIRepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangeEI = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&EIRepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-#pragma endregion WithinMinMaxRange representations
+#pragma endregion  WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 	/*
 			PhiNum   EI = Has_EnablePhi<Policy>&&Policy::EnablePhi&&EIRepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -3202,11 +3202,11 @@ namespace BlazesRusCode
 			PlasticNum   EI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&EIRepresented<Layout>? Layout::PlasticNumRep : UnknownType
 			PlasticSquareNum   EI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&EIRepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType
 	*/
-#pragma Other math constants
+#pragma region Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinEI = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>?
       Layout::SinRep|PositiveSign| AboveSub | Layout::EINumRep : UnknownType,
@@ -3235,9 +3235,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanEI = TrigRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::TanRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHEI = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>?
       Layout::SinHRep|PositiveSign| AboveSub | Layout::EINumRep : UnknownType,
@@ -3264,9 +3264,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanHEI = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::TanHRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfEI = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>?
@@ -3278,7 +3278,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfEI = InversionRepresented<Layout>&&SignEnabled<Layout>&&EIRepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::EINumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubCscEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3287,9 +3287,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeCscEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::EINumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcCosEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3298,9 +3298,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcCosEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::EINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcTanEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3309,9 +3309,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcTanEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::EINumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubCscHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3320,9 +3320,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeCscHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcCosHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3331,9 +3331,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcCosHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcTanHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3342,11 +3342,11 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcTanHEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfEI = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&EIRepresented<Layout>?
@@ -3359,7 +3359,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::EINumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubCscEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3368,10 +3368,10 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeCscEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::EINumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)EI = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubSecEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3380,10 +3380,10 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeSecEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::EINumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentEI = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubCotEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3392,9 +3392,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeCotEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::EINumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubCscHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3403,9 +3403,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeCscHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubSecHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3414,9 +3414,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeSecHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubCotHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3425,11 +3425,11 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeCotHEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubCscEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3438,9 +3438,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeCscEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::EINumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcCosEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3449,9 +3449,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcCosEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::EINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcTanEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3460,9 +3460,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcTanEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::EINumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcCscHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3471,9 +3471,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcCscHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcCosHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3482,9 +3482,9 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcCosHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::EINumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeAboveSubArcTanHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3493,13 +3493,13 @@ namespace BlazesRusCode
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
 			NegativeSubRangeArcTanHEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&EIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::EINumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --EINum Variants--
+	#pragma region  Experimental symbolic trig expression flags
+#pragma endregion  --EINum Variants--
 
-#pragma region --PiEINum Variants--
-  #pragma region Fractional representations
+#pragma region  --PiEINum Variants--
+  #pragma region  Fractional representations
 
 			PositiveAboveSubPiEINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>? Layout::NumByDivRep|PositiveSign| AboveSub | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubPiEINumByDiv = ByDivRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>? Layout::NumByDivRep|NegativeSign| AboveSub | Layout::PiEINumRep : UnknownType,
@@ -3511,9 +3511,9 @@ namespace BlazesRusCode
 			PositiveSubRangeMixedPiEI = MixedFracRepresented<Layout>&&PiEIRepresented<Layout>? Layout::MixedFracRep|PositiveSign | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeMixedPiEI = MixedFracRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>? Layout::MixedFracRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-  #pragma endregion Fractional representations
+  #pragma endregion  Fractional representations
 
-  #pragma region Approaching representations
+  #pragma region  Approaching representations
 
 		  PositiveApproachingBottomPiEI = ApproachingRepresented<Layout>&&PiEIRepresented<Layout>? 
       Layout::ApproachingBottomRep|PositiveSign| Layout::PiEINumRep : UnknownType,
@@ -3525,7 +3525,7 @@ namespace BlazesRusCode
 		  NegativeApproachingTopPiEI = ApproachingTopRepresented<Layout>&&SignEnabled<Layout> ?
       Layout::ApproachingTopRep|NegativeSign| Layout::PiEINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
       PositiveApproachingBottomByDivPiEI = ApproachingBottomByDivRepresented<Layout>&&PiEIRepresented<Layout>?
       Layout::ApproachingBottomByDivRep|PositiveSign| Layout::PiEINumRep : UnknownType,
@@ -3533,18 +3533,18 @@ namespace BlazesRusCode
       NegativeApproachingBottomByDivPiEI = ApproachingBottomByDivRepresented<Layout> && SignEnabled<Layout>
       &&PiEIRepresented<Layout> ? Layout::ApproachingBottomRep|Layout::NumByDivRep|NegativeSign| Layout::PiEINumRep : UnknownType,
 
-    #pragma region ApproachingBottom representation divided by ExtraRep
+    #pragma region  ApproachingBottom representation divided by ExtraRep
 
-    #pragma region ApproachingTop representation divided by ExtraRep
+    #pragma region  ApproachingTop representation divided by ExtraRep
 
       PositiveApproachingTopPiEI = ApproachingRepresented<Layout>&&PiEIRepresented<Layout>?
       Layout::ApproachingTopRep|PositiveSign | Layout::PiEINumRep : UnknownType,
 			NegativeApproachingTopPiEI = ApproachingRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::ApproachingTopRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-	  #pragma endregion ApproachingTop representation divided by ExtraRep
+	  #pragma endregion  ApproachingTop representation divided by ExtraRep
 
-	  #pragma region ApproachingMidLeft
+	  #pragma region  ApproachingMidLeft
 
 			PositiveApproachingMidLeftPiEI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiEIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|PositiveSign | Layout::PiEINumRep : UnknownType,
@@ -3557,10 +3557,10 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidLeftPiEI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::ApproachingMidLeftRep|NegativeSign|ZeroSentinal | Layout::PiEINumRep : UnknownType,
 
-	  #pragma endregion ApproachingMidLeft
+	  #pragma endregion  ApproachingMidLeft
 
 	// Formula Representation: SignMultiplier * ((Raw as unsigned)+(DecimalOverflow/ExtraRep)+0.0...01)
-	#pragma region ApproachingMidRight
+	#pragma region  ApproachingMidRight
 
 			PositiveApproachingMidRightPiEI = ApproachingMidRepresented<Layout> && Has_ExtraRepBits<Policy>&&PiEIRepresented<Layout>?
       Layout::ApproachingMidRightRep|PositiveSign | Layout::PiEINumRep : UnknownType,
@@ -3573,9 +3573,9 @@ namespace BlazesRusCode
 			NegativeZeroApproachingMidRightPiEI = ApproachingMidRepresented<Layout> && SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::ApproachingMidRightRep|NegativeSign|ZeroSentinal | Layout::PiEINumRep : UnknownType,
 
-	#pragma endregion ApproachingMidRight
+	#pragma endregion  ApproachingMidRight
 
-	#pragma region ApproachingOffsets
+	#pragma region  ApproachingOffsets
 
 		  PositiveApproachingBottomPlusOffsetPiEI = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
       PositiveSign|Layout::ApproachingBottomRep|Layout::PlusOffsetRep | Layout::PiEINumRep:UnknownType,
@@ -3597,11 +3597,11 @@ namespace BlazesRusCode
       NegativeApproachingTopMinusOffsetPiEI = ApproachingOffsetsRepresented<Layout>&&PiEIRepresented<Layout>?
       NegativeSign|Layout::ApproachingTopRep|Layout::MinusOffsetRep | Layout::PiEINumRep:UnknownType,
 
-		#pragma endregion ApproachingOffsets
+		#pragma endregion  ApproachingOffsets
 
-  #pragma endregion Approaching representations
+  #pragma endregion  Approaching representations
 
-  #pragma region PowerOf representations
+  #pragma region  PowerOf representations
 
 	    PositiveAboveSubPiEIPower = PowerOfRepresented<Layout>&&PiEIRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::ToPowerOfRep|PositiveSign| AboveSub | Layout::PiEINumRep : UnknownType,
@@ -3655,18 +3655,18 @@ namespace BlazesRusCode
 			PositiveSubRangePiEIPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&PiEIRepresented<Layout>? Layout::PowerOfPiEIRep|PositiveSign | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangePiEIPowerOfPiEI = PowerOfRepresented<Layout>&&ExtraPiEIRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>? Layout::PowerOfPiEIRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-#pragma endregion PowerOf representations
+#pragma endregion  PowerOf representations
 
-#pragma region WithinMinMaxRange representations
+#pragma region  WithinMinMaxRange representations
 	/*
 			//Within bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			WithinMinMaxRangePiEI = Has_EnableWithinMinMaxRange && Policy::EnableWithinMinMaxRange&&PiEIRepresented<Layout>? Layout::WithinMinMaxRangeRep : UnknownType,
 			//Out of bounds of IntValue(IntHalf*SignMultiplier) to (ExtraFlag?-1:1)*DecimalHalf
 			NotWithinMinMaxRangePiEI = Has_EnableNotWithinMinMaxRange && Policy::EnableNotWithinMinMaxRange&&PiEIRepresented<Layout>? Layout::NotWithinMinMaxRangeRep : UnknownType,
 	*/
-#pragma endregion WithinMinMaxRange representations
+#pragma endregion  WithinMinMaxRange representations
 
-#pragma Other math constants
+#pragma region Other math constants
 	/*
 			PhiNum   PiEI = Has_EnablePhi<Policy>&&Policy::EnablePhi&&PiEIRepresented<Layout>? Layout::PhiNumRep : UnknownType,
 			//√5
@@ -3677,11 +3677,11 @@ namespace BlazesRusCode
 			PlasticNum   PiEI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiEIRepresented<Layout>? Layout::PlasticNumRep : UnknownType
 			PlasticSquareNum   PiEI = Has_EnablePlasticSquareNum<Policy>&&Policy::EnablePlasticSquareNum&&PiEIRepresented<Layout>? Layout::PlasticSquareNumRep : UnknownType
 	*/
-#pragma Other math constants
+#pragma region Other math constants
 
-#pragma Experimental symbolic trig expression flags
+#pragma region  Experimental symbolic trig expression flags
 			// Used to store unevaluated forms like sin(x), cos(x), tan(x) in ExtraRep.
-			#pragma region Circular symbolic trig expression flags
+			#pragma region  Circular symbolic trig expression flags
 
 			PositiveAboveSubSinPiEI = TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::SinRep|PositiveSign| AboveSub | Layout::PiEINumRep : UnknownType,
@@ -3710,9 +3710,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanPiEI = TrigRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::TanRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-			#pragma endregion Circular symbolic trig expression flags
+			#pragma endregion  Circular symbolic trig expression flags
 
-			#pragma region Hyperbolic symbolic expression flags
+			#pragma region  Hyperbolic symbolic expression flags
 
 			PositiveAboveSubSinHPiEI = HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::SinHRep|PositiveSign| AboveSub | Layout::PiEINumRep : UnknownType,
@@ -3739,9 +3739,9 @@ namespace BlazesRusCode
 			NegativeSubRangeTanHPiEI = HyperbolicRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::TanHRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-			#pragma endregion Hyperbolic symbolic expression flags
+			#pragma endregion  Hyperbolic symbolic expression flags
 
-			#pragma region Inversed expressions
+			#pragma region  Inversed expressions
 
 			//Inversed Circular symbolic expression flag
 			PositiveAboveSubInversedOfPiEI = InversionRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>?
@@ -3753,7 +3753,7 @@ namespace BlazesRusCode
 			NegativeSubRangeInversedOfPiEI = InversionRepresented<Layout>&&SignEnabled<Layout>&&PiEIRepresented<Layout>?
       Layout::InversedOfRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
-			#pragma region ArcSin
+			#pragma region  ArcSin
 			PositiveAboveSubCscPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCscPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3762,9 +3762,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCscPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion ArcSin
+			#pragma endregion  ArcSin
 
-			#pragma region ArcCos
+			#pragma region  ArcCos
 			PositiveAboveSubArcCosPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcCosPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3773,9 +3773,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcCosPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region ArcTan
+			#pragma region  ArcTan
 			PositiveAboveSubArcTanPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcTanPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3784,9 +3784,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcTanPiEI = InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
-			#pragma region ArcTan
+			#pragma region  ArcTan
 
-			#pragma region Hyperbolic ArcSin
+			#pragma region  Hyperbolic ArcSin
 			PositiveAboveSubCscHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCscHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3795,9 +3795,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCscHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic ArcCos
+			#pragma region  Hyperbolic ArcCos
 			PositiveAboveSubArcCosHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcCosHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3806,9 +3806,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcCosHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcCos
+			#pragma endregion  Hyperbolic ArcCos
 
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 			PositiveAboveSubArcTanHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcTanHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3817,11 +3817,11 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcTanHPiEI = InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
-			#pragma region Hyperbolic ArcTan
+			#pragma region  Hyperbolic ArcTan
 
-			#pragma endregion Inversed expressions
+			#pragma endregion  Inversed expressions
 
-			#pragma region Reciprocal expressions
+			#pragma region  Reciprocal expressions
 
 			//Reciprocal expression flag 1/OtherExpression/Value
 			PositiveAboveSubReciprocalOfPiEI = ReciprocalRepresented<Layout>&&SignedExpEnabled<Layout>&&PiEIRepresented<Layout>?
@@ -3834,7 +3834,7 @@ namespace BlazesRusCode
       Layout::ReciprocalOfRep|NegativeSign | Layout::PiEINumRep : UnknownType,
 
 			//cosecant(x) == 1/sin(x)
-			#pragma region cosecant
+			#pragma region  cosecant
 			PositiveAboveSubCscPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCscPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3843,10 +3843,10 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCscPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion cosecant
+			#pragma endregion  cosecant
 
 			//secant(x)PiEI = 1/cos(x)
-			#pragma region secant
+			#pragma region  secant
 			PositiveAboveSubSecPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubSecPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3855,10 +3855,10 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeSecPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion secant
+			#pragma endregion  secant
 
 			//CotangentPiEI = 1/tan(x)
-			#pragma region Cotangent
+			#pragma region  Cotangent
 			PositiveAboveSubCotPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCotPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3867,9 +3867,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCotPiEI = ReciprocalRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
-			#pragma region Cotangent
+			#pragma region  Cotangent
 
-			#pragma region Hyperbolic cosecant
+			#pragma region  Hyperbolic cosecant
 			PositiveAboveSubCscHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCscHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3878,9 +3878,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCscHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic cosecant
+			#pragma endregion  Hyperbolic cosecant
 
-			#pragma region Hyperbolic secant
+			#pragma region  Hyperbolic secant
 			PositiveAboveSubSecHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubSecHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3889,9 +3889,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeSecHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic secant
+			#pragma endregion  Hyperbolic secant
 
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 			PositiveAboveSubCotHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCotHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3900,11 +3900,11 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|PositiveSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCotHPiEI = ReciprocalRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|NegativeSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
-			#pragma region Hyperbolic Cotangent
+			#pragma region  Hyperbolic Cotangent
 
-			#pragma endregion Reciprocal expressions
+			#pragma endregion  Reciprocal expressions
 
-			#pragma region Arc cosecant
+			#pragma region  Arc cosecant
 			PositiveAboveSubCscPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubCscPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3913,9 +3913,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeCscPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion Arc cosecant
+			#pragma endregion  Arc cosecant
 
-			#pragma region Arc secant
+			#pragma region  Arc secant
 			PositiveAboveSubArcCosPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcCosPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3924,9 +3924,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcCosPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion ArcCos
+			#pragma endregion  ArcCos
 
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 			PositiveAboveSubArcTanPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcTanPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3935,9 +3935,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcTanPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&TrigRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanRep| Layout::PiEINumRep : UnknownType,
-			#pragma region Arc cotangent
+			#pragma region  Arc cotangent
 
-			#pragma region Hyperbolic Arc cosecant
+			#pragma region  Hyperbolic Arc cosecant
 			PositiveAboveSubArcCscHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcCscHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout> &&
@@ -3946,9 +3946,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcCscHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout> &&
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::SinHRep | Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic ArcSin
+			#pragma endregion  Hyperbolic ArcSin
 
-			#pragma region Hyperbolic Arc secant
+			#pragma region  Hyperbolic Arc secant
 			PositiveAboveSubArcCosHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::CosHRep | Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcCosHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3957,9 +3957,9 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcCosHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::CosHRep| Layout::PiEINumRep : UnknownType,
-			#pragma endregion Hyperbolic Arc secant
+			#pragma endregion  Hyperbolic Arc secant
 
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 			PositiveAboveSubArcTanHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign| AboveSub | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeAboveSubArcTanHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignedExpEnabled<Layout>&&SignEnabled<Layout>
@@ -3968,10 +3968,10 @@ namespace BlazesRusCode
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|PositiveSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
 			NegativeSubRangeArcTanHPiEI = ReciprocalRepresented<Layout>&&InversionRepresented<Layout>&&HyperbolicRepresented<Layout>&&SignEnabled<Layout>
 			&&PiEIRepresented<Layout>? Layout::ReciprocalOfRep|Layout::InversedOfRep|NegativeSign | Layout::TanHRep| Layout::PiEINumRep : UnknownType,
-			#pragma region Hyperbolic Arc cotangent
+			#pragma region  Hyperbolic Arc cotangent
 
-	#pragma Experimental symbolic trig expression flags
-#pragma endregion --PiEINum Variants--
+	#pragma region  Experimental symbolic trig expression flags
+#pragma endregion  --PiEINum Variants--
 
   },
 	

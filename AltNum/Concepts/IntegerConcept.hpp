@@ -1,5 +1,7 @@
 #pragma once
 
+#include <concepts>
+
 namespace BlazesRusCode
 {
     //Integer type (concept)
@@ -25,6 +27,11 @@ namespace BlazesRusCode
       { a | a } -> std::same_as<T>;
       { a ^ a } -> std::same_as<T>;
       { ~a }    -> std::same_as<T>;
+			
+      { a + a } -> std::same_as<T>;
+      { a - a } -> std::same_as<T>;
+      { a * a } -> std::same_as<T>;
+      { a / a } -> std::same_as<T>;
 
       // comparisons and zero checks
       { a == T{0} } -> std::convertible_to<bool>;
@@ -34,9 +41,33 @@ namespace BlazesRusCode
       { a >  a }    -> std::convertible_to<bool>;
       { a >= a }    -> std::convertible_to<bool>;
 
-      // shifts with the same type as index
-      { a << T{1} } -> std::same_as<T>;
-      { a >> T{1} } -> std::same_as<T>;
-      { T{1} << T{1} } -> std::same_as<T>;
+      // shifts with unsigned
+      { a << unsigned{1} } -> std::same_as<T>;
+      { a >> unsigned{1} } -> std::same_as<T>;
+      { T{1} << unsigned{1} } -> std::same_as<T>;
+    };
+		
+    template<class T>
+    concept UnsignedLight = requires(T a) {
+      // construction of canonical values
+      { T{0} } -> std::same_as<T>;
+      { T{1} } -> std::same_as<T>;
+			
+			//Addition and subtraction
+      { a + a } -> std::same_as<T>;
+      { a - a } -> std::same_as<T>;
+
+      // comparisons and zero checks
+      { a == T{0} } -> std::convertible_to<bool>;
+      { a != T{0} } -> std::convertible_to<bool>;
+      { a <  a }    -> std::convertible_to<bool>;
+      { a <= a }    -> std::convertible_to<bool>;
+      { a >  a }    -> std::convertible_to<bool>;
+      { a >= a }    -> std::convertible_to<bool>;
+
+      // shifts with unsigned
+      { a << unsigned{1} } -> std::same_as<T>;
+      { a >> unsigned{1} } -> std::same_as<T>;
+      { T{1} << unsigned{1} } -> std::same_as<T>;
     };
 }
