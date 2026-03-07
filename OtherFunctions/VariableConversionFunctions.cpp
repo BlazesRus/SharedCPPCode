@@ -2,6 +2,7 @@
 #include <iostream>
 #include <locale>
 #include <cmath>
+#include <charconv>
 
 using std::string;
 using std::cout;
@@ -291,55 +292,19 @@ float VariableConversionFunctions::ReadFloatFromString(std::string TempString)
     cout << "\n";
     return CalculatedValue;
 }
+
 /** Returns Integer value version of String
  * @param TempString
  * @return
  */
-int VariableConversionFunctions::ReadIntFromString(string TempString)
+int VariableConversionFunctions::ReadIntFromString(const string& TempString)
 {
-    int WholeNumberPart = 0;
-    int PlaceNumber = 0;
-    bool IsNegative = false;
-    string StringChar;
-    size_t StringLength;
-    StringLength = TempString.length();
-    string WholeNumberBuffer = "";
-    int TempInt;
-    int TempInt02;
-    for(size_t i = 0; i < StringLength; ++i)
-    {
-        StringChar = TempString.at(i);
-        if(StringChar == "-")
-        {
-            IsNegative = true;
-        }
-        else
-        {
-            if(IsDigit(StringChar))
-            {
-                WholeNumberBuffer += StringChar;
-            }
-        }
-    }
-    //cout << "\nWhole Number Calculations:\n";
-    for(int i = WholeNumberBuffer.length() - 1; i >= 0; --i)
-    {
-        StringChar = WholeNumberBuffer.at(i);
-        TempInt = CharAsInt(StringChar.at(0));
-        TempInt02 = TempInt*pow(10, PlaceNumber);
-        //cout << "StringChar:" << TempInt << " PlaceNumber:" << PlaceNumber << " +=" << TempInt02<<"\n";
-        if(StringChar != "0")
-        {
-            WholeNumberPart += TempInt02;
-        }
-        PlaceNumber++;
-    }
-    //cout << "\nEnd of WholeNumber Calculations\n";
-    if(IsNegative == true)
-    {
-        WholeNumberPart *= -1;
-    }
-    return WholeNumberPart;
+	int value;
+	auto [ptr, ec] = std::from_chars(TempString.data(), TempString.data() + TempString.size(), value);
+	if (ec == std::errc{}) {
+		return value;
+	}
+	throw std::invalid_argument("Invalid integer string");
 }
 
 long long int VariableConversionFunctions::ReadXIntFromString(std::string TempString)

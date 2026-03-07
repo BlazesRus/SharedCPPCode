@@ -61,6 +61,21 @@
     <Filter Include="Source Files\AltNum\IntReplacements">
       <UniqueIdentifier>{448afdff-b7e2-4758-be7d-923dbe950cd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\AltNum\AltDecV2">
+      <UniqueIdentifier>{6eeb6952-c33c-48ef-9687-48ea9fcbc726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AltNum\AltDecV2">
+      <UniqueIdentifier>{c192d64d-c1c0-4ca8-98f6-cc5b44534fd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AltNum\RestrictedFloat">
+      <UniqueIdentifier>{e2fe9d65-6131-45ba-937f-fff71536dd48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AltNum\IntXBits">
+      <UniqueIdentifier>{a112238b-d69a-4ea0-a0cb-2bcdb67c05f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AltNum\BinaryDec">
+      <UniqueIdentifier>{f3aa83ff-4518-4359-8834-706e687b1792}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp">
@@ -69,44 +84,8 @@
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp">
       <Filter>Source Files\OtherFunctions</Filter>
     </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp">
-      <Filter>Source Files\AltNum\MediumDec</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp">
-      <Filter>Source Files\AltNum\IntReplacements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp">
-      <Filter>Source Files\AltNum\IntReplacements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp">
-      <Filter>Source Files\AltNum\IntReplacements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="MediumDecV2Tests.cpp">
+    <ClCompile Include="AltNumTester.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\RepType.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\AltNum\MediumDecV2\RepTypeOp.cpp">
-      <Filter>Source Files\AltNum\MediumDecV2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,29 +107,8 @@
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h">
       <Filter>Header Files\AltNum\MediumDec</Filter>
     </ClInclude>
-    <ClInclude Include="..\AltNum\AltNumModResult.hpp">
-      <Filter>Header Files\AltNum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\RepType.h">
-      <Filter>Header Files\AltNum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\VirtualTableBase.hpp">
-      <Filter>Header Files\AltNum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp">
-      <Filter>Header Files\AltNum\Concepts</Filter>
-    </ClInclude>
     <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp">
       <Filter>Header Files\AltNum\Concepts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp">
-      <Filter>Header Files\AltNum\IntReplacements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp">
-      <Filter>Header Files\AltNum\IntReplacements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp">
-      <Filter>Header Files\AltNum\IntReplacements</Filter>
     </ClInclude>
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp">
       <Filter>Header Files\AltNum\MediumDec</Filter>
@@ -160,6 +118,48 @@
     </ClInclude>
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp">
       <Filter>Header Files\AltNum\MediumDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MixedAltDec\AltDecV2.hpp">
+      <Filter>Header Files\AltNum\AltDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\MixedAltDec\MixedAltDec.hpp">
+      <Filter>Header Files\AltNum\AltDecV2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\AltFloat.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\ExponentalDec.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\FullRepTypeV3.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDBV3.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDetection.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeV3.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\RestrictedFloat\RestrictedFloat.hpp">
+      <Filter>Header Files\AltNum\RestrictedFloat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryBitCode.hpp">
+      <Filter>Header Files\AltNum\BinaryDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryDec.hpp">
+      <Filter>Header Files\AltNum\BinaryDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryTypeSelector.hpp">
+      <Filter>Header Files\AltNum\BinaryDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\BinaryDec\UInt64ArrayFallback.hpp">
+      <Filter>Header Files\AltNum\BinaryDec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AltNum\BinaryDec\IntXBits.hpp">
+      <Filter>Header Files\AltNum\IntXBits</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

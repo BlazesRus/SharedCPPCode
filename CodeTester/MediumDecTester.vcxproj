@@ -24,31 +24,32 @@
     <ProjectGuid>{47e09dff-3b14-4c29-ad54-c0e68da31d30}</ProjectGuid>
     <RootNamespace>MediumDecTester</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>AltNumTester</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -167,40 +168,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryBitCode.hpp" />
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryDec.hpp" />
+    <ClInclude Include="..\AltNum\BinaryDec\BinaryTypeSelector.hpp" />
+    <ClInclude Include="..\AltNum\BinaryDec\IntXBits.hpp" />
+    <ClInclude Include="..\AltNum\BinaryDec\UInt64ArrayFallback.hpp" />
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
+    <ClInclude Include="..\AltNum\MixedAltDec\AltDecV2.hpp" />
+    <ClInclude Include="..\AltNum\MixedAltDec\MixedAltDec.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\AltFloat.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\ExponentalDec.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\FullRepTypeV3.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDBV3.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDetection.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeV3.hpp" />
+    <ClInclude Include="..\AltNum\RestrictedFloat\RestrictedFloat.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
-    <ClInclude Include="..\AltNum\AltNumModResult.hpp" />
     <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
-    <ClInclude Include="..\AltNum\RepType.h" />
-    <ClInclude Include="..\AltNum\VirtualTableBase.hpp" />
-    <ClInclude Include="..\AltNum\Concepts\MediumDecVariantConcept.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\AltNum\MediumDecV2\AddOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\DivOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\MediumDecV2.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\MultOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\RepTypeOp.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\SubOp.cpp" />
-    <ClCompile Include="..\AltNum\RepType.cpp" />
-    <ClCompile Include="MediumDecV2Tests.cpp" />
+    <ClCompile Include="AltNumTester.cpp" />
     <ClInclude Include="..\tsl\ordered_map.h" />
     <ClInclude Include="..\OtherFunctions\StringFunctions.h" />
     <ClInclude Include="..\OtherFunctions\VariableConversionFunctions.h" />
-    <ClCompile Include="..\AltNum\AlternativeInt\FlaggedInt.cpp" />
-    <ClCompile Include="..\AltNum\AlternativeInt\MirroredInt.cpp" />
-    <ClCompile Include="..\AltNum\AlternativeInt\PartialInt.cpp" />
-    <ClCompile Include="..\AltNum\MediumDecV2\ConvertToOtherRep.cpp" />
-    <ClCompile Include="..\AltNum\MediumDec\MediumDec.cpp" />
     <ClCompile Include="..\OtherFunctions\StringFunctions.cpp" />
     <ClCompile Include="..\OtherFunctions\VariableConversionFunctions.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\AltNum\AlternativeInt\MirroredInt.hpp" />
-    <ClInclude Include="..\AltNum\AlternativeInt\PartialInt.hpp" />
-    <ClInclude Include="..\AltNum\AlternativeInt\FlaggedInt.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AltNum\MediumDec\MediumDecPreprocessors.h" />
