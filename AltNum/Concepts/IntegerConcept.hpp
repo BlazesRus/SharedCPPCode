@@ -16,7 +16,6 @@ namespace BlazesRusCode
     template<typename T>
     concept SignedIntegerType = std::is_signed_v<T>&&std::is_integral_v<T>;
     
-#if !defined(UnsignedLike_Implimented)
     template<class T>
     concept UnsignedLike = requires(T a) {
       // construction of canonical values
@@ -71,9 +70,6 @@ namespace BlazesRusCode
       { a >> unsigned{1} } -> std::same_as<T>;
       { T{1} << unsigned{1} } -> std::same_as<T>;
     };
-		
-	#define UnsignedLike_Implimented 1
-#endif
 		
 
 }
