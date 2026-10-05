@@ -55,27 +55,6 @@ struct RestrictedFloatExtraExperimentalFeatures {
   static constexpr bool UseCustomDenom = Has_UseCustomDenom ? Policy::UseCustomDenom : false;
 };
 
-struct RepTypeV3Layout {
-  unsigned PiNumRep;
-  unsigned ENumRep;
-  unsigned INumRep;
-
-  unsigned PiENumRep;
-  unsigned PiINumRep;
-  unsigned EINumRep;
-  unsigned PiEINumRep;
-  unsigned total;
-};
-
-namespace RepTypeV3Detection {
-	template<typename Policy>
-	concept Has_EnablePi   = requires { { Policy::EnablePi }   -> std::convertible_to<bool>; };
-	template<typename Policy>
-	concept Has_EnableE    = requires { { Policy::EnableE }    -> std::convertible_to<bool>; };
-	template<typename Policy>
-	concept Has_EnableI    = requires { { Policy::EnableI }    -> std::convertible_to<bool>; };
-}
-
 // Experiment Split Raw mode (includes optional ExtendedRange)
 template<typename Policy, typename OriginalPolicy>
 struct RestrictedFloatSplitRawModeExtras
@@ -100,43 +79,6 @@ struct RestrictedFloatSplitRawModeExtras
 
   static inline constexpr bool EnableExtendedRange = 
   ExpandedRangeBits>0 ? true : false;
-
-  static inline constexpr bool EnablePi = 
-  RepTypeV3Detection::Has_EnablePi<OriginalPolicy> ? true : false;
-  static inline constexpr bool EnableE = 
-  RepTypeV3Detection::Has_EnableE<OriginalPolicy> ? true : false;
-  static inline constexpr bool EnableI = 
-  RepTypeV3Detection::Has_EnableI<OriginalPolicy> ? true : false;
-
-  //Generates RepTypeV3 layout
-  static constexpr RepTypeV3Layout ComputeRepTypeLayout() noexcept {
-    unsigned totalExtraFlags = 0;
-  
-    unsigned PiNumRep = 0, ENumRep = 0, INumRep = 0;
-  
-    if constexpr (EnablePi) {
-      PiNumRep = 1u << totalExtraFlags++;
-    }
-    if constexpr (EnableE) {
-      ENumRep = 1u << totalExtraFlags++;
-    }
-    if constexpr (EnableI) {
-      INumRep = 1u << totalExtraFlags++;
-    }
-  
-    unsigned PiENumRep   = PiNumRep | ENumRep;
-    unsigned PiINumRep   = PiNumRep | INumRep;
-    unsigned EINumRep    = ENumRep  | INumRep;
-    unsigned PiEINumRep  = PiNumRep | ENumRep | INumRep;
-  
-    return RepTypeV3Layout{ PiNumRep, ENumRep, INumRep,
-                            PiENumRep, PiINumRep, EINumRep, PiEINumRep,
-                            totalExtraFlags };
-  }
-	
-  static inline constexpr RestrictedFloatCode::BitLayout RepTypeLayout = ComputeRepTypeLayout();
-
-  using RepType = RepTypeV3<OriginalPolicy, RepTypeLayout>;
 
   static inline constexpr unsigned ExtraFeatureBits = RepTypeLayout.total;
 

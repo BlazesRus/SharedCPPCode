@@ -30,21 +30,6 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API MediumDecV2 : public MediumDec
     {
-    #if defined(AltNum_UseBuiltinVirtualTable)//Experimental VTable code
-    protected:
-        struct VirtualTable {
-            RepTypeFn* VirtualTable_GetRepType;
-            //String_RepTypeFn* VirtualTable_RepTypeAsString;
-        };
-        #if defined(AltNum_UseNonStaticVirtualStable)
-            VirtualTable* VTable;
-        #else//Defaulting to non-static VTable to attempt to reduce virtual footprint
-        static VirtualTable* VTable;
-        #endif
-        #if !defined(AltNum_UseNonStaticVirtualStable)
-        VirtualTable* InitializeVTable(){ return new VirtualTable; }
-        #endif
-    #endif
     protected:
         //BitFlag 01(1) = PiRep
         static const RepTypeUnderlayer PiFlag = 1;
@@ -88,9 +73,6 @@ public:
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
-    #if defined(AltNum_UseBuiltinVirtualTable)&&defined(AltNum_UseNonStaticVirtualStable)
-            VTable = new VirtualTable;
-    #endif
         }
 
         /// <summary>
@@ -102,9 +84,6 @@ public:
         {
             IntHalf = intVal;
             DecimalHalf = decVal;
-    #if defined(AltNum_UseBuiltinVirtualTable)&&defined(AltNum_UseNonStaticVirtualStable)
-            VTable = new VirtualTable;
-    #endif
         }
 
         MediumDecV2& operator=(const MediumDecV2& rhs)
@@ -259,97 +238,33 @@ public:
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetPiRepType() const;
-    #else
         RepType GetPiRepType() const;
-    #endif
 #endif
 
 #if defined(AltNum_EnableERep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetERepType() const;
-    #else
         RepType GetERepType() const;
-    #endif
 #endif
 
 #if defined(AltNum_EnableIRep)
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetIRepType() const;
-    #else
         RepType GetIRepType() const;
-    #endif;
 #endif
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-    #if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetNormRepType() const;
-    #else
         RepType GetNormRepType() const;
-    #endif
 
 
         /// <summary>
         /// Returns representation type data that is stored in value
         /// </summary>
-#if defined(AltNum_UseBuiltinVirtualTable)
-        RepType VirtualTable_GetRepType() const;
-#else
         RepType GetRepType() const;
-#endif
-
-#if defined(AltNum_UseBuiltinVirtualTable)
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetPiRepType() const
-        {
-            GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
-        }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetERepType() const
-        {
-            GetVTable(VTable)->VirtualTable_GetERepType(VTable);
-        }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetIRepType() const
-        {
-            GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
-        }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetNormRepType() const
-        {
-            GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
-        }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetRepType() const
-        {
-            GetVTable(VTable)->VirtualTable_GetRepType(VTable);
-        }
-
-#endif
 
     #pragma endregion RepType
 

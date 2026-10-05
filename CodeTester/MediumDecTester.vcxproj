@@ -168,23 +168,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\AltNum\BinaryDec\BinaryBitCode.hpp" />
-    <ClInclude Include="..\AltNum\BinaryDec\BinaryDec.hpp" />
-    <ClInclude Include="..\AltNum\BinaryDec\BinaryTypeSelector.hpp" />
-    <ClInclude Include="..\AltNum\BinaryDec\IntXBits.hpp" />
-    <ClInclude Include="..\AltNum\BinaryDec\UInt64ArrayFallback.hpp" />
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2.hpp" />
     <ClInclude Include="..\AltNum\MediumDecV2\MediumDecV2Preprocessors.h" />
     <ClInclude Include="..\AltNum\MediumDec\MediumDec.hpp" />
-    <ClInclude Include="..\AltNum\MixedAltDec\AltDecV2.hpp" />
-    <ClInclude Include="..\AltNum\MixedAltDec\MixedAltDec.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\AltFloat.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\ExponentalDec.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\FullRepTypeV3.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDBV3.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeDetection.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\RepTypeV3.hpp" />
-    <ClInclude Include="..\AltNum\RestrictedFloat\RestrictedFloat.hpp" />
     <ClInclude Include="..\DLLAPI.h" />
     <ClInclude Include="..\AltNum\Concepts\IntegerConcept.hpp" />
   </ItemGroup>

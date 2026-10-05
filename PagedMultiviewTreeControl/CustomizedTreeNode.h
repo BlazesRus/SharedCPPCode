@@ -1,7 +1,33 @@
 // ***********************************************************************
-// Code Created by James Michael Armstrong (https://github.com/BlazesRus)
-// Code based on https://www.codeproject.com/Articles/9887/CStaticTreeCtrl-A-CStatic-derived-custom-Tree-cont
-// Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
+// Code Created by James Michael Armstrong
+// GitHub: https://github.com/BlazesRus
+//
+// Code based partly on CStaticTreeCtrl:
+// https://www.codeproject.com/Articles/9887/CStaticTreeCtrl-A-CStatic-derived-custom-Tree-cont
+//
+// Latest Code Release:
+// https://github.com/BlazesRus/BlazesRusSharedCode
+//
+// PagedMultiviewTreeControl was developed partly from CStaticTreeCtrl,
+// an instructional CStatic-derived custom tree-control project by
+// Franc Morales, originally published on CodeProject (1 May 2006).
+//
+// The original tutorial demonstrated node insertion and removal,
+// expand/collapse behavior, recursive drawing, multiline text,
+// scrolling, connecting lines, and an owner-drawn context menu.
+//
+// PagedMultiviewTreeControl also incorporates node-tree architecture
+// and related implementation work developed by James Michael Armstrong,
+// including stable node identities, generalized tree relationships,
+// and later paged and multi-view behavior.
+//
+// Preserved original article:
+// https://web.archive.org/web/20241115112046/https://www.codeproject.com/Articles/9887/CStaticTreeCtrl-A-CStatic-derived-custom-Tree-cont
+//
+// No explicit software license was identified in either the archived
+// article or the downloaded sample files. This notice records technical
+// lineage and attribution without asserting that the original work was
+// released under CPOL or another specific license.
 // ***********************************************************************
 #pragma once
 #ifndef CustomizedTreeNode_Header

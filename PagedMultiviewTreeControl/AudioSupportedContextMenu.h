@@ -1,5 +1,8 @@
 // ***********************************************************************
 // base code from https://www.codeproject.com/Articles/9887/CStaticTreeCtrl-A-CStatic-derived-custom-Tree-cont
+// The following Wayback Machine URL is a preserved snapshot of the
+// original CodeProject article by Franc Morales (1 May 2006):
+// https://web.archive.org/web/20241115112046/https://www.codeproject.com/Articles/9887/CStaticTreeCtrl-A-CStatic-derived-custom-Tree-cont
 // Code modified by James Michael Armstrong (https://github.com/BlazesRus)
 // Latest Code Release at https://github.com/BlazesRus/BlazesRusSharedCode
 // ***********************************************************************
