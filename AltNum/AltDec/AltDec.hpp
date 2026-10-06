@@ -18,6 +18,7 @@ namespace BlazesRusCode
     /// </summary>
     class DLL_API AltDec: public MediumDecV2
     {
+protected:
 #if defined(AltNum_EnableApproachingDivided)
       static const bool EnableApproachingDivided = true;
 #else
@@ -33,11 +34,69 @@ namespace BlazesRusCode
 #else
       static const bool ReserveLastRepForDivideByZero = false;
 #endif
-#if defined(AltNum_ReserveLastRepForDivideByZero)
-      static const bool ReserveLastRepForDivideByZero = true;
+#if defined(AltNum_EnablePowerOfRepresentation)
+      static const bool EnablePowerOfRepresentation = true;
 #else
-      static const bool ReserveLastRepForDivideByZero = false;
+      static const bool EnablePowerOfRepresentation = false;
 #endif
+#if defined(AltNum_EnableMixedFractional)
+      static const bool EnableMixedFractional = true;
+#else
+      static const bool EnableMixedFractional = false;
+#endif
+#if defined(AltNum_EnableIndeterminateForms)
+      static const bool EnableIndeterminateForms = true;
+#else
+      static const bool EnableIndeterminateForms = false;
+#endif
+#if defined(AltNum_EnableFractionals)
+      static const bool EnableFractionals = true;
+#else
+      static const bool EnableFractionals = false;
+#endif
+
+#if defined(AltNum_EnableEnhancedDivideByZeroForm)
+      static const bool EnableEnhancedDivideByZeroForm = true;
+#else
+      static const bool EnableEnhancedDivideByZeroForm = false;
+#endif
+#if defined(AltNum_EnableNegativePowerRep)
+      static const bool EnableNegativePowerRep = true;
+#else
+      static const bool EnableNegativePowerRep = false;
+#endif
+
+#if defined(AltNum_UseIntForDecimalHalf)
+      static const bool UseIntForDecimalHalf = true;
+#else
+      static const bool UseIntForDecimalHalf = false;
+#endif
+#if defined(AltNum_EnableUndefinedButInRange)
+      static const bool EnableUndefinedButInRange = true;
+#else
+      static const bool EnableUndefinedButInRange = false;
+#endif
+#if defined(AltNum_EnableMirroredSection)
+      static const bool EnableMirroredSection = true;
+#else
+      static const bool EnableMirroredSection = false;
+#endif
+#if defined(AltNum_EnableWithinMinMaxRange)
+      static const bool EnableWithinMinMaxRange = true;
+#else
+      static const bool EnableWithinMinMaxRange = false;
+#endif
+#if defined(AltNum_EnableNaN)
+      static const bool EnableNaN = true;
+#else
+      static const bool EnableNaN = false;
+#endif
+#if defined(AltNum_EnableNilRep)
+      static const bool EnableNilRep = true;
+#else
+      static const bool EnableNilRep = false;
+#endif
+
     //AltDec System
     //   ├── Core Numeric Layer
     //   │      ├── MediumDec
@@ -145,6 +204,7 @@ public:
         constexpr auto SwapNegativeStatus = MediumDec::SwapNegativeStatus;
 
     protected:
+        //If value is zero, than feature currently is off
         #pragma region Const Representation values
 
   #if defined(AltNum_EnableApproachingDivided)
@@ -410,50 +470,6 @@ public:
                     return GetNormRepType(); break;
             }
         }
-
-#if defined(AltNum_UseBuiltinVirtualTable)
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetPiRepType()
-    {
-      GetVTable(VTable)->VirtualTable_GetPiRepType(VTable);
-    }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetERepType()
-    {
-      GetVTable(VTable)->VirtualTable_GetERepType(VTable);
-    }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetIRepType()
-    {
-      GetVTable(VTable)->VirtualTable_GetIRepType(VTable);
-    }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetNormRepType()
-    {
-      GetVTable(VTable)->VirtualTable_GetNormRepType(VTable);
-    }
-
-        /// <summary>
-        /// Returns representation type data that is stored in value(Directly calling function)
-        /// </summary>
-        RepType GetRepType()
-    {
-      GetVTable(VTable)->VirtualTable_GetRepType(VTable);
-    }
-
-#endif
 
     #pragma endregion RepType
 

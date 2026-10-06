@@ -6,10 +6,6 @@
 
 #include "MediumDecV2Preprocessors.h"
 #include "..\MediumDec\MediumDec.hpp"
-#include "..\MediumDec\MediumDec.hpp"
-#if defined(AltNum_UseBuiltinVirtualTable)
-    #include "..\VirtualTableBase.hpp"
-#endif
 
 #include "..\RepType.h"
 
@@ -31,6 +27,39 @@ namespace BlazesRusCode
     class DLL_API MediumDecV2 : public MediumDec
     {
     protected:
+#if defined(AltNum_EnablePiRep)
+      static const bool EnablePiRep = true;
+#else
+      static const bool EnablePiRep = false;
+#endif
+#if defined(AltNum_EnableERep)
+      static const bool EnableERep = true;
+#else
+      static const bool EnableERep = false;
+#endif
+#if defined(AltNum_EnableIRep)
+      static const bool EnableIRep = true;
+#else
+      static const bool EnableIRep = false;
+#endif
+#if defined(AltNum_EnableApproaching)
+      static const bool EnableApproaching = true;
+#else
+      static const bool EnableApproaching = false;
+#endif
+#if defined(AltNum_DisableApproachingTop)
+      static const bool EnableApproachingTop = false;
+#elif defined(AltNum_EnableApproaching)
+      static const bool EnableApproachingTop = true;
+#else
+      static const bool EnableApproachingTop = false;
+#endif
+#if defined(AltNum_EnableInfinityRep)
+      static const bool EnableInfinityRep = true;
+#else
+      static const bool EnableInfinityRep = false;
+#endif
+    //protected:
         //BitFlag 01(1) = PiRep
         static const RepTypeUnderlayer PiFlag = 1;
         //BitFlag 02(2) = ERep
@@ -163,8 +192,9 @@ public:
     #pragma region Check_if_value
     #pragma endregion Check_if_value
 
-    #pragma region Const Representation values
     protected:
+        //If value is zero, than feature currently is off
+        #pragma region Const Representation values
     #if defined(AltNum_EnablePiRep)
         //Pi*tValue representation(when DecimalHalf.Flags==1)
         static const unsigned int PiRep = PartialInt::PiRep;
