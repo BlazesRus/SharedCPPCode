@@ -71,6 +71,11 @@ protected:
 #else
       static const bool UseIntForDecimalHalf = false;
 #endif
+#if defined(AltNum_EnableWithinMinMaxRange)
+      static const bool EnableWithinMinMaxRange = true;
+#else
+      static const bool EnableWithinMinMaxRange = false;
+#endif
 #if defined(AltNum_EnableUndefinedButInRange)
       static const bool EnableUndefinedButInRange = true;
 #else
@@ -81,11 +86,7 @@ protected:
 #else
       static const bool EnableMirroredSection = false;
 #endif
-#if defined(AltNum_EnableWithinMinMaxRange)
-      static const bool EnableWithinMinMaxRange = true;
-#else
-      static const bool EnableWithinMinMaxRange = false;
-#endif
+
 #if defined(AltNum_EnableNaN)
       static const bool EnableNaN = true;
 #else
@@ -101,7 +102,7 @@ protected:
     //   ├── Core Numeric Layer
     //   │      ├── MediumDec
     //   │      └── MediumUDec
-    //   ├── AltDec Featues added without ExtraRep
+    //   ├── AltDec Features added without ExtraRep
     //   │      ├── MediumDecV2
     //   │      └── MediumUDecV2
     //   │

@@ -255,3 +255,7 @@ AltNumExpansion
 AltNum/Backup/
 
 AltNumCommunity/
+
+AltNum/MediumDecVariant/Variant.cpp
+
+AltNum/MediumDecVariant/Variant.hpp
