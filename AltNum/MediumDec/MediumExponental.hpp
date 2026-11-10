@@ -131,7 +131,8 @@ public:
       else if (tValue.DecimalHalf == 0 && tValue.IntHalf.Value == 10)
       {
         VariantType result = tValue;
-        if(tValue.IsNegative()&&(expValue&1)==1)
+        // A negative base raised to an even exponent becomes positive.
+        if (tValue.IsNegative() && ((expValue & 1u) == 0u))
           result.IntHalf.Sign = MirroredInt::PositiveSign;
         result.IntHalf.Value = VariableConversionFunctions::PowerOfTens[expValue];
         return result;
@@ -140,7 +141,9 @@ public:
       {
         IntType exp = expValue;
         //Code based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-        bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+				//Odd exponent  ? negative sign remains
+				//Even exponent ? negative signs cancel, producing positive
+				const bool IsNegative = tValue.IsNegative() && ((exp & 1u) != 0u);//(exp & 1u) if returns 1 than odd exponent otherwise is even exponent
         VariantType self = tValue.AbsOf();
         VariantType result = VariantType::One;
         while (exp > 0)
@@ -150,7 +153,8 @@ public:
             result.UnsignedMultOp(self);
           // n must be even now
           exp = exp >> 1; // y = y/2
-          self.UnsignedMultOp(self); // Change x to x^2
+          if (exp != 0u)
+            self.UnsignedMultOp(self); // Change x to x^2
         }
         if(IsNegative)
           result.IntHalf.Sign = MirroredInt::NegativeSign;
@@ -171,16 +175,18 @@ public:
         IntType exp = expValue * -1;
         if (tValue.DecimalHalf == 0 && tValue.IntHalf == 10 && expValue >= -9)
         {
-          VariantType result = VariantType(0, DecimalOverflow / VariableConversionFunctions::PowerOfTens[exp]);
-          if(tValue.IsNegative()&&(exp&1)==1)
-            result.IntHalf.Sign = MirroredInt::PositiveSign;
+					VariantType result(0, DecimalOverflow/VariableConversionFunctions::PowerOfTens[exp]);
+
+					if (tValue.IsNegative() && ((exp & 1u) != 0u))
+							result.IntHalf.Sign = MirroredInt::NegativeSign;
           return result;
         }
         else
         {
           //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
-          //Switches from negative to positive if exp is odd number
-          bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+          //Odd exponent  ? negative sign remains
+          //Even exponent ? negative signs cancel, producing positive
+          const bool IsNegative = tValue.IsNegative() && ((exp & 1u) != 0u);//(exp & 1u) if returns 1 than odd exponent otherwise is even exponent  
           VariantType self = tValue.AbsOf();//Prevent needing to flip the sign
           VariantType result = VariantType::One;
           while (exp > 0)
@@ -190,7 +196,10 @@ public:
               result.UnsignedDivOp(self);
             // n must be even now
             exp = exp >> 1; // y = y/2
-            self.UnsignedMultOp(self); //  Change x to x^2
+						// Do not calculate another power after all exponent bits
+            // have already been processed.
+            if (exp != 0)
+              self.UnsignedMultOp(self); //  Change x to x^2
           }
           if(IsNegative)
             result.IntHalf.Sign = MirroredInt::NegativeSign;
@@ -207,7 +216,7 @@ public:
       unsigned int exp = expValue;
       //Code(Reversed in application) based on https://www.geeksforgeeks.org/write-an-iterative-olog-y-function-for-powx-y/
       //Switches from negative to positive if exp is odd number
-      bool IsNegative = tValue.IsPositive()?false:(exp&1)==1?false:true;
+      const bool IsNegative = tValue.IsNegative() && ((exp & 1u) != 0u);//(exp & 1u) if returns 1 than odd exponent otherwise is even exponent  
       VariantType self = tValue.AbsOf();
       VariantType result = VariantType::One;
       while (exp > 0)
